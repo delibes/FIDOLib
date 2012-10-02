@@ -3,7 +3,6 @@
  */
 package data;
 
-
 import java.awt.Color;
 
 /**
@@ -12,27 +11,24 @@ import java.awt.Color;
  */
 public class Constants {
 
-    
-     // Colors
+    // Colors
     public static Color backGroundColor = Color.black;
     public static Color textColor = Color.white;
     public static Color skyColor = Color.BLUE;
-    
     public static Color warningColor = Color.red;
     public static Color progressBarColor = Color.GRAY;
     public static Color flightStatusNOKcolor = Color.GREEN;
     public static Color flightStatusConfirmedColor = Color.RED;
-        public static Color ESD139Color = Color.BLUE;
-        public static Color sputnikColor = Color.RED;
+    public static Color ESD139Color = Color.BLUE;
+    public static Color sputnikColor = Color.RED;
     public static Color hjortoeColor = Color.BLUE;
     public static Color smaragdColor = Color.GREEN;
     public static Color otherVesselsColor = Color.YELLOW;
     public static Color otherVesselsNoMovementColor = Color.WHITE;
     public static Color baseStationColor = Color.BLUE;
     public static Color otherVesselsTextColor = Color.BLACK;
-        public static Color knotsLabelColor = Color.BLACK;
+    public static Color knotsLabelColor = Color.BLACK;
     public static int knotsLabelSize = 16;
-
     /**
      * True headning N/A AIS value
      */
@@ -49,7 +45,6 @@ public class Constants {
      * Perform a checksum validation on data
      */
     public static boolean useCheckSum = false;
-
     /**
      * Configuration file name
      */
@@ -58,7 +53,7 @@ public class Constants {
      *  Update GUI deltaT_GUI every msec.
      */
     public static int deltaT_GUI = 100;
-     /**
+    /**
      *  Trigger the log timer every msec
      */
     public static int triggerLogTimer = 500;
@@ -92,7 +87,7 @@ public class Constants {
     public static String threeRingParachutesReleaseStr = "Chutes Rls";
     // up-righting bags tower string
     public static String upRightingBagsStr = "Bags";
-     /**
+    /**
      * AIS column log separator
      */
     public static String AISColumnSeparator = "\t";
@@ -100,7 +95,7 @@ public class Constants {
      * N/A string
      */
     public static String naString = "N/A";
-     /**
+    /**
      * Remove vessel which havent been update in removeVesselMinutes (in minutes)
      */
     public static long removeVesselMinutes = 1000 * 60 * 60;
@@ -121,7 +116,6 @@ public class Constants {
      * Longitude label
      */
     public static String lonStr = "Lon";
-    
     /**
      * Progress bar indication
      */
@@ -135,8 +129,6 @@ public class Constants {
      * Progress bar indication
      */
     public static int progressbarEND = -1;
-    
-   
     /**
      * The g force
      */
@@ -150,7 +142,6 @@ public class Constants {
      * Serial port packet length
      */
     public static int packetLength = 13;
-   
     /**
      * Begin sim after this period (in 1/10 sec)
      */
@@ -192,10 +183,13 @@ public class Constants {
      */
     public static boolean showESD139 = false;
 
-     /**
+    /**
      * Degree format
      */
-    public enum DegreeFormat{DECIMAL, DECIMALMINUTE, DECIMALMINSEC};
+    public enum DegreeFormat {
+
+        DECIMAL, DECIMALMINUTE, DECIMALMINSEC
+    };
     /**
      * Actual degree format
      */
