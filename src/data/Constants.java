@@ -202,6 +202,6 @@ public class Constants {
     /**
      * East / West
      * 
-     */
+     */ 
     public static String eastWest = "E";
 }
