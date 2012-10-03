@@ -1,7 +1,7 @@
 /*
  * Constants used throughout the program for color schemes, text on buttons etc.
  */
-package data;
+package fidolib.data;
 
 import java.awt.Color;
 
@@ -15,6 +15,7 @@ public class Constants {
     public static Color backGroundColor = Color.black;
     public static Color textColor = Color.white;
     public static Color skyColor = Color.BLUE;
+    public static Color rocketColor = Color.BLUE;
     public static Color warningColor = Color.red;
     public static Color progressBarColor = Color.GRAY;
     public static Color flightStatusNOKcolor = Color.GREEN;
@@ -28,7 +29,47 @@ public class Constants {
     public static Color baseStationColor = Color.BLUE;
     public static Color otherVesselsTextColor = Color.BLACK;
     public static Color knotsLabelColor = Color.BLACK;
+     /**
+     * Progress bar indication
+     */
+    public static int progressbarMECO = -1;
+    /**
+     * Progress bar indication
+     */
+    public static int progressbarSEP = -1;
+    /**
+     * Progress bar indication
+     */
+    public static int progressbar2IGN= -1;
+    /**
+     * Progress bar indication
+     */
+    public static int progressbar2MECO= -1;
+    
+    /**
+     * Text string for the progress bar
+     */
+    public static String progressbarMECOStr = "1st ECO";
+     /**
+     * Text string for the progress bar
+     */
+    public static String progressbar2STGStr = "2nd IGN";
+    /**
+     * Text string for the progress bar
+     */
+    public static String progressbar2STGMECOStr = "2nd ECO";
+    /**
+     * Text string for the progress bar
+     */
+    public static String progressbarSEPStr = "PL Sep";
+    /* 
+     * Knots label size
+     */
     public static int knotsLabelSize = 16;
+    /*
+     * Paint data on count down panel
+     */
+    public static boolean paintData = true;
     /**
      * True headning N/A AIS value
      */

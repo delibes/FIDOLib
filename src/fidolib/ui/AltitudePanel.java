@@ -10,7 +10,7 @@
  */
 package fidolib.ui;
 
-import data.Constants;
+import fidolib.data.Constants;
 import java.awt.Graphics;
 import java.util.Calendar;
 import java.util.Timer;
@@ -30,11 +30,11 @@ public class AltitudePanel extends javax.swing.JPanel {
     private int xAxesBorder = 60; // Pixels
     private int yAxesBorder = 60; // Pixels
     private int xAxesScale = 10; // Km
-    private int yAxesScale = 10; // Km
+    private int yAxesScale = 20; // Km
     private int lineWidth = 3;
     private int ticksLineWidth = 2;
     private int xTicks = 10;
-    private int yTicks = 10;
+    private int yTicks = 20;
     /**
      * Timer delay
      */
@@ -66,7 +66,7 @@ public class AltitudePanel extends javax.swing.JPanel {
     public void paint(Graphics g) {
         super.paint(g);
 
-        paintAxis(g);
+        paintCoorSys(g);
         paintRocket(g);
 
     }
@@ -79,11 +79,15 @@ public class AltitudePanel extends javax.swing.JPanel {
             spotSize = (spotSize + 2) % maxSpotSize;
 
         }
-        g.setColor(Constants.skyColor);
+        g.setColor(Constants.rocketColor);
         g.fillOval(20 - (spotSize / 2), 20 - (spotSize / 2), spotSize, spotSize);
     }
 
-    public void paintAxis(Graphics g) {
+    /**
+     * Paint the coordinate system
+     * @param g 
+     */
+    public void paintCoorSys(Graphics g) {
 
         int width = this.getWidth();
         int height = this.getHeight();
@@ -94,15 +98,28 @@ public class AltitudePanel extends javax.swing.JPanel {
         g.fillRect(xAxesBorder, height - yAxesBorder, width - xAxesBorder * 2, lineWidth);
         g.fillRect(xAxesBorder, yAxesBorder, lineWidth, height - xAxesBorder * 2);
 
+        
+        int sLength = 0;
         int xTicksPixels = (int)((width - xAxesBorder * 2) / xTicks );
         for (int i = 0; i <= xAxesScale; i += ((int)(1.0 / ((double) xTicks/ (double)xAxesScale)))) {
             g.fillRect(xAxesBorder + (i * xTicksPixels / (xAxesScale / xTicks)), height - yAxesBorder, ticksLineWidth, ticksLineWidth * 4);
-            int sLength = g.getFontMetrics().stringWidth("" + i);
+            sLength = g.getFontMetrics().stringWidth("" + i);
             g.drawString("" + i, xAxesBorder + (i * xTicksPixels / (xAxesScale / xTicks)) - sLength / 4, height - yAxesBorder / 2);
         }
         String downRangeStr = "Down range (Km)";
-        int sLength = g.getFontMetrics().stringWidth(downRangeStr);
+        sLength = g.getFontMetrics().stringWidth(downRangeStr);
         g.drawString(downRangeStr, width / 2 - sLength / 2, height - yAxesBorder / 4);
+        
+        
+        int yTicksPixels = (int)((height - yAxesBorder * 2) / yTicks );
+        for (int i = 0; i <= yAxesScale; i += ((int)(1.0 / ((double) yTicks/ (double)yAxesScale)))) {
+            g.fillRect(xAxesBorder - ticksLineWidth * 4 , height - yAxesBorder - (i * yTicksPixels / (yAxesScale / yTicks)), ticksLineWidth * 4, ticksLineWidth);
+            sLength = g.getFontMetrics().stringWidth("" + i);
+            g.drawString("" + i, xAxesBorder /3 * 2 - sLength , height - yAxesBorder - (i * yTicksPixels / (yAxesScale / yTicks)) - sLength / 4);
+        }
+        String altitudeRangeStr = "Altitude (Km)";
+        sLength = g.getFontMetrics().stringWidth(altitudeRangeStr);
+        g.drawString(altitudeRangeStr, xAxesBorder - sLength / 2, yAxesBorder / 3 * 2);
 
     }
 

@@ -2,9 +2,8 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package data;
+package fidolib.data;
 
-import data.Constants;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
@@ -96,7 +95,7 @@ public class Position {
         double lon1 = p1.lon * Math.PI / 180;
         double lat2 = p2.lat * Math.PI / 180;
         double lon2 = p2.lon * Math.PI / 180;
-        double dLat = lat2 - lat1;
+       // double dLat = lat2 - lat1;
         double dLon = lon2 - lon1;
 
         double y = Math.sin(dLon) * Math.cos(lat2);
@@ -134,7 +133,7 @@ public class Position {
     }
 
     /**
-     * The modules function with the sign following the divisor
+     * The modulus function with the sign following the divisor
      */
     public static double mod(double x, double y) {
         double mod = 0.0;
@@ -168,18 +167,34 @@ public class Position {
             return "";
         }
     }
+    
+    /**
+     * Calculate the latitude in pixels
+     * @param p the position p in lat/lon
+     */
+    public static void calcLatLonPixels(Position p, int width, int height) {
+
+        //TODO: remove before flight
+        //    p.latPixels = ((int) (((p.lat - 0.5 - Constants.upperLeftCornerLat) / (Constants.lowerRightCornerLat - Constants.upperLeftCornerLat)) * height));
+        //    p.lonPixels = ((int) ((p.lon + 3.0 - Constants.upperLeftCornerLon) / (Constants.lowerRightCornerLon - Constants.upperLeftCornerLon) * width));
+//
+        p.latPixels = ((int) (((p.lat - Constants.upperLeftCornerLat) / (Constants.lowerRightCornerLat - Constants.upperLeftCornerLat)) * height));
+        p.lonPixels = ((int) ((p.lon - Constants.upperLeftCornerLon) / (Constants.lowerRightCornerLon - Constants.upperLeftCornerLon) * width));
+
+    }
+
 
     /**
      * Return latitude as string according to the format
      */
     public String getLat() {
-        return "N " + formatDegrees(lat);
+        return Constants.northSouth + " " + formatDegrees(lat);
     }
 
     /**
      * Return longitude as string according to the format
      */
     public String getLon() {
-        return "E " + formatDegrees(lon);
+        return Constants.northSouth + " " + formatDegrees(lon);
     }
 }
