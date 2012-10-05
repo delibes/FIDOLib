@@ -27,6 +27,22 @@ public class Position {
      */
     public int GPAAltitude = 0;
     /**
+     * Down range from launch point in meter
+     */
+    public double downRange = 0;
+    /**
+     * Vertical velocity in m/s from privious point 
+     */
+    public double verticalVelocity = 0;
+    /**
+     * Velocity in m/s from privious point
+     */
+    public double velocity = 0.0;
+    /**
+     * On board time stamp
+     */
+    public double onBoardTimeStamp = 0.0;
+    /**
      * Good latitude reading?
      */
     public boolean latitudeGood = false;
@@ -69,6 +85,19 @@ public class Position {
         this.lat = lat;
         this.lon = lon;
         this.GPAAltitude = GPSAltitude;
+        
+
+    }
+    /**
+     * Constructor
+     */
+    public Position(double lat, double lon, int GPSAltitude, int ts) {
+        decimalSymbols.setDecimalSeparator('.');
+        decimalSymbols.setGroupingSeparator(',');
+        this.lat = lat;
+        this.lon = lon;
+        this.GPAAltitude = GPSAltitude;
+        this.onBoardTimeStamp = ts;
         
 
     }

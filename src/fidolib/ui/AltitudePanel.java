@@ -13,8 +13,10 @@ package fidolib.ui;
 import fidolib.data.Position;
 import fidolib.data.Constants;
 import fidolib.data.FlightData;
+import java.awt.BasicStroke;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
@@ -35,6 +37,7 @@ public class AltitudePanel extends javax.swing.JPanel {
     private int yAxesBorder = 60; // Pixels
     private int xAxesScale = 10; // Km
     private int yAxesScale = 10; // Km
+    private int ticks = 10;
     private int lineWidth = 3;
     private int ticksLineWidth = 2;
     private int fontSize = 12;
@@ -50,7 +53,7 @@ public class AltitudePanel extends javax.swing.JPanel {
      * The timer it self
      */
     private Timer timer = new Timer();
-        /**
+    /**
      * Reference to the flight data
      * 
      */
@@ -83,6 +86,8 @@ public class AltitudePanel extends javax.swing.JPanel {
     public void paintRocketPositions(Graphics g) {
         int width = this.getWidth();
         int height = this.getHeight();
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setStroke(new BasicStroke(lineWidth));
         g.setColor(Constants.textColor);
         calendar = Calendar.getInstance();
         if ((calendar.getTimeInMillis() - lastSpotPaint) > deltaSpotPaint) {
@@ -94,15 +99,26 @@ public class AltitudePanel extends javax.swing.JPanel {
         int yTicksPixels = (int) ((height - yAxesBorder * 2) / yAxesScale);
 
         List positions = aFlightData.positions;
-        if (positions != null) {
+        if (positions != null && positions.size() > 2) {
             for (int i = 0; i < positions.size() - 1; i++) {
-                Position p1 = (Position)positions.get(i);
-                Position p2 = (Position)positions.get(i);
-                int x1 = (int) (Position.disanceNauticalMiles((Position)positions.get(0), p1) * Constants.nauticalMile / 1000.0);
-                int x2 = (int) (Position.disanceNauticalMiles((Position)positions.get(0), p2) * Constants.nauticalMile / 1000.0);
-                
-                int y1 = height - yAxesBorder - (int) (p1.GPAAltitude * yTicksPixels / 1000.0) - spotSize / 2;
-                int y2 = height - yAxesBorder - (int) (p2.GPAAltitude * yTicksPixels / 1000.0) - spotSize / 2;
+                Position p1 = (Position) positions.get(i);
+                Position p2 = (Position) positions.get(i + 1);
+                double xDist = Position.disanceNauticalMiles((Position) positions.get(0), p1)
+                        * Constants.nauticalMile;
+                if (xDist > (xAxesScale * 1000)) {
+                    xAxesScale += 10;
+                }
+
+                int x1 = (int) (xDist / 1000.0 * xTicksPixels + xAxesBorder);
+                int x2 = (int) (Position.disanceNauticalMiles((Position) positions.get(0), p2)
+                        * Constants.nauticalMile / 1000.0 * xTicksPixels + xAxesBorder);
+
+                int y1 = height - yAxesBorder - (int) (p1.GPAAltitude * yTicksPixels / 1000.0);
+                if (p2.GPAAltitude > (yAxesScale * 1000)) {
+                    yAxesScale += 10;
+                }
+
+                int y2 = height - yAxesBorder - (int) (p2.GPAAltitude * yTicksPixels / 1000.0);
                 g.drawLine(x1, y1, x2, y2);
             }
         }
@@ -110,14 +126,18 @@ public class AltitudePanel extends javax.swing.JPanel {
         g.setColor(Constants.rocketColor);
         int xPos = 0;
         if ((positions != null) && (positions.size() > 0)) {
-           xPos = (int) (Position.disanceNauticalMiles((Position)positions.get(0), aFlightData.rocketPosition) * Constants.nauticalMile / 1000.0) * xTicksPixels + xAxesBorder - spotSize / 2;
-        }
-        else {
-           xPos = xAxesBorder - spotSize / 2;
-            
+            xPos = (int) (aFlightData.rocketPosition.downRange / 1000.0 * xTicksPixels + xAxesBorder - spotSize / 2);
+        } else {
+            xPos = xAxesBorder - spotSize / 2;
+
         }
         int yPos = height - yAxesBorder - (int) (aFlightData.rocketPosition.GPAAltitude * yTicksPixels / 1000.0) - spotSize / 2;
         g.fillOval(xPos, yPos, spotSize, spotSize);
+        g.setColor(Constants.textColor);
+        g.drawString("A    " + aFlightData.rocketPosition.GPAAltitude + " m" , xPos + spotSize / 2 + maxSpotSize , yPos + spotSize / 2 - maxSpotSize - g.getFont().getSize() * 3);
+        g.drawString("D    " + (int)(aFlightData.rocketPosition.downRange) + " m" , xPos + spotSize / 2 + maxSpotSize , yPos + spotSize / 2 - maxSpotSize - g.getFont().getSize() * 2);
+        g.drawString("V    " + (int)(aFlightData.rocketPosition.velocity) + " m/s" , xPos + spotSize / 2 + maxSpotSize , yPos + spotSize / 2 - maxSpotSize - g.getFont().getSize());
+        g.drawString("V v " + (int)(aFlightData.rocketPosition.verticalVelocity) + " m/s" , xPos + spotSize / 2 + maxSpotSize , yPos + spotSize / 2 - maxSpotSize );
 
     }
 
@@ -147,7 +167,7 @@ public class AltitudePanel extends javax.swing.JPanel {
 
         // X axes
         int xTicksPixels = (int) ((width - xAxesBorder * 2) / xAxesScale);
-        for (int i = 0; i <= xAxesScale; i += 1) {
+        for (int i = 0; i <= xAxesScale; i += xAxesScale / ticks) {
             g.fillRect(xAxesBorder + (i * xTicksPixels / (xAxesScale / xAxesScale)), height - yAxesBorder, ticksLineWidth, ticksLineWidth * 4);
             sLength = g.getFontMetrics().stringWidth("" + i);
             g.drawString("" + i, xAxesBorder + (i * xTicksPixels) - sLength / 4, height - yAxesBorder / 2);
@@ -158,7 +178,7 @@ public class AltitudePanel extends javax.swing.JPanel {
 
         // Y axes
         int yTicksPixels = (int) ((height - yAxesBorder * 2) / yAxesScale);
-        for (int i = 0; i <= yAxesScale; i += 1) {
+        for (int i = 0; i <= yAxesScale; i += yAxesScale / ticks) {
             g.fillRect(xAxesBorder - ticksLineWidth * 4, height - yAxesBorder - (i * yTicksPixels), ticksLineWidth * 4, ticksLineWidth);
             sLength = g.getFontMetrics().stringWidth("" + i);
             g.drawString("" + i, xAxesBorder / 3 * 2 - sLength, height + (fontSize / 2) - yAxesBorder - (i * yTicksPixels) - sLength / 4);

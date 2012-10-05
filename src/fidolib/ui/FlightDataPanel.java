@@ -29,12 +29,13 @@ import java.util.TimerTask;
  * @author Steen
  */
 public class FlightDataPanel extends javax.swing.JPanel {
+
     /**
      * Reference to the flight data
      * 
      */
     private FlightData aFlightData = null;
-     /**
+    /**
      * Reference to the AIS data
      * 
      */
@@ -53,7 +54,7 @@ public class FlightDataPanel extends javax.swing.JPanel {
     private Timer timer = new Timer();
 
     /** Creates new form FlightDataPanel */
-    public FlightDataPanel( AISData aAISData, FlightData aFlightData) {
+    public FlightDataPanel(AISData aAISData, FlightData aFlightData) {
         this.aAISData = aAISData;
         this.aFlightData = aFlightData;
         initComponents();
@@ -66,7 +67,7 @@ public class FlightDataPanel extends javax.swing.JPanel {
         }, delay, period);
     }
 
-        @Override
+    @Override
     public void paint(Graphics g) {
         int width = this.getWidth();
         int height = this.getHeight();
@@ -89,18 +90,19 @@ public class FlightDataPanel extends javax.swing.JPanel {
         Font font = new Font("New Courier", Font.BOLD, fontSize);
 
         g.setFont(font);
-       
+
         if (Constants.paintData == true) {
             paintData(g);
         }
 
 
     }
-          public void paintData(Graphics g) {
+
+    public void paintData(Graphics g) {
 
         int fontSize = this.getWidth() / 25;
         int textPos = 10;
-        int deltaTextPos = this.getWidth() / 4;
+        int deltaTextPos = this.getWidth() / 4 + 20;
         Font font = new Font("New Courier", Font.BOLD, fontSize);
         g.setFont(font);
         int fontSizeFactor = 6;
@@ -108,12 +110,12 @@ public class FlightDataPanel extends javax.swing.JPanel {
         g.drawString("Lat ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Lon ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Alt ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("B.A. ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        //g.drawString("B.A. ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Time ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("D. MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
 
-        textPos += deltaTextPos ;
+        textPos += deltaTextPos;
         // Print time since last valid data reception
         fontSizeFactor = 6;
         if (aFlightData.lastValidDataTimeStamp > 0) {
@@ -135,8 +137,7 @@ public class FlightDataPanel extends javax.swing.JPanel {
 
             }
 
-        }
-        else {
+        } else {
             fontSizeFactor--;
         }
         String latStr = "" + aFlightData.rocketPosition.getLat();
@@ -151,7 +152,7 @@ public class FlightDataPanel extends javax.swing.JPanel {
         g.drawString(latStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString(lonStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("" + aFlightData.rocketPosition.GPAAltitude + " m", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("" + aFlightData.barometerAltitude + " m", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        //  g.drawString("" + aFlightData.barometerAltitude + " m", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("" + AuxiliaryFunctions.getTimeStamp(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         if (aAISData.getVessel(aAISData.hjortoeMMSI) != null) {
             double disanceNauticalMiles = Position.disanceNauticalMiles(aFlightData.rocketPosition, aAISData.getVessel(aAISData.hjortoeMMSI).pos);
@@ -166,12 +167,10 @@ public class FlightDataPanel extends javax.swing.JPanel {
 
             g.drawString(distStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
-        } 
+        }
 
     }
-          
-    
-        
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

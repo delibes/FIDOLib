@@ -15,7 +15,6 @@ import fidolib.data.Constants;
 import fidolib.data.FlightData;
 import fidolib.data.Position;
 import fidolib.data.VesselInfo;
-import fidolib.misc.AuxiliaryFunctions;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.text.DecimalFormat;
@@ -36,12 +35,12 @@ public class AISDataPanel extends javax.swing.JPanel {
      * 
      */
     private FlightData aFlightData = null;
-     /**
+    /**
      * Reference to the AIS data
      * 
      */
     private AISData aAISData = null;
-       /**
+    /**
      * Timer delay
      */
     private int delay = 0;
@@ -67,7 +66,7 @@ public class AISDataPanel extends javax.swing.JPanel {
         }, delay, period);
     }
 
-            @Override
+    @Override
     public void paint(Graphics g) {
         int width = this.getWidth();
         int height = this.getHeight();
@@ -90,25 +89,26 @@ public class AISDataPanel extends javax.swing.JPanel {
         Font font = new Font("New Courier", Font.BOLD, fontSize);
 
         g.setFont(font);
-       
+
         if (Constants.paintData == true) {
             paintData(g);
         }
 
 
     }
-          public void paintData(Graphics g) {
+
+    public void paintData(Graphics g) {
 
         int fontSize = this.getWidth() / 25;
         int textPos = 10;
-        int deltaTextPos = this.getWidth() / 4;
+        int deltaTextPos = this.getWidth() / 4 + 20;
         Font font = new Font("New Courier", Font.BOLD, fontSize);
         g.setFont(font);
         int fontSizeFactor = 7;
         fontSizeFactor = 7;
-        
+
         // Spunik
-        
+
         fontSizeFactor = 7;
         g.drawString("Sputnik", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Lat ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
@@ -119,7 +119,7 @@ public class AISDataPanel extends javax.swing.JPanel {
         g.drawString("D. MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
 
-        textPos += deltaTextPos ;
+        textPos += deltaTextPos;
         Calendar c1 = Calendar.getInstance();
         String deltaTSputnikData = "";
         VesselInfo sputnik = aAISData.getVessel(aAISData.sputnikMMSI);
@@ -202,6 +202,7 @@ public class AISDataPanel extends javax.swing.JPanel {
             }
         }
     }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
