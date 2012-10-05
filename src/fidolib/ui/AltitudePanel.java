@@ -50,9 +50,15 @@ public class AltitudePanel extends javax.swing.JPanel {
      * The timer it self
      */
     private Timer timer = new Timer();
+        /**
+     * Reference to the flight data
+     * 
+     */
+    private FlightData aFlightData = null;
 
     /** Creates new form AltPanel */
-    public AltitudePanel() {
+    public AltitudePanel(FlightData aFlightData) {
+        this.aFlightData = aFlightData;
         initComponents();
 
 
@@ -87,7 +93,7 @@ public class AltitudePanel extends javax.swing.JPanel {
         int xTicksPixels = (int) ((width - xAxesBorder * 2) / xAxesScale);
         int yTicksPixels = (int) ((height - yAxesBorder * 2) / yAxesScale);
 
-        List positions = FlightData.getInstance().positions;
+        List positions = aFlightData.positions;
         if (positions != null) {
             for (int i = 0; i < positions.size() - 1; i++) {
                 Position p1 = (Position)positions.get(i);
@@ -104,13 +110,13 @@ public class AltitudePanel extends javax.swing.JPanel {
         g.setColor(Constants.rocketColor);
         int xPos = 0;
         if ((positions != null) && (positions.size() > 0)) {
-           xPos = (int) (Position.disanceNauticalMiles((Position)positions.get(0), FlightData.getInstance().rocketPosition) * Constants.nauticalMile / 1000.0) * xTicksPixels + xAxesBorder - spotSize / 2;
+           xPos = (int) (Position.disanceNauticalMiles((Position)positions.get(0), aFlightData.rocketPosition) * Constants.nauticalMile / 1000.0) * xTicksPixels + xAxesBorder - spotSize / 2;
         }
         else {
            xPos = xAxesBorder - spotSize / 2;
             
         }
-        int yPos = height - yAxesBorder - (int) (FlightData.getInstance().rocketPosition.GPAAltitude * yTicksPixels / 1000.0) - spotSize / 2;
+        int yPos = height - yAxesBorder - (int) (aFlightData.rocketPosition.GPAAltitude * yTicksPixels / 1000.0) - spotSize / 2;
         g.fillOval(xPos, yPos, spotSize, spotSize);
 
     }
@@ -129,7 +135,7 @@ public class AltitudePanel extends javax.swing.JPanel {
 
         Font font = new Font("New Courier", Font.BOLD, fontSize);
         g.setFont(font);
-        String title = "GPS based data";
+        String title = "GPS data";
         int sLength = 0;
         sLength = g.getFontMetrics().stringWidth(title);
         g.drawString(title, width / 2 - sLength / 2, yAxesBorder / 2);
@@ -159,7 +165,7 @@ public class AltitudePanel extends javax.swing.JPanel {
         }
         String altitudeRangeStr = "Altitude (Km)";
         sLength = g.getFontMetrics().stringWidth(altitudeRangeStr);
-        g.drawString(altitudeRangeStr, xAxesBorder - sLength / 2, yAxesBorder / 3 * 2);
+        g.drawString(altitudeRangeStr, xAxesBorder - sLength / 2, yAxesBorder / 4 * 3);
 
     }
 

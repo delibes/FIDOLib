@@ -9,12 +9,16 @@ import fidolib.data.CountDownData;
 import fidolib.data.VesselInfo;
 import fidolib.data.AISData;
 import fidolib.data.FlightData;
+import fidolib.data.Position;
 import fidolib.misc.AuxiliaryFunctions;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -29,6 +33,11 @@ public class CountDownPanel extends javax.swing.JPanel {
      * 
      */
     private AISData aAISData = null;
+    /**
+     * Reference to the flight data
+     * 
+     */
+    private FlightData aFlightData = null;
    
     /**
      * Timer delay
@@ -44,9 +53,10 @@ public class CountDownPanel extends javax.swing.JPanel {
     private Timer timer = new Timer();
 
     /** Creates new form CountDownPanel */
-    public CountDownPanel(AISData aAISData) {
+    public CountDownPanel(AISData aAISData, FlightData aFlightData) {
         initComponents();
         this.aAISData = aAISData;
+        this.aFlightData = aFlightData;
         MouseAdaptorCountDownPanel aMouseAdaptorCountDownPanel = new MouseAdaptorCountDownPanel(this);
         this.addMouseMotionListener(aMouseAdaptorCountDownPanel);
         this.addMouseListener(aMouseAdaptorCountDownPanel);
@@ -89,150 +99,12 @@ public class CountDownPanel extends javax.swing.JPanel {
         sLength = g.getFontMetrics().stringWidth(timeStr);
         g.drawString(timeStr, (width / 2) - (sLength / 2), height / 2 + fontSize / 3);
 
-        if (Constants.paintData == true) {
-            paintData(g);
-        }
+        
 
 
     }
 
-    public void paintData(Graphics g) {
 
-        int fontSize = this.getHeight() / 32;
-        Font font = new Font("New Courier", Font.BOLD, fontSize);
-        g.setFont(font);
-        // Rocket
-        int textPos = 10;
-        g.drawString("Rocket", textPos, this.getHeight() - (fontSize * 6));
-        g.drawString("Lat ", textPos, this.getHeight() - (fontSize * 5));
-        g.drawString("Lon ", textPos, this.getHeight() - (fontSize * 4));
-        g.drawString("Alt ", textPos, this.getHeight() - (fontSize * 3));
-        g.drawString("B.A. ", textPos, this.getHeight() - (fontSize * 2));
-        g.drawString("Time ", textPos, this.getHeight() - (fontSize * 1));
-
-        textPos = 100;
-        // Print time since last valid data reception
-        if (FlightData.getInstance().lastValidDataTimeStamp > 0) {
-            Calendar calender = Calendar.getInstance();
-            long now = calender.getTime().getTime();
-
-            font = new Font("New Courier", Font.BOLD, fontSize);
-            g.setFont(font);
-            long sinceLastData = now - FlightData.getInstance().lastValidDataTimeStamp;
-            if (sinceLastData > 1000) {
-                String secondsStr = String.format("%02d", (sinceLastData % 60000 / 1000));
-                String minutesStr = String.format("%02d", (sinceLastData / 60000));
-
-                String sinceLastDataStr = "" + minutesStr + ":" + secondsStr;
-                g.drawString(sinceLastDataStr + " " + FlightData.getInstance().noGoodPackets + "/" + FlightData.getInstance().noBadPackets, textPos, this.getHeight() - (fontSize * 6));
-
-            } else {
-                g.drawString("" + FlightData.getInstance().noGoodPackets + "/" + FlightData.getInstance().noBadPackets, textPos, this.getHeight() - (fontSize * 6));
-
-            }
-
-        }
-
-        String latStr = "" + FlightData.getInstance().rocketPosition.getLat();
-        if (FlightData.getInstance().rocketPosition.latitudeGood != true) {
-
-            latStr = "(" + latStr + ")";
-        }
-        String lonStr = "" + FlightData.getInstance().rocketPosition.getLon();
-        if (FlightData.getInstance().rocketPosition.longitudeGood != true) {
-            lonStr = "(" + lonStr + ")";
-        }
-        g.drawString(latStr, textPos, this.getHeight() - (fontSize * 5));
-        g.drawString(lonStr, textPos, this.getHeight() - (fontSize * 4));
-        g.drawString("" + FlightData.getInstance().rocketPosition.GPAAltitude + " m", textPos, this.getHeight() - (fontSize * 3));
-        g.drawString("" + FlightData.getInstance().barometerAltitude + " m", textPos, this.getHeight() - (fontSize * 2));
-        g.drawString("" + getTimeStamp(), textPos, this.getHeight() - (fontSize * 1));
-
-        // Spunik
-        textPos = 300;
-        g.drawString("Sputnik", textPos, this.getHeight() - (fontSize * 6));
-        g.drawString("Lat ", textPos, this.getHeight() - (fontSize * 5));
-        g.drawString("Lon ", textPos, this.getHeight() - (fontSize * 4));
-        g.drawString("COG ", textPos, this.getHeight() - (fontSize * 3));
-        g.drawString("SOG ", textPos, this.getHeight() - (fontSize * 2));
-        g.drawString("TH ", textPos, this.getHeight() - (fontSize * 1));
-
-        textPos = 400;
-        Calendar c1 = Calendar.getInstance();
-        String deltaTSputnikData = "";
-        VesselInfo sputnik = aAISData.getVessel(aAISData.sputnikMMSI);
-        if (sputnik == null) {
-            deltaTSputnikData = Constants.naString;
-            g.drawString(deltaTSputnikData, textPos, this.getHeight() - (fontSize * 6));
-        } else {
-            if (sputnik.timeStamp != 0) {
-
-                long sinceLastData = c1.getTimeInMillis() - sputnik.timeStamp;
-                String secondsStr = String.format("%02d", (sinceLastData % 60000 / 1000));
-                String minutesStr = String.format("%02d", (sinceLastData / 60000));
-                deltaTSputnikData = "" + minutesStr + ":" + secondsStr;
-            } else {
-                deltaTSputnikData = Constants.naString;
-            }
-            g.drawString(deltaTSputnikData, textPos, this.getHeight() - (fontSize * 6));
-
-            if (sputnik.timeStamp != 0) {
-                g.drawString(sputnik.pos.getLat(), textPos, this.getHeight() - (fontSize * 5));
-                g.drawString(sputnik.pos.getLon(), textPos, this.getHeight() - (fontSize * 4));
-                g.drawString("" + sputnik.cog + Constants.degreeChar, textPos, this.getHeight() - (fontSize * 3));
-                g.drawString("" + sputnik.getSOG(true), textPos, this.getHeight() - (fontSize * 2));
-                g.drawString(sputnik.getTH(), textPos, this.getHeight() - (fontSize * 1));
-            }
-        }
-        // Hjortoe
-        textPos = 550;
-        g.drawString("Hjortø", textPos, this.getHeight() - (fontSize * 6));
-        g.drawString("Lat ", textPos, this.getHeight() - (fontSize * 5));
-        g.drawString("Lon ", textPos, this.getHeight() - (fontSize * 4));
-        g.drawString("COG ", textPos, this.getHeight() - (fontSize * 3));
-        g.drawString("SOG ", textPos, this.getHeight() - (fontSize * 2));
-        g.drawString("TH ", textPos, this.getHeight() - (fontSize * 1));
-
-        textPos = 650;
-        String deltaTHjortoeData = "";
-        VesselInfo hjortoe = aAISData.getVessel(aAISData.hjortoeMMSI);
-        if (hjortoe == null) {
-            deltaTHjortoeData = Constants.naString;
-            g.drawString(deltaTHjortoeData, textPos, this.getHeight() - (fontSize * 6));
-        } else {
-            if (hjortoe.timeStamp != 0) {
-
-                long sinceLastData = c1.getTimeInMillis() - hjortoe.timeStamp;
-                String secondsStr = String.format("%02d", (sinceLastData % 60000 / 1000));
-                String minutesStr = String.format("%02d", (sinceLastData / 60000));
-                deltaTHjortoeData = "" + minutesStr + ":" + secondsStr;
-            } else {
-                deltaTHjortoeData = Constants.naString;
-            }
-            g.drawString(deltaTHjortoeData, textPos, this.getHeight() - (fontSize * 6));
-            if (hjortoe.timeStamp != 0) {
-                g.drawString(hjortoe.pos.getLat(), textPos, this.getHeight() - (fontSize * 5));
-                g.drawString(hjortoe.pos.getLon(), textPos, this.getHeight() - (fontSize * 4));
-                g.drawString("" + hjortoe.cog + Constants.degreeChar, textPos, this.getHeight() - (fontSize * 3));
-                g.drawString("" + hjortoe.getSOG(true), textPos, this.getHeight() - (fontSize * 2));
-                g.drawString(hjortoe.getTH(), textPos, this.getHeight() - (fontSize * 1));
-            }
-        }
-    }
-
-    /**
-     * Return the real time as a string
-     * @return the time stamp
-     */
-    public String getTimeStamp() {
-        String s;
-        Format formatter;
-        Calendar calender = Calendar.getInstance();
-        long now = calender.getTime().getTime();
-        formatter = new SimpleDateFormat("HH.mm.ss");
-        s = formatter.format(now);
-        return s;
-    }
 
     
 

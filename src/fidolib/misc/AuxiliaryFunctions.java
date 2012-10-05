@@ -5,6 +5,9 @@
 package fidolib.misc;
 
 import fidolib.data.CountDownData;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  *
@@ -177,5 +180,19 @@ public class AuxiliaryFunctions {
         }
         return time;
     }
+    /**
+     * Return the real time as a string
+     * @return the time stamp
+     */
+    public static String getTimeStamp() {
+        String s;
+        Format formatter;
+        Calendar calender = Calendar.getInstance();
+        long now = calender.getTime().getTime();
+        formatter = new SimpleDateFormat("HH.mm.ss");
+        s = formatter.format(now);
+        return s;
+    }
+    
     
 }
