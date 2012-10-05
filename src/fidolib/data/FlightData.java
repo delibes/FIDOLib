@@ -6,7 +6,10 @@ package fidolib.data;
 
 import fidolib.misc.AuxiliaryFunctions;
 import fidolib.log.DataLog;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
 
 /**
  *
@@ -27,10 +30,7 @@ public class FlightData {
      * Last data received
      */
     public String data = null;
-    /**
-     * GPS altitude
-     */
-    public int gpsAltitude = 0;
+    
     /**
      * Barometer based altitude
      */
@@ -55,6 +55,18 @@ public class FlightData {
      * The latitude and longitude position of the rocket
      */
     public Position rocketPosition = new Position();
+    /**
+     * The position if the rocket at lift off
+     */
+    public Position liftOffPosition = new Position();
+    /**
+     * 
+     */
+    public ArrayList<Position> arrayList = new ArrayList<Position>();
+    /**
+     * List of positions after lift off
+     */
+    public List positions = Collections.synchronizedList(arrayList);
 
     /**
      * Constructor
@@ -152,13 +164,23 @@ public class FlightData {
                 } else {
                     rocketPosition.longitudeGood = false;
                 }
+                rocketPosition.GPAAltitude = AuxiliaryFunctions.byteArrayToINT16(packet, 5);
+                if (flying && rocketPosition.latitudeGood && rocketPosition.longitudeGood)
+                {
+                    Position p = new Position(rocketPosition.lat, rocketPosition.lon, rocketPosition.GPAAltitude);
+                    positions.add(p);
+                    if (positions.size()> 7200) // two hours of data
+                    {
+                        positions.remove(1); // do not remove the first position
+                    }
+                }
                 DataLog.getInstance().logData(1);
 
                 break;
             case 2:
 
                 realAltitudeTime = AuxiliaryFunctions.byteArrayToINT32(packet, 1);
-                gpsAltitude = AuxiliaryFunctions.byteArrayToINT16(packet, 5);
+                
                 barometerAltitude = AuxiliaryFunctions.byteArrayToINT16(packet, 7);
 
                 DataLog.getInstance().logData(2);

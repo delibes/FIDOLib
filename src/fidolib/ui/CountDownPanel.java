@@ -144,7 +144,7 @@ public class CountDownPanel extends javax.swing.JPanel {
         }
         g.drawString(latStr, textPos, this.getHeight() - (fontSize * 5));
         g.drawString(lonStr, textPos, this.getHeight() - (fontSize * 4));
-        g.drawString("" + FlightData.getInstance().gpsAltitude + " m", textPos, this.getHeight() - (fontSize * 3));
+        g.drawString("" + FlightData.getInstance().rocketPosition.GPAAltitude + " m", textPos, this.getHeight() - (fontSize * 3));
         g.drawString("" + FlightData.getInstance().barometerAltitude + " m", textPos, this.getHeight() - (fontSize * 2));
         g.drawString("" + getTimeStamp(), textPos, this.getHeight() - (fontSize * 1));
 

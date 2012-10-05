@@ -10,9 +10,13 @@
  */
 package fidolib.ui;
 
+import fidolib.data.Position;
 import fidolib.data.Constants;
+import fidolib.data.FlightData;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -30,11 +34,10 @@ public class AltitudePanel extends javax.swing.JPanel {
     private int xAxesBorder = 60; // Pixels
     private int yAxesBorder = 60; // Pixels
     private int xAxesScale = 10; // Km
-    private int yAxesScale = 20; // Km
+    private int yAxesScale = 10; // Km
     private int lineWidth = 3;
     private int ticksLineWidth = 2;
-    private int xTicks = 10;
-    private int yTicks = 20;
+    private int fontSize = 12;
     /**
      * Timer delay
      */
@@ -67,11 +70,13 @@ public class AltitudePanel extends javax.swing.JPanel {
         super.paint(g);
 
         paintCoorSys(g);
-        paintRocket(g);
+        paintRocketPositions(g);
 
     }
 
-    public void paintRocket(Graphics g) {
+    public void paintRocketPositions(Graphics g) {
+        int width = this.getWidth();
+        int height = this.getHeight();
         g.setColor(Constants.textColor);
         calendar = Calendar.getInstance();
         if ((calendar.getTimeInMillis() - lastSpotPaint) > deltaSpotPaint) {
@@ -79,8 +84,35 @@ public class AltitudePanel extends javax.swing.JPanel {
             spotSize = (spotSize + 2) % maxSpotSize;
 
         }
+        int xTicksPixels = (int) ((width - xAxesBorder * 2) / xAxesScale);
+        int yTicksPixels = (int) ((height - yAxesBorder * 2) / yAxesScale);
+
+        List positions = FlightData.getInstance().positions;
+        if (positions != null) {
+            for (int i = 0; i < positions.size() - 1; i++) {
+                Position p1 = (Position)positions.get(i);
+                Position p2 = (Position)positions.get(i);
+                int x1 = (int) (Position.disanceNauticalMiles((Position)positions.get(0), p1) * Constants.nauticalMile / 1000.0);
+                int x2 = (int) (Position.disanceNauticalMiles((Position)positions.get(0), p2) * Constants.nauticalMile / 1000.0);
+                
+                int y1 = height - yAxesBorder - (int) (p1.GPAAltitude * yTicksPixels / 1000.0) - spotSize / 2;
+                int y2 = height - yAxesBorder - (int) (p2.GPAAltitude * yTicksPixels / 1000.0) - spotSize / 2;
+                g.drawLine(x1, y1, x2, y2);
+            }
+        }
+
         g.setColor(Constants.rocketColor);
-        g.fillOval(20 - (spotSize / 2), 20 - (spotSize / 2), spotSize, spotSize);
+        int xPos = 0;
+        if ((positions != null) && (positions.size() > 0)) {
+           xPos = (int) (Position.disanceNauticalMiles((Position)positions.get(0), FlightData.getInstance().rocketPosition) * Constants.nauticalMile / 1000.0) * xTicksPixels + xAxesBorder - spotSize / 2;
+        }
+        else {
+           xPos = xAxesBorder - spotSize / 2;
+            
+        }
+        int yPos = height - yAxesBorder - (int) (FlightData.getInstance().rocketPosition.GPAAltitude * yTicksPixels / 1000.0) - spotSize / 2;
+        g.fillOval(xPos, yPos, spotSize, spotSize);
+
     }
 
     /**
@@ -95,27 +127,35 @@ public class AltitudePanel extends javax.swing.JPanel {
         g.fillRect(0, 0, width, height);
         g.setColor(Constants.textColor);
 
+        Font font = new Font("New Courier", Font.BOLD, fontSize);
+        g.setFont(font);
+        String title = "GPS based data";
+        int sLength = 0;
+        sLength = g.getFontMetrics().stringWidth(title);
+        g.drawString(title, width / 2 - sLength / 2, yAxesBorder / 2);
+
         g.fillRect(xAxesBorder, height - yAxesBorder, width - xAxesBorder * 2, lineWidth);
         g.fillRect(xAxesBorder, yAxesBorder, lineWidth, height - xAxesBorder * 2);
 
-        
-        int sLength = 0;
-        int xTicksPixels = (int)((width - xAxesBorder * 2) / xTicks );
-        for (int i = 0; i <= xAxesScale; i += ((int)(1.0 / ((double) xTicks/ (double)xAxesScale)))) {
-            g.fillRect(xAxesBorder + (i * xTicksPixels / (xAxesScale / xTicks)), height - yAxesBorder, ticksLineWidth, ticksLineWidth * 4);
+
+
+        // X axes
+        int xTicksPixels = (int) ((width - xAxesBorder * 2) / xAxesScale);
+        for (int i = 0; i <= xAxesScale; i += 1) {
+            g.fillRect(xAxesBorder + (i * xTicksPixels / (xAxesScale / xAxesScale)), height - yAxesBorder, ticksLineWidth, ticksLineWidth * 4);
             sLength = g.getFontMetrics().stringWidth("" + i);
-            g.drawString("" + i, xAxesBorder + (i * xTicksPixels / (xAxesScale / xTicks)) - sLength / 4, height - yAxesBorder / 2);
+            g.drawString("" + i, xAxesBorder + (i * xTicksPixels) - sLength / 4, height - yAxesBorder / 2);
         }
         String downRangeStr = "Down range (Km)";
         sLength = g.getFontMetrics().stringWidth(downRangeStr);
         g.drawString(downRangeStr, width / 2 - sLength / 2, height - yAxesBorder / 4);
-        
-        
-        int yTicksPixels = (int)((height - yAxesBorder * 2) / yTicks );
-        for (int i = 0; i <= yAxesScale; i += ((int)(1.0 / ((double) yTicks/ (double)yAxesScale)))) {
-            g.fillRect(xAxesBorder - ticksLineWidth * 4 , height - yAxesBorder - (i * yTicksPixels / (yAxesScale / yTicks)), ticksLineWidth * 4, ticksLineWidth);
+
+        // Y axes
+        int yTicksPixels = (int) ((height - yAxesBorder * 2) / yAxesScale);
+        for (int i = 0; i <= yAxesScale; i += 1) {
+            g.fillRect(xAxesBorder - ticksLineWidth * 4, height - yAxesBorder - (i * yTicksPixels), ticksLineWidth * 4, ticksLineWidth);
             sLength = g.getFontMetrics().stringWidth("" + i);
-            g.drawString("" + i, xAxesBorder /3 * 2 - sLength , height - yAxesBorder - (i * yTicksPixels / (yAxesScale / yTicks)) - sLength / 4);
+            g.drawString("" + i, xAxesBorder / 3 * 2 - sLength, height + (fontSize / 2) - yAxesBorder - (i * yTicksPixels) - sLength / 4);
         }
         String altitudeRangeStr = "Altitude (Km)";
         sLength = g.getFontMetrics().stringWidth(altitudeRangeStr);

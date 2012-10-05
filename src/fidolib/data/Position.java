@@ -23,13 +23,17 @@ public class Position {
      */
     public double lon = 0.0;
     /**
+     * GPS altitude in meters
+     */
+    public int GPAAltitude = 0;
+    /**
      * Good latitude reading?
      */
-    public static boolean latitudeGood = false;
+    public boolean latitudeGood = false;
     /**
      * Good longitude reading?
      */
-    public static boolean longitudeGood = false;
+    public boolean longitudeGood = false;
     /**
      * The latitude in pixels
      */
@@ -55,6 +59,19 @@ public class Position {
         decimalSymbols.setGroupingSeparator(',');
 
     }
+    
+    /**
+     * Constructor
+     */
+    public Position(double lat, double lon, int GPSAltitude) {
+        decimalSymbols.setDecimalSeparator('.');
+        decimalSymbols.setGroupingSeparator(',');
+        this.lat = lat;
+        this.lon = lon;
+        this.GPAAltitude = GPSAltitude;
+        
+
+    }
 
     /**
      * Greate circle distance in nautical miles between p1 and p2 using The haversine formula
@@ -67,7 +84,7 @@ public class Position {
             return -1.0;
         }
         if ((p1.lat == 0.0) || (p1.lon == 0.0) || (p2.lat == 0.0) || (p2.lat == 0.0)) {
-            return -1.0;
+            return 0.0;
         }
         // Use radians
         double lat1 = p1.lat * Math.PI / 180;
