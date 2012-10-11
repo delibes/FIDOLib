@@ -25,7 +25,7 @@ public class Position {
     /**
      * GPS altitude in meters
      */
-    public int GPAAltitude = 0;
+    public int GPSAltitude = 0;
     /**
      * Down range from launch point in meter
      */
@@ -34,6 +34,10 @@ public class Position {
      * Vertical velocity in m/s from privious point 
      */
     public double verticalVelocity = 0;
+    /**
+     * Horizontal velocity in m/s from privious point 
+     */
+    public double horizontalVelocity = 0;
     /**
      * Velocity in m/s from privious point
      */
@@ -84,7 +88,7 @@ public class Position {
         decimalSymbols.setGroupingSeparator(',');
         this.lat = lat;
         this.lon = lon;
-        this.GPAAltitude = GPSAltitude;
+        this.GPSAltitude = GPSAltitude;
         
 
     }
@@ -96,7 +100,7 @@ public class Position {
         decimalSymbols.setGroupingSeparator(',');
         this.lat = lat;
         this.lon = lon;
-        this.GPAAltitude = GPSAltitude;
+        this.GPSAltitude = GPSAltitude;
         this.onBoardTimeStamp = ts;
         
 
@@ -221,8 +225,8 @@ public class Position {
     public static void calcLatLonPixels(Position p, int width, int height) {
 
         //TODO: remove before flight
-        //    p.latPixels = ((int) (((p.lat - 0.5 - Constants.upperLeftCornerLat) / (Constants.lowerRightCornerLat - Constants.upperLeftCornerLat)) * height));
-        //    p.lonPixels = ((int) ((p.lon + 3.0 - Constants.upperLeftCornerLon) / (Constants.lowerRightCornerLon - Constants.upperLeftCornerLon) * width));
+//          p.latPixels = ((int) (((p.lat - 0.5 - Constants.upperLeftCornerLat) / (Constants.lowerRightCornerLat - Constants.upperLeftCornerLat)) * height));
+//          p.lonPixels = ((int) ((p.lon + 3.0 - Constants.upperLeftCornerLon) / (Constants.lowerRightCornerLon - Constants.upperLeftCornerLon) * width));
 //
         p.latPixels = ((int) (((p.lat - Constants.upperLeftCornerLat) / (Constants.lowerRightCornerLat - Constants.upperLeftCornerLat)) * height));
         p.lonPixels = ((int) ((p.lon - Constants.upperLeftCornerLon) / (Constants.lowerRightCornerLon - Constants.upperLeftCornerLon) * width));

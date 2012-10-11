@@ -6,19 +6,15 @@ package fidolib.ui;
 
 import fidolib.data.Constants;
 import fidolib.data.CountDownData;
-import fidolib.data.VesselInfo;
 import fidolib.data.AISData;
 import fidolib.data.FlightData;
-import fidolib.data.Position;
 import fidolib.misc.AuxiliaryFunctions;
+import java.awt.Color;
 import java.awt.Font;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.Format;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
+import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -81,10 +77,12 @@ public class CountDownPanel extends javax.swing.JPanel {
         }
         // Clear the background
         g.setColor(Constants.backGroundColor);
+        Graphics2D g2 = (Graphics2D) g;
+        GradientPaint gp = new GradientPaint(0,0, Color.BLACK, 0, height ,Constants.backGroundColor, true);
+        Paint p = g2.getPaint();
+        g2.setPaint(gp);
         g.fillRect(0, 0, width, height);
-        // Draw a surrounding rectangle
-        g.setColor(Constants.textColor);
-
+        
 
         // Set text color and font size
         g.setColor(Constants.textColor);

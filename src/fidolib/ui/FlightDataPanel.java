@@ -15,8 +15,12 @@ import fidolib.data.Constants;
 import fidolib.data.FlightData;
 import fidolib.data.Position;
 import fidolib.misc.AuxiliaryFunctions;
+import java.awt.Color;
 import java.awt.Font;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Calendar;
@@ -77,6 +81,10 @@ public class FlightDataPanel extends javax.swing.JPanel {
         }
         // Clear the background
         g.setColor(Constants.backGroundColor);
+        Graphics2D g2 = (Graphics2D) g;
+        GradientPaint gp = new GradientPaint(0,0, Color.BLACK, 0, height ,Constants.backGroundColor, true);
+        Paint p = g2.getPaint();
+        g2.setPaint(gp);
         g.fillRect(0, 0, width, height);
         // Draw a surrounding rectangle
         g.setColor(Constants.textColor);
@@ -102,27 +110,29 @@ public class FlightDataPanel extends javax.swing.JPanel {
 
         int fontSize = this.getWidth() / 25;
         int textPos = 10;
-        int deltaTextPos = this.getWidth() / 4 + 20;
-        Font font = new Font("New Courier", Font.BOLD, fontSize);
+        int deltaTextPos = this.getWidth() / 5 + 40;
+        Font font = new Font("SansSerif", Font.BOLD, fontSize);
         g.setFont(font);
-        int fontSizeFactor = 6;
-        g.drawString("Payload", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("Lat ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("Lon ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("Alt ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        int maxFontSizeFactor = 7;
+        int fontSizeFactor = maxFontSizeFactor;
+        g.drawString("GPS data", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("Telemetry", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("Latitude ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("Longitude ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        //g.drawString("Altitude ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         //g.drawString("B.A. ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Time ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("D. MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
-
+        maxFontSizeFactor = 6;
         textPos += deltaTextPos;
         // Print time since last valid data reception
-        fontSizeFactor = 6;
+        fontSizeFactor = maxFontSizeFactor;
         if (aFlightData.lastValidDataTimeStamp > 0) {
             Calendar calender = Calendar.getInstance();
             long now = calender.getTime().getTime();
 
-            font = new Font("New Courier", Font.BOLD, fontSize);
+            font = new Font("SansSerif", Font.BOLD, fontSize);
             g.setFont(font);
             long sinceLastData = now - aFlightData.lastValidDataTimeStamp;
             if (sinceLastData > 1000) {
@@ -151,7 +161,7 @@ public class FlightDataPanel extends javax.swing.JPanel {
         }
         g.drawString(latStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString(lonStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("" + aFlightData.rocketPosition.GPAAltitude + " m", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+       // g.drawString("" + aFlightData.rocketPosition.GPSAltitude + " m", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         //  g.drawString("" + aFlightData.barometerAltitude + " m", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("" + AuxiliaryFunctions.getTimeStamp(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         if (aAISData.getVessel(aAISData.hjortoeMMSI) != null) {
@@ -163,11 +173,26 @@ public class FlightDataPanel extends javax.swing.JPanel {
             decimalSymbols.setDecimalSeparator('.');
             decimalSymbols.setGroupingSeparator(',');
             DecimalFormat df = new DecimalFormat("0.0", decimalSymbols);
-            distStr = " " + df.format(disanceNauticalMiles) + " / " + df.format(distanceMeters / 1000);
+            distStr = "" + df.format(disanceNauticalMiles) + " / " + df.format(distanceMeters / 1000);
 
             g.drawString(distStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
         }
+        fontSizeFactor = maxFontSizeFactor;
+        textPos += deltaTextPos +40;
+        g.drawString("Alt", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("Dwn", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("V", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("V v", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("V h", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        fontSizeFactor = maxFontSizeFactor;
+        textPos += deltaTextPos -60;
+        g.drawString("" + aFlightData.rocketPosition.GPSAltitude  + " m", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("" + (int) (aFlightData.rocketPosition.downRange) + " m", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("" + (int) (aFlightData.rocketPosition.velocity) + " m/s", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("" + (int) (aFlightData.rocketPosition.verticalVelocity) + " m/s", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("" + (int) (aFlightData.rocketPosition.horizontalVelocity) + " m/s", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+
 
     }
 

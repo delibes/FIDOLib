@@ -14,9 +14,12 @@ import fidolib.data.Position;
 import fidolib.data.Constants;
 import fidolib.data.FlightData;
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Font;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
@@ -28,8 +31,10 @@ import java.util.TimerTask;
  */
 public class AltitudePanel extends javax.swing.JPanel {
 
-    private int spotSize = 1;
-    private int maxSpotSize = 14;
+    private int deltaSpotSize = 2;
+    private int maxSpotSize = 16;
+    private int minSpotSize = 4;
+    private int spotSize = minSpotSize;
     private long lastSpotPaint = 0;
     private long deltaSpotPaint = 50;
     private Calendar calendar = Calendar.getInstance();
@@ -83,6 +88,10 @@ public class AltitudePanel extends javax.swing.JPanel {
 
     }
 
+    /**
+     * Paint the privious rocket positions and the present position
+     * @param g 
+     */
     public void paintRocketPositions(Graphics g) {
         int width = this.getWidth();
         int height = this.getHeight();
@@ -92,7 +101,15 @@ public class AltitudePanel extends javax.swing.JPanel {
         calendar = Calendar.getInstance();
         if ((calendar.getTimeInMillis() - lastSpotPaint) > deltaSpotPaint) {
             lastSpotPaint = calendar.getTimeInMillis();
-            spotSize = (spotSize + 2) % maxSpotSize;
+            spotSize = (spotSize + deltaSpotSize);
+            if (spotSize >= maxSpotSize)
+            {
+                deltaSpotSize *= -1;
+            }
+            else if (spotSize <= minSpotSize)
+            {
+                deltaSpotSize *= -1;
+            }
 
         }
         int xTicksPixels = (int) ((width - xAxesBorder * 2) / xAxesScale);
@@ -113,12 +130,12 @@ public class AltitudePanel extends javax.swing.JPanel {
                 int x2 = (int) (Position.disanceNauticalMiles((Position) positions.get(0), p2)
                         * Constants.nauticalMile / 1000.0 * xTicksPixels + xAxesBorder);
 
-                int y1 = height - yAxesBorder - (int) (p1.GPAAltitude * yTicksPixels / 1000.0);
-                if (p2.GPAAltitude > (yAxesScale * 1000)) {
+                int y1 = height - yAxesBorder - (int) (p1.GPSAltitude * yTicksPixels / 1000.0);
+                if (p2.GPSAltitude > (yAxesScale * 1000)) {
                     yAxesScale += 10;
                 }
 
-                int y2 = height - yAxesBorder - (int) (p2.GPAAltitude * yTicksPixels / 1000.0);
+                int y2 = height - yAxesBorder - (int) (p2.GPSAltitude * yTicksPixels / 1000.0);
                 g.drawLine(x1, y1, x2, y2);
             }
         }
@@ -131,13 +148,16 @@ public class AltitudePanel extends javax.swing.JPanel {
             xPos = xAxesBorder - spotSize / 2;
 
         }
-        int yPos = height - yAxesBorder - (int) (aFlightData.rocketPosition.GPAAltitude * yTicksPixels / 1000.0) - spotSize / 2;
+        int yPos = height - yAxesBorder - (int) (aFlightData.rocketPosition.GPSAltitude * yTicksPixels / 1000.0) - spotSize / 2;
         g.fillOval(xPos, yPos, spotSize, spotSize);
         g.setColor(Constants.textColor);
-        g.drawString("A    " + aFlightData.rocketPosition.GPAAltitude + " m" , xPos + spotSize / 2 + maxSpotSize , yPos + spotSize / 2 - maxSpotSize - g.getFont().getSize() * 3);
-        g.drawString("D    " + (int)(aFlightData.rocketPosition.downRange) + " m" , xPos + spotSize / 2 + maxSpotSize , yPos + spotSize / 2 - maxSpotSize - g.getFont().getSize() * 2);
-        g.drawString("V    " + (int)(aFlightData.rocketPosition.velocity) + " m/s" , xPos + spotSize / 2 + maxSpotSize , yPos + spotSize / 2 - maxSpotSize - g.getFont().getSize());
-        g.drawString("V v " + (int)(aFlightData.rocketPosition.verticalVelocity) + " m/s" , xPos + spotSize / 2 + maxSpotSize , yPos + spotSize / 2 - maxSpotSize );
+        int textXPos = xPos + spotSize / 2 + maxSpotSize;
+        int textYPos = yPos + spotSize / 2 - maxSpotSize;
+        g.drawString("A " + aFlightData.rocketPosition.GPSAltitude + " m", textXPos, textYPos - g.getFont().getSize());
+        g.drawString("D " + (int) (aFlightData.rocketPosition.downRange) + " m", textXPos, textYPos);
+        //g.drawString("V    " + (int) (aFlightData.rocketPosition.velocity) + " m/s", textXPos, textYPos - g.getFont().getSize());
+        //g.drawString("V v " + (int) (aFlightData.rocketPosition.verticalVelocity) + " m/s", textXPos, textYPos);
+        //g.drawString("V h " + (int) (aFlightData.rocketPosition.horizontalVelocity) + " m/s", textXPos, textYPos +g.getFont().getSize() );
 
     }
 
@@ -149,7 +169,12 @@ public class AltitudePanel extends javax.swing.JPanel {
 
         int width = this.getWidth();
         int height = this.getHeight();
+        
         g.setColor(Constants.backGroundColor);
+        Graphics2D g2 = (Graphics2D) g;
+        GradientPaint gp = new GradientPaint(0,0, Color.BLACK, 0, height ,Constants.backGroundColor, true);
+        Paint p = g2.getPaint();
+        g2.setPaint(gp);
         g.fillRect(0, 0, width, height);
         g.setColor(Constants.textColor);
 

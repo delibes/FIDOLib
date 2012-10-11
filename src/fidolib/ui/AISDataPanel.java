@@ -15,8 +15,12 @@ import fidolib.data.Constants;
 import fidolib.data.FlightData;
 import fidolib.data.Position;
 import fidolib.data.VesselInfo;
+import java.awt.Color;
 import java.awt.Font;
+import java.awt.GradientPaint;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Calendar;
@@ -76,6 +80,10 @@ public class AISDataPanel extends javax.swing.JPanel {
         }
         // Clear the background
         g.setColor(Constants.backGroundColor);
+        Graphics2D g2 = (Graphics2D) g;
+        GradientPaint gp = new GradientPaint(0,0, Color.BLACK, 0, height ,Constants.backGroundColor, true);
+        Paint p = g2.getPaint();
+        g2.setPaint(gp);
         g.fillRect(0, 0, width, height);
         // Draw a surrounding rectangle
         g.setColor(Constants.textColor);
@@ -104,15 +112,15 @@ public class AISDataPanel extends javax.swing.JPanel {
         int deltaTextPos = this.getWidth() / 4 + 20;
         Font font = new Font("New Courier", Font.BOLD, fontSize);
         g.setFont(font);
-        int fontSizeFactor = 7;
-        fontSizeFactor = 7;
-
+        int maxFontSizeFactor = 9;
+        int fontSizeFactor = maxFontSizeFactor;
+        
         // Spunik
 
-        fontSizeFactor = 7;
-        g.drawString("Sputnik", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("Lat ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("Lon ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        fontSizeFactor = maxFontSizeFactor - 1;
+        //g.drawString("Sputnik", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("Latitude ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("Longitude ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("COG ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("SOG ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("TH ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
@@ -123,10 +131,10 @@ public class AISDataPanel extends javax.swing.JPanel {
         Calendar c1 = Calendar.getInstance();
         String deltaTSputnikData = "";
         VesselInfo sputnik = aAISData.getVessel(aAISData.sputnikMMSI);
-        fontSizeFactor = 7;
+        fontSizeFactor = maxFontSizeFactor ;
         if (sputnik == null) {
             deltaTSputnikData = Constants.naString;
-            g.drawString(deltaTSputnikData, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString("Sputnik " + deltaTSputnikData, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         } else {
             if (sputnik.timeStamp != 0) {
 
@@ -137,7 +145,7 @@ public class AISDataPanel extends javax.swing.JPanel {
             } else {
                 deltaTSputnikData = Constants.naString;
             }
-            g.drawString(deltaTSputnikData, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString("Sputnik " + deltaTSputnikData, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
             if (sputnik.timeStamp != 0) {
                 g.drawString(sputnik.pos.getLat(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
@@ -156,7 +164,7 @@ public class AISDataPanel extends javax.swing.JPanel {
                 decimalSymbols.setDecimalSeparator('.');
                 decimalSymbols.setGroupingSeparator(',');
                 DecimalFormat df = new DecimalFormat("0.0", decimalSymbols);
-                distStr = " " + df.format(disanceNauticalMiles) + " / " + df.format(distanceMeters / 1000);
+                distStr = "" + df.format(disanceNauticalMiles) + " / " + df.format(distanceMeters / 1000);
 
                 g.drawString(distStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
@@ -166,22 +174,23 @@ public class AISDataPanel extends javax.swing.JPanel {
         }
 
         // Hjortoe
-        textPos += deltaTextPos;
-        fontSizeFactor = 7;
-        g.drawString("Hjortø", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("Lat ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("Lon ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("COG ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("SOG ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("TH ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        textPos += deltaTextPos + 20;
+        fontSizeFactor = maxFontSizeFactor;//
+ //       g.drawString("Hjortø", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+//        g.drawString("Latitude ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+//        g.drawString("Longitude ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+//        g.drawString("COG ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+//        g.drawString("SOG ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+//        g.drawString("TH ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
-        textPos += deltaTextPos / 2;
-        fontSizeFactor = 7;
+        //textPos += deltaTextPos / 2;
+       
         String deltaTHjortoeData = "";
         VesselInfo hjortoe = aAISData.getVessel(aAISData.hjortoeMMSI);
+        
         if (hjortoe == null) {
             deltaTHjortoeData = Constants.naString;
-            g.drawString(deltaTHjortoeData, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString("Hjortø " + deltaTHjortoeData, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         } else {
             if (hjortoe.timeStamp != 0) {
 
@@ -192,8 +201,9 @@ public class AISDataPanel extends javax.swing.JPanel {
             } else {
                 deltaTHjortoeData = Constants.naString;
             }
-            g.drawString(deltaTHjortoeData, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-            if (hjortoe.timeStamp != 0) {
+            g.drawString("Hjortø " + deltaTHjortoeData, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            if (hjortoe.timeStamp != 0) 
+            {
                 g.drawString(hjortoe.pos.getLat(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
                 g.drawString(hjortoe.pos.getLon(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
                 g.drawString("" + hjortoe.cog + Constants.degreeChar, textPos, this.getHeight() - (fontSize * fontSizeFactor--));

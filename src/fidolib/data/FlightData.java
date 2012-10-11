@@ -164,10 +164,10 @@ public class FlightData {
                 } else {
                     rocketPosition.longitudeGood = false;
                 }
-                rocketPosition.GPAAltitude = AuxiliaryFunctions.byteArrayToINT16(packet, 5);
+                rocketPosition.GPSAltitude = AuxiliaryFunctions.byteArrayToINT16(packet, 5);
                 if (flying && rocketPosition.latitudeGood && rocketPosition.longitudeGood)
                 {
-                    Position p = new Position(rocketPosition.lat, rocketPosition.lon, rocketPosition.GPAAltitude);
+                    Position p = new Position(rocketPosition.lat, rocketPosition.lon, rocketPosition.GPSAltitude);
                     positions.add(p);
                     if (positions.size()> 7200) // two hours of data
                     {

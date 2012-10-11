@@ -4,6 +4,7 @@
 package fidolib.data;
 
 import java.awt.Color;
+import java.awt.Font;
 
 /**
  *
@@ -12,11 +13,14 @@ import java.awt.Color;
 public class Constants {
 
     // Colors
-    public static Color backGroundColor = Color.black;
+    public static Color backGroundColor = new Color(0, 16, 100);
+    public static Color gradientStartColor = Color.darkGray;
+    public static Color gradientEndColor = Color.BLACK;
     public static Color textColor = Color.white;
     public static Color skyColor = Color.BLUE;
-    public static Color rocketColor = Color.BLUE;
+    public static Color rocketColor = Color.white;
     public static Color warningColor = Color.red;
+    public static Color angleLinesColor = Color.yellow;
     public static Color progressBarColor = Color.GRAY;
     public static Color flightStatusNOKcolor = Color.GREEN;
     public static Color flightStatusConfirmedColor = Color.RED;
@@ -29,7 +33,22 @@ public class Constants {
     public static Color baseStationColor = Color.BLUE;
     public static Color otherVesselsTextColor = Color.BLACK;
     public static Color knotsLabelColor = Color.BLACK;
-     /**
+    public static Color outOfRangeColor = Color.RED;
+    public static Color arrowColor = Color.BLUE;
+    public static Color inRangeColor = Color.white;
+    // Fonts
+    public static Font boldFont = new Font("SansSerif", Font.BOLD, 12);
+    public static Font plainFont = new Font("SansSerif", Font.PLAIN, 12);
+    public static Font warningFont = new Font("SansSerif", Font.BOLD, 16);
+    /**
+     * Range limit for pitch and yaw
+     */
+    public static double rangeLimitAlarm = 20;
+    /**
+     * Range limit for pitch and yaw activated
+     */
+    public static boolean rangeLimitAlarmActive = true;
+    /**
      * Progress bar indication
      */
     public static int progressbarMECO = -1;
@@ -40,17 +59,16 @@ public class Constants {
     /**
      * Progress bar indication
      */
-    public static int progressbar2IGN= -1;
+    public static int progressbar2IGN = -1;
     /**
      * Progress bar indication
      */
-    public static int progressbar2MECO= -1;
-    
+    public static int progressbar2MECO = -1;
     /**
      * Text string for the progress bar
      */
     public static String progressbarMECOStr = "1st ECO";
-     /**
+    /**
      * Text string for the progress bar
      */
     public static String progressbar2STGStr = "2nd IGN";
@@ -106,6 +124,10 @@ public class Constants {
      * Count down timer delta_T
      */
     public static int countDownTimerDelta_T = 1000;
+    /**
+     * The maximum degree in the zenith panel
+     */
+    public static int maxDegreeZenithPanel = 20;
     // Degree sign
     public static char degreeChar = 186;
     // Count down clock start button text
@@ -243,6 +265,6 @@ public class Constants {
     /**
      * East / West
      * 
-     */ 
+     */
     public static String eastWest = "E";
 }
