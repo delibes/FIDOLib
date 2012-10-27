@@ -8,55 +8,54 @@ import fidolib.data.AISData;
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
-
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
 /**
  *
- * @author Steen Andersen
+ * @author Steen
  */
-public class AISCOMPort {
-
+public class COMPort {
+    
     /**
      * Self reference
      */
-    private static AISCOMPort aCOMPort = null;
+    private static COMPort aCOMPort = null;
     /**
      * COM Port reader
      */
-    private AISCOMPortSerialReader aAISCOMPortSerialReader = null;
+    private COMPortSerialReader aCOMPortSerialReader = null;
     /**
      * The COMM Port
      */
     private static CommPort commPort = null;
 
     /**
-     * Reference to the AIS data
+     * Reference to the data
      * 
      */
-    private AISData aAISData = null;
+    private DataParser aDataParser = null;
+    /**
+     * Enum the port types
+     */
+    public static enum PortType{AISPORT, TELEMETRYPORT};
+    /**
+     * Intancce of the port type
+     */
+    public PortType portType = PortType.AISPORT;
    /**
      * 
-     * @param aAISData 
+     * @param aDataParser the instance of the data model 
      */
-    public AISCOMPort(AISData aAISData) {
+    public COMPort(DataParser aDataParser, PortType portType) {
         
-        this.aAISData = aAISData;
+        this.aDataParser = aDataParser;
+        this.portType = portType;
+
         
     }
-    /**
-     * Get instance
-     */
-    public static AISCOMPort getInstance() {
-
-        if (aCOMPort == null) {
-            aCOMPort = new AISCOMPort(AISData.getInstance());
-        }
-        return aCOMPort;
-
-    }
+    
 
     /**
      * Return available ports
@@ -102,7 +101,7 @@ public class AISCOMPort {
         try {
             CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(portName);
             if (portIdentifier.isCurrentlyOwned()) {
-                System.out.println("Error: Port is currently in use");
+                throw new Exception("Error: Port is currenty owned");
             } else {
 
                 commPort = portIdentifier.open(this.getClass().getName(), 2000);
@@ -113,8 +112,14 @@ public class AISCOMPort {
 
                     InputStream in = serialPort.getInputStream();
   
-                    aAISCOMPortSerialReader = new AISCOMPortSerialReader(in, aAISData);
-                    (new Thread(aAISCOMPortSerialReader)).start();
+                    if (portType == PortType.AISPORT) {
+                        aCOMPortSerialReader = new COMPortSerialReader(in, aDataParser);
+                        (new Thread(aCOMPortSerialReader)).start();
+                    }
+                    else if (portType == PortType.TELEMETRYPORT) {
+                        aCOMPortSerialReader = new COMPortSerialReader(in, aDataParser);
+                    (new Thread(aCOMPortSerialReader)).start();
+                    }
   
                 } else {
                     throw new Exception("Error: Only serial ports are handled.");
@@ -140,8 +145,8 @@ public class AISCOMPort {
      * Close the COMM Port connection
      */
     public void closeConnection() throws Exception {
-        if (aAISCOMPortSerialReader != null) {
-            AISCOMPortSerialReader.closeConnection();
+        if (aCOMPortSerialReader != null) {
+            aCOMPortSerialReader.closeConnection();
             commPort.close();
             commPort = null;
         } else {

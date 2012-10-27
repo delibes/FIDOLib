@@ -4,14 +4,13 @@
  */
 
 /*
- * 
+ * SerialPortDialog.java
  *
- * Created on 25-02-2012, 15:48:30
+ * Created on 27-10-2012, 14:07:43
  */
 package fidolib.ui;
 
-import fidolib.com.AISCOMPort;
-import fidolib.data.AISData;
+import fidolib.com.COMPort;
 import java.util.List;
 import javax.swing.JOptionPane;
 
@@ -19,27 +18,39 @@ import javax.swing.JOptionPane;
  *
  * @author Steen
  */
-public class AISSerialPortDialog extends javax.swing.JDialog {
+public class SerialPortDialog extends javax.swing.JDialog {
 
+    
     /**
      * Reference to the com port
      */
-    private AISCOMPort aAISCOMPort = null;
+    private COMPort aCOMPort = null;
     /** Creates new form SerialPortDialog */
-    public AISSerialPortDialog(java.awt.Frame parent, boolean modal) {
+    public SerialPortDialog(java.awt.Frame parent, boolean modal,COMPort aCOMPort) {
         super(parent, modal);
-        this.setTitle("AIS Serial port");
-        aAISCOMPort = new AISCOMPort(AISData.getInstance());
+        this.aCOMPort = aCOMPort;
         initComponents();
+        if (this.aCOMPort.portType == COMPort.PortType.AISPORT)
+        {
+            this.setTitle("AIS Serial port");
+            this.baudRateComboBox.setSelectedIndex(5);
+        }
+        else if (this.aCOMPort.portType == COMPort.PortType.TELEMETRYPORT)
+        {
+            this.setTitle("Telemetry Serial port");
+            this.baudRateComboBox.setSelectedIndex(2);
+        }
+        
+        
         // Get available ports 
         try {
-            List portList = AISCOMPort.listPorts();
+            List portList = aCOMPort.listPorts();
             if (portList != null) {
                 while (!portList.isEmpty()) {
                     portComboBox.insertItemAt((String) portList.remove(0), 0);
                 }
                 portComboBox.setSelectedIndex(0);
-                if (aAISCOMPort.isCOMPortOpen() == true) {
+                if (aCOMPort.isCOMPortOpen() == true) {
                     this.openButton.setEnabled(false);
                     this.closeButton.setEnabled(true);
                 } else {
@@ -49,7 +60,6 @@ public class AISSerialPortDialog extends javax.swing.JDialog {
             }
         } catch (Exception e) {
         }
-
 
     }
 
@@ -78,46 +88,43 @@ public class AISSerialPortDialog extends javax.swing.JDialog {
         closeDialogButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setName("Form"); // NOI18N
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance().getContext().getResourceMap(AISSerialPortDialog.class);
-        mainComPortPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(resourceMap.getString("mainComPortPanel.border.title"))); // NOI18N
-        mainComPortPanel.setToolTipText(resourceMap.getString("mainComPortPanel.toolTipText")); // NOI18N
+        mainComPortPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("COM Port"));
+        mainComPortPanel.setToolTipText("");
         mainComPortPanel.setName("mainComPortPanel"); // NOI18N
 
-        portLabel.setText(resourceMap.getString("portLabel.text")); // NOI18N
+        portLabel.setText("Port");
         portLabel.setName("portLabel"); // NOI18N
 
         portComboBox.setName("portComboBox"); // NOI18N
 
-        baudRateLabel.setText(resourceMap.getString("baudRateLabel.text")); // NOI18N
+        baudRateLabel.setText("Baud rate");
         baudRateLabel.setName("baudRateLabel"); // NOI18N
 
         baudRateComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "300", "600", "1200", "2400", "4800", "9600", "14400", "28800", "36000", "115000" }));
         baudRateComboBox.setSelectedIndex(5);
         baudRateComboBox.setName("baudRateComboBox"); // NOI18N
 
-        parityLabel.setText(resourceMap.getString("parityLabel.text")); // NOI18N
+        parityLabel.setText("Parity");
         parityLabel.setName("parityLabel"); // NOI18N
 
         parityComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0", "1", "2", "3", "4" }));
         parityComboBox.setName("parityComboBox"); // NOI18N
 
-        stopBitLabel.setText(resourceMap.getString("stopBitLabel.text")); // NOI18N
+        stopBitLabel.setText("Stop bit");
         stopBitLabel.setName("stopBitLabel"); // NOI18N
 
         stopBitComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1", "2", "3" }));
         stopBitComboBox.setName("stopBitComboBox"); // NOI18N
 
-        dataBitsLabel.setText(resourceMap.getString("dataBitsLabel.text")); // NOI18N
+        dataBitsLabel.setText("Data bits");
         dataBitsLabel.setName("dataBitsLabel"); // NOI18N
 
         dataBitsComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "7", "8", "9" }));
         dataBitsComboBox.setSelectedIndex(1);
         dataBitsComboBox.setName("dataBitsComboBox"); // NOI18N
 
-        openButton.setText(resourceMap.getString("openButton.text")); // NOI18N
+        openButton.setText("Open Port");
         openButton.setName("openButton"); // NOI18N
         openButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -125,7 +132,7 @@ public class AISSerialPortDialog extends javax.swing.JDialog {
             }
         });
 
-        closeButton.setText(resourceMap.getString("closeButton.text")); // NOI18N
+        closeButton.setText("Close Port");
         closeButton.setName("closeButton"); // NOI18N
         closeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -133,7 +140,7 @@ public class AISSerialPortDialog extends javax.swing.JDialog {
             }
         });
 
-        closeDialogButton.setText(resourceMap.getString("closeDialogButton.text")); // NOI18N
+        closeDialogButton.setText("Close Dialog");
         closeDialogButton.setName("closeDialogButton"); // NOI18N
         closeDialogButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -204,49 +211,66 @@ public class AISSerialPortDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        getContentPane().add(mainComPortPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 11, 199, -1));
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(mainComPortPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 199, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(mainComPortPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void closeDialogButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeDialogButtonActionPerformed
-        this.dispose();
-    }//GEN-LAST:event_closeDialogButtonActionPerformed
+    private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openButtonActionPerformed
+
+        try {             
+		String portName = (String) portComboBox.getSelectedItem();             
+		int baudRate = Integer.parseInt((String) baudRateComboBox.getSelectedItem());             
+		int dataBits = Integer.parseInt((String) dataBitsComboBox.getSelectedItem());             
+		int stopBits = Integer.parseInt((String) stopBitComboBox.getSelectedItem());             
+		int parity = Integer.parseInt((String) parityComboBox.getSelectedItem());              
+		aCOMPort.connect(portName, baudRate, dataBits, stopBits, parity);             
+		this.openButton.setEnabled(false);             
+		this.closeButton.setEnabled(true);             
+		this.dispose();          
+		} 
+		catch (Exception e) {             
+		JOptionPane.showMessageDialog(this,"COMM Port couldn't be opened" + "\n" + e.getMessage(),
+											"Error opening COMM Port",                     
+											JOptionPane.ERROR_MESSAGE);         
+											}     
+	}//GEN-LAST:event_openButtonActionPerformed
 
     private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
-        try {
-            aAISCOMPort.closeConnection();
 
-            this.closeButton.setEnabled(false);
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                    "Exception during COMM Port closing" + "\n" + e.getMessage(),
-                    "Error closing COMM Port",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-        this.openButton.setEnabled(true);
-    }//GEN-LAST:event_closeButtonActionPerformed
+        try {             
+		aCOMPort.closeConnection();              
+		this.closeButton.setEnabled(false);         
+		} 
+		catch (Exception e) {             
+		JOptionPane.showMessageDialog(this,"Exception during COMM Port closing" + "\n" + e.getMessage(),
+										"Error closing COMM Port",JOptionPane.ERROR_MESSAGE);         
+										}         
+	    this.openButton.setEnabled(true);     
+		}//GEN-LAST:event_closeButtonActionPerformed
 
-    private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openButtonActionPerformed
-        try {
-            String portName = (String) portComboBox.getSelectedItem();
-            int baudRate = Integer.parseInt((String) baudRateComboBox.getSelectedItem());
-            int dataBits = Integer.parseInt((String) dataBitsComboBox.getSelectedItem());
-            int stopBits = Integer.parseInt((String) stopBitComboBox.getSelectedItem());
-            int parity = Integer.parseInt((String) parityComboBox.getSelectedItem());
+    private void closeDialogButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeDialogButtonActionPerformed
 
-            AISCOMPort.getInstance().connect(portName, baudRate, dataBits, stopBits, parity);
-            this.openButton.setEnabled(false);
-            this.closeButton.setEnabled(true);
-            this.dispose();
+        this.dispose();     
+		
+		}//GEN-LAST:event_closeDialogButtonActionPerformed
 
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                    "COMM Port couldn't be opened" + "\n" + e.getMessage(),
-                    "Error opening COMM Port",
-                    JOptionPane.ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_openButtonActionPerformed
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox baudRateComboBox;
     private javax.swing.JLabel baudRateLabel;
