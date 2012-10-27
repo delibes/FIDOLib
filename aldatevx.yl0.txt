@@ -1,0 +1,31 @@
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+	deleted:    src/fidolib/com/AISCOMPortSerialReader.java
+	renamed:    src/fidolib/com/AISCOMPort.java -> src/fidolib/com/COMPort.java
+	new file:   src/fidolib/com/COMPortSerialReader.java
+	new file:   src/fidolib/com/COMPortSerialReaderIF.java
+	new file:   src/fidolib/com/DataParser.java
+	deleted:    src/fidolib/com/FlightDataCOMPort.java
+	deleted:    src/fidolib/com/FlightDataCOMSerialReader.java
+	modified:   src/fidolib/data/AISData.java
+	modified:   src/fidolib/data/CountDownData.java
+	modified:   src/fidolib/data/FlightData.java
+	modified:   src/fidolib/data/Position.java
+	modified:   src/fidolib/log/DataLog.java
+	modified:   src/fidolib/ui/CountDownDialog.java
+	modified:   src/fidolib/ui/CountdownControlPanel.java
+	deleted:    src/fidolib/ui/FlightDataSerialPortDialog.form
+	deleted:    src/fidolib/ui/FlightDataSerialPortDialog.java
+	renamed:    src/fidolib/ui/AISSerialPortDialog.form -> src/fidolib/ui/SerialPortDialog.form
+	renamed:    src/fidolib/ui/AISSerialPortDialog.java -> src/fidolib/ui/SerialPortDialog.java
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#	t44guuld.w3t.txt
+

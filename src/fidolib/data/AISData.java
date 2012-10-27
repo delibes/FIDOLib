@@ -15,6 +15,7 @@ import fidolib.aisparser.Message4;
 import fidolib.aisparser.Message5;
 import fidolib.aisparser.Nmea;
 import fidolib.aisparser.Vdm;
+import fidolib.com.DataParser;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -23,7 +24,7 @@ import java.util.LinkedList;
  *
  * @author Steen
  */
-public class AISData {
+public class AISData implements DataParser {
 
     /**
      * Sputnik info
@@ -63,29 +64,25 @@ public class AISData {
         return aAISData;
 
     }
-   
+
     /**
      * Parse AIS data receives the data and parses the AIS string
      */
-    public void parseAISData(String AISData) {
+    @Override
+    public void parseData(String data) {
         Nmea nmea_message = new Nmea();
-        nmea_message.init(AISData);
+        nmea_message.init(data);
 
         if (nmea_message.checkChecksum() != 0) {
-            AISData = AISData.substring(0, AISData.length() - 2); // remove trailing CR and LF
-            AISLog.getInstance().logData(AISData + Constants.AISColumnSeparator + " => Checksum is BAD" + "\n");
+            data = data.substring(0, data.length() - 2); // remove trailing CR and LF
+            AISLog.getInstance().logData(data + Constants.AISColumnSeparator + " => Checksum is BAD" + "\n");
             return;
 
         }
 
         Vdm vdm_message = new Vdm();
-
-
-
         try {
-            int result = vdm_message.add(AISData);
-            
-    
+            int result = vdm_message.add(data);
             switch (vdm_message.msgid()) {
                 case 1:
                     Message1 msg1 = new Message1();
@@ -126,11 +123,11 @@ public class AISData {
 
             }
 
-            AISLog.getInstance().logData(AISData);
+            AISLog.getInstance().logData(data);
 
         } catch (Exception e) {
-            AISData = AISData.substring(0, AISData.length() - 2); // remove trailing CR and LF
-            AISLog.getInstance().logData(AISData + Constants.AISColumnSeparator + "Exception parsing AIS data. " + e.getMessage() + "\n");
+            data = data.substring(0, data.length() - 2); // remove trailing CR and LF
+            AISLog.getInstance().logData(data + Constants.AISColumnSeparator + "Exception parsing AIS data. " + e.getMessage() + "\n");
         }
 
 
@@ -308,7 +305,7 @@ public class AISData {
             }
 
             allVessels.add(aVesselInfoArg);
-           
+
         }
 
 
@@ -430,4 +427,10 @@ public class AISData {
         }
 
     }
+
+    @Override
+    public int parseData(byte[] packet) {
+      return -1; 
+    }
+
 }

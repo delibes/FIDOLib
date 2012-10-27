@@ -4,6 +4,7 @@
  */
 package fidolib.data;
 
+import fidolib.com.DataParser;
 import fidolib.misc.AuxiliaryFunctions;
 import fidolib.log.DataLog;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import java.util.List;
  *
  * @author Steen Andersen
  */
-public class FlightData {
+public class FlightData implements DataParser{
 
     /**
      * Self reference
@@ -96,7 +97,7 @@ public class FlightData {
     }
 
     public void setData(byte[] buffer, int length) {
-        parsePacket(buffer);
+        parseData(buffer);
         Calendar calender = Calendar.getInstance();
         lastValidDataTimeStamp = calender.getTime().getTime();
 
@@ -106,7 +107,8 @@ public class FlightData {
      * Parse the data packets
      * @return -1 = error,  1 = new and valid data
      */
-    public int parsePacket(byte[] packet) {
+    @Override
+    public int parseData(byte[] packet) {
 
         if (packet == null) {
             noBadPackets++;
@@ -219,4 +221,11 @@ public class FlightData {
     public String getData() {
         return data;
     }
+
+    @Override
+    public void parseData(String data) {
+        
+    }
+
+    
 }

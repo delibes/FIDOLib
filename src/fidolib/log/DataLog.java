@@ -141,7 +141,8 @@ public class DataLog {
 
         try {
             synchronized (output) {
-                output.close();
+                
+                    output.close();
             }
 
         } catch (IOException e) {

@@ -236,11 +236,7 @@ public class CountdownControlPanel extends javax.swing.JPanel {
 
     private void jButton1StartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1StartActionPerformed
 
-        Calendar calender = Calendar.getInstance();
-
-        Date timestamp = calender.getTime();
-        CountDownData.countDownRunning = true;
-        CountDownData.countDownTimeStamp = timestamp.getTime();
+        CountDownData.startCountDown();
 //        this.jButton1Start.setEnabled(false);
 //        this.jButton1Hold.setEnabled(true);
 //        this.jButton1Stop.setEnabled(true);
@@ -260,8 +256,7 @@ public class CountdownControlPanel extends javax.swing.JPanel {
     private void jButton1HoldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1HoldActionPerformed
         if (this.jButton1Hold.getText().equals(Constants.holdButtonTxt)) {
             // The hold button is pressed
-            CountDownData.countDownRunning = false;
-            CountDownData.countDownHold = true;
+            CountDownData.holdResetCountDown();
 
             this.jButton1Start.setEnabled(false);
             this.jButton1Hold.setEnabled(true);
@@ -273,12 +268,7 @@ public class CountdownControlPanel extends javax.swing.JPanel {
             this.jTextField1manualTimeEntering.setEnabled(false);
         } else // The restart button is pressed
         {
-            CountDownData.countDownRunning = true;
-            CountDownData.countDownHold = false;
-            CountDownData.startCountDown = CountDownData.remainingTime;
-            Calendar calender = Calendar.getInstance();
-            Date timestamp = calender.getTime();
-            CountDownData.countDownTimeStamp = timestamp.getTime();
+           CountDownData.holdResetCountDown();
 
             this.jButton1Start.setEnabled(false);
             this.jButton1Hold.setEnabled(true);
@@ -298,8 +288,7 @@ public class CountdownControlPanel extends javax.swing.JPanel {
     private void jButton1StopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1StopActionPerformed
 
 
-        CountDownData.countDownRunning = false;
-        CountDownData.countDownHold = false;
+        CountDownData.stopCountDown();
         this.jButton1Start.setEnabled(true);
         this.jButton1Hold.setEnabled(false);
         this.jButton1Stop.setEnabled(false);
@@ -314,10 +303,7 @@ public class CountdownControlPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton1StopActionPerformed
 
     private void jButton1ResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ResetActionPerformed
-        CountDownData.countDownRunning = false;
-        CountDownData.startCountDown = CountDownData.resetTo;
-        CountDownData.countDownTimeStamp = 0;
-        CountDownData.remainingTime = CountDownData.startCountDown;
+        CountDownData.holdResetCountDown();
 
         this.jButton1Start.setEnabled(true);
         this.jButton1Hold.setEnabled(false);

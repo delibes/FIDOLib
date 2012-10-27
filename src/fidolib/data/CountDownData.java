@@ -4,6 +4,9 @@
  */
 package fidolib.data;
 
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  *
  * @author Steen Andersen
@@ -97,5 +100,41 @@ public class CountDownData {
             String minSec = "-" + minutesStr + ":" + secondsStr;
             return minSec;
         }
+    }
+
+    public static void startCountDown() {
+        if ((countDownRunning == false) && (countDownHold == false)) {
+            Calendar calender = Calendar.getInstance();
+            Date timestamp = calender.getTime();
+            countDownRunning = true;
+            countDownTimeStamp = timestamp.getTime();
+        }
+
+    }
+
+    public static void holdResetCountDown() {
+        if ((countDownRunning == true) && (countDownHold == false)) {
+            // The hold button is pressed
+            countDownRunning = false;
+            countDownHold = true;
+        } else if ((countDownRunning == false) && (countDownHold == true)) {
+            // The reset button is pressed
+            countDownRunning = true;
+            countDownHold = false;
+            startCountDown = remainingTime;
+            Calendar calender = Calendar.getInstance();
+            Date timestamp = calender.getTime();
+            countDownTimeStamp = timestamp.getTime();
+        }
+
+    }
+
+    public static void stopCountDown() {
+        countDownRunning = false;
+        countDownHold = false;
+        startCountDown = resetTo;
+        countDownTimeStamp = 0;
+        remainingTime = startCountDown;
+
     }
 }
