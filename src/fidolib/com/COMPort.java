@@ -4,7 +4,6 @@
  */
 package fidolib.com;
 
-import fidolib.data.AISData;
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
