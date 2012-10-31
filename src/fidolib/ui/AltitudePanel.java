@@ -29,7 +29,7 @@ import java.util.TimerTask;
  *
  * @author Steen
  */
-public class AltitudePanel extends javax.swing.JPanel {
+public class AltitudePanel extends ColorPanel {
 
     private int deltaSpotSize = 2;
     private int maxSpotSize = 16;
@@ -65,7 +65,12 @@ public class AltitudePanel extends javax.swing.JPanel {
     private FlightData aFlightData = null;
 
     /** Creates new form AltPanel */
-    public AltitudePanel(FlightData aFlightData) {
+    public AltitudePanel(boolean useGradientColors, Color textColor, Color backgroundColor, Color gradientColorStart,Color gradientColorStop,FlightData aFlightData) {
+         this.useGradientColors = useGradientColors;
+        this.textColor = textColor;
+        this.backgroundColor = backgroundColor;
+        this.gradientColorStart = gradientColorStart;
+        this.gradientColorStop = gradientColorStop;
         this.aFlightData = aFlightData;
         initComponents();
 
@@ -170,11 +175,15 @@ public class AltitudePanel extends javax.swing.JPanel {
         int width = this.getWidth();
         int height = this.getHeight();
         
-        g.setColor(Constants.backGroundColor);
-        Graphics2D g2 = (Graphics2D) g;
-        GradientPaint gp = new GradientPaint(0,0, Color.BLACK, 0, height ,Constants.backGroundColor, true);
-        Paint p = g2.getPaint();
-        g2.setPaint(gp);
+        if (useGradientColors == true) {
+            Graphics2D g2 = (Graphics2D) g;
+            GradientPaint gp = new GradientPaint(0, 0, gradientColorStart, 0, height, gradientColorStop, true);
+            Paint p = g2.getPaint();
+            g2.setPaint(gp);
+        } else {
+            g.setColor(backgroundColor);
+        }
+
         g.fillRect(0, 0, width, height);
         g.setColor(Constants.textColor);
 

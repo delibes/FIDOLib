@@ -32,7 +32,7 @@ import java.util.TimerTask;
  *
  * @author Steen
  */
-public class AISDataPanel extends javax.swing.JPanel {
+public class AISDataPanel extends ColorPanel {
 
     /**
      * Reference to the flight data
@@ -58,7 +58,12 @@ public class AISDataPanel extends javax.swing.JPanel {
     private Timer timer = new Timer();
 
     /** Creates new form AISDataPanel */
-    public AISDataPanel(AISData aAISData, FlightData aFlightData) {
+    public AISDataPanel(boolean useGradientColors, Color textColor, Color backgroundColor, Color gradientColorStart,Color gradientColorStop,AISData aAISData, FlightData aFlightData) {
+         this.useGradientColors = useGradientColors;
+        this.textColor = textColor;
+        this.backgroundColor = backgroundColor;
+        this.gradientColorStart = gradientColorStart;
+        this.gradientColorStop = gradientColorStop;
         this.aAISData = aAISData;
         this.aFlightData = aFlightData;
         initComponents();
@@ -79,16 +84,16 @@ public class AISDataPanel extends javax.swing.JPanel {
             smallest = height;
         }
         // Clear the background
-        g.setColor(Constants.backGroundColor);
-        Graphics2D g2 = (Graphics2D) g;
-        GradientPaint gp = new GradientPaint(0,0, Color.BLACK, 0, height ,Constants.backGroundColor, true);
-        Paint p = g2.getPaint();
-        g2.setPaint(gp);
+        if (useGradientColors == true) {
+            Graphics2D g2 = (Graphics2D) g;
+            GradientPaint gp = new GradientPaint(0, 0, gradientColorStart, 0, height, gradientColorStop, true);
+            Paint p = g2.getPaint();
+            g2.setPaint(gp);
+        } else {
+            g.setColor(backgroundColor);
+        }
+
         g.fillRect(0, 0, width, height);
-        // Draw a surrounding rectangle
-        g.setColor(Constants.textColor);
-
-
         // Set text color and font size
         g.setColor(Constants.textColor);
         int sLength = 0;

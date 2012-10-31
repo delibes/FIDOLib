@@ -32,7 +32,7 @@ import java.util.TimerTask;
  *
  * @author Steen
  */
-public class FlightDataPanel extends javax.swing.JPanel {
+public class FlightDataPanel extends ColorPanel {
 
     /**
      * Reference to the flight data
@@ -58,7 +58,12 @@ public class FlightDataPanel extends javax.swing.JPanel {
     private Timer timer = new Timer();
 
     /** Creates new form FlightDataPanel */
-    public FlightDataPanel(AISData aAISData, FlightData aFlightData) {
+    public FlightDataPanel(boolean useGradientColors, Color textColor, Color backgroundColor, Color gradientColorStart,Color gradientColorStop, AISData aAISData, FlightData aFlightData) {
+         this.useGradientColors = useGradientColors;
+        this.textColor = textColor;
+        this.backgroundColor = backgroundColor;
+        this.gradientColorStart = gradientColorStart;
+        this.gradientColorStop = gradientColorStop;
         this.aAISData = aAISData;
         this.aFlightData = aFlightData;
         initComponents();
@@ -80,16 +85,16 @@ public class FlightDataPanel extends javax.swing.JPanel {
             smallest = height;
         }
         // Clear the background
-        g.setColor(Constants.backGroundColor);
-        Graphics2D g2 = (Graphics2D) g;
-        GradientPaint gp = new GradientPaint(0,0, Color.BLACK, 0, height ,Constants.backGroundColor, true);
-        Paint p = g2.getPaint();
-        g2.setPaint(gp);
+        if (useGradientColors == true) {
+            Graphics2D g2 = (Graphics2D) g;
+            GradientPaint gp = new GradientPaint(0, 0, gradientColorStart, 0, height, gradientColorStop, true);
+            Paint p = g2.getPaint();
+            g2.setPaint(gp);
+        } else {
+            g.setColor(backgroundColor);
+        }
+
         g.fillRect(0, 0, width, height);
-        // Draw a surrounding rectangle
-        g.setColor(Constants.textColor);
-
-
         // Set text color and font size
         g.setColor(Constants.textColor);
         int sLength = 0;
@@ -108,12 +113,12 @@ public class FlightDataPanel extends javax.swing.JPanel {
 
     public void paintData(Graphics g) {
 
-        int fontSize = this.getWidth() / 25;
+        int fontSize = this.getWidth() / 24;
         int textPos = 10;
         int deltaTextPos = this.getWidth() / 5 + 40;
         Font font = new Font("SansSerif", Font.BOLD, fontSize);
         g.setFont(font);
-        int maxFontSizeFactor = 7;
+        int maxFontSizeFactor = 8;
         int fontSizeFactor = maxFontSizeFactor;
         g.drawString("GPS data", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Telemetry", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
@@ -124,7 +129,7 @@ public class FlightDataPanel extends javax.swing.JPanel {
         g.drawString("Time ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("D. MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
-        maxFontSizeFactor = 6;
+        maxFontSizeFactor = 7;
         textPos += deltaTextPos;
         // Print time since last valid data reception
         fontSizeFactor = maxFontSizeFactor;

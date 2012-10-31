@@ -176,9 +176,6 @@ public class RollPanel extends javax.swing.JPanel  {
         g2.setColor(Constants.backGroundColor);
         g2.fillRect(0, 0, width, height);
 
-        // g.setFont(plainFont);
-
-
         g2.setColor(Constants.textColor);
         origon.x = width / 2;
         origon.y = height / 2;
@@ -187,7 +184,7 @@ public class RollPanel extends javax.swing.JPanel  {
 
         int circleDistance = 1;
         // GradientPaint gradientpaint = new GradientPaint(new Point(), new Color(130, 130, 255), new Point(), new Color(130, 255, 255));
-        GradientPaint gp = new GradientPaint(width / 2, circleBorderHeight, Constants.gradientStartColor, width / 2, height - circleBorderHeight, Constants.gradientEndColor, true);
+        GradientPaint gp = new GradientPaint(width / 2, circleBorderHeight, Constants.rollGradientStartColor, width / 2, height - circleBorderHeight, Constants.rollGradientStopColor, true);
         Paint p = g2.getPaint();
         g2.setPaint(gp);
         // g2.setColor(Constants.rollMeterColor);

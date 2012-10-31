@@ -14,8 +14,8 @@ public class Constants {
 
     // Colors
     public static Color backGroundColor = new Color(0, 16, 100);
-    public static Color gradientStartColor = Color.darkGray;
-    public static Color gradientEndColor = Color.BLACK;
+    public static Color rollGradientStartColor = Color.darkGray;
+    public static Color rollGradientStopColor = Color.BLACK;
     public static Color textColor = Color.white;
     public static Color skyColor = Color.BLUE;
     public static Color rocketColor = Color.white;
@@ -36,6 +36,14 @@ public class Constants {
     public static Color outOfRangeColor = Color.RED;
     public static Color arrowColor = Color.BLUE;
     public static Color inRangeColor = Color.white;
+    /**
+     * Gradient color start
+     */
+    public static Color gradientColorStart = Color.BLACK;
+    /**
+     * Gradient color start
+     */
+    public static Color gradientColorStop = Color.BLUE;
     // Fonts
     public static Font boldFont = new Font("SansSerif", Font.BOLD, 12);
     public static Font plainFont = new Font("SansSerif", Font.PLAIN, 12);

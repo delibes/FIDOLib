@@ -22,18 +22,9 @@ import java.util.TimerTask;
  *
  * @author Steen Andersen
  */
-public class CountDownPanel extends javax.swing.JPanel {
+public class CountDownPanel extends ColorPanel {
 
-    /**
-     * Reference to the AIS data
-     * 
-     */
-    // private AISData aAISData = null;
-    /**
-     * Reference to the flight data
-     * 
-     */
-    // private FlightData aFlightData = null;
+  
     /**
      * Timer delay
      */
@@ -46,29 +37,15 @@ public class CountDownPanel extends javax.swing.JPanel {
      * The timer it self
      */
     private Timer timer = new Timer();
-    /**
-     * Use gradient colors
-     */
-    private boolean useGradientColors = false;
-    /**
-     * Text color
-     */
-    private Color textColor;
-    /**
-     * Background color
-     */
-    private Color backgroundColor;
-    /**
-     * Gradient color start
-     */
-    private Color gradientColorStart;
+    
 
     /** Creates new form CountDownPanel */
-    public CountDownPanel(boolean useGradientColors, Color textColor, Color backgroundColor, Color gradientColorStart /*AISData aAISData, FlightData aFlightData*/) {
+    public CountDownPanel(boolean useGradientColors, Color textColor, Color backgroundColor, Color gradientColorStart,Color gradientColorStop) {
         this.useGradientColors = useGradientColors;
         this.textColor = textColor;
         this.backgroundColor = backgroundColor;
         this.gradientColorStart = gradientColorStart;
+        this.gradientColorStop = gradientColorStop;
         initComponents();
 //        this.aAISData = aAISData;
 //        this.aFlightData = aFlightData;
@@ -95,10 +72,9 @@ public class CountDownPanel extends javax.swing.JPanel {
             smallest = height;
         }
         // Clear the background
-        g.setColor(Constants.backGroundColor);
         if (useGradientColors == true) {
             Graphics2D g2 = (Graphics2D) g;
-            GradientPaint gp = new GradientPaint(0, 0, gradientColorStart, 0, height, backgroundColor, true);
+            GradientPaint gp = new GradientPaint(0, 0, gradientColorStart, 0, height, gradientColorStop, true);
             Paint p = g2.getPaint();
             g2.setPaint(gp);
         } else {
@@ -106,12 +82,9 @@ public class CountDownPanel extends javax.swing.JPanel {
         }
 
         g.fillRect(0, 0, width, height);
-
-
         // Set text color and font size
         g.setColor(textColor);
         
-
         int sLength = 0;
         // Larger font for count down clock
         int fontSize = ((int) (((double) smallest / 1.7)));
