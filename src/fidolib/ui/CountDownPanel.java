@@ -24,17 +24,16 @@ import java.util.TimerTask;
  */
 public class CountDownPanel extends javax.swing.JPanel {
 
-     /**
+    /**
      * Reference to the AIS data
      * 
      */
-    private AISData aAISData = null;
+    // private AISData aAISData = null;
     /**
      * Reference to the flight data
      * 
      */
-    private FlightData aFlightData = null;
-   
+    // private FlightData aFlightData = null;
     /**
      * Timer delay
      */
@@ -47,12 +46,32 @@ public class CountDownPanel extends javax.swing.JPanel {
      * The timer it self
      */
     private Timer timer = new Timer();
+    /**
+     * Use gradient colors
+     */
+    private boolean useGradientColors = false;
+    /**
+     * Text color
+     */
+    private Color textColor;
+    /**
+     * Background color
+     */
+    private Color backgroundColor;
+    /**
+     * Gradient color start
+     */
+    private Color gradientColorStart;
 
     /** Creates new form CountDownPanel */
-    public CountDownPanel(AISData aAISData, FlightData aFlightData) {
+    public CountDownPanel(boolean useGradientColors, Color textColor, Color backgroundColor, Color gradientColorStart /*AISData aAISData, FlightData aFlightData*/) {
+        this.useGradientColors = useGradientColors;
+        this.textColor = textColor;
+        this.backgroundColor = backgroundColor;
+        this.gradientColorStart = gradientColorStart;
         initComponents();
-        this.aAISData = aAISData;
-        this.aFlightData = aFlightData;
+//        this.aAISData = aAISData;
+//        this.aFlightData = aFlightData;
         MouseAdaptorCountDownPanel aMouseAdaptorCountDownPanel = new MouseAdaptorCountDownPanel(this);
         this.addMouseMotionListener(aMouseAdaptorCountDownPanel);
         this.addMouseListener(aMouseAdaptorCountDownPanel);
@@ -77,15 +96,22 @@ public class CountDownPanel extends javax.swing.JPanel {
         }
         // Clear the background
         g.setColor(Constants.backGroundColor);
-        Graphics2D g2 = (Graphics2D) g;
-        GradientPaint gp = new GradientPaint(0,0, Color.BLACK, 0, height ,Constants.backGroundColor, true);
-        Paint p = g2.getPaint();
-        g2.setPaint(gp);
+        if (useGradientColors == true) {
+            Graphics2D g2 = (Graphics2D) g;
+            GradientPaint gp = new GradientPaint(0, 0, gradientColorStart, 0, height, backgroundColor, true);
+            Paint p = g2.getPaint();
+            g2.setPaint(gp);
+        } else {
+            g.setColor(backgroundColor);
+        }
+
         g.fillRect(0, 0, width, height);
-        
+
 
         // Set text color and font size
-        g.setColor(Constants.textColor);
+        g.setColor(textColor);
+        
+
         int sLength = 0;
         // Larger font for count down clock
         int fontSize = ((int) (((double) smallest / 1.7)));
@@ -97,14 +123,10 @@ public class CountDownPanel extends javax.swing.JPanel {
         sLength = g.getFontMetrics().stringWidth(timeStr);
         g.drawString(timeStr, (width / 2) - (sLength / 2), height / 2 + fontSize / 3);
 
-        
+
 
 
     }
-
-
-
-    
 
     /** This method is called from within the constructor to
      * initialize the form.
