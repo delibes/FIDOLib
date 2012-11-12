@@ -17,6 +17,8 @@ import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DataLog {
 
@@ -32,7 +34,7 @@ public class DataLog {
      * Buffered writer
      */
     private BufferedWriter output = null;
-   /**
+    /**
      * Decimal symbols
      */
     private DecimalFormatSymbols decimalSymbols = new DecimalFormatSymbols(new Locale("da", "DK"));
@@ -47,7 +49,7 @@ public class DataLog {
     public DataLog() {
         decimalSymbols.setDecimalSeparator(',');
         decimalSymbols.setGroupingSeparator('.');
- 
+
 
     }
 
@@ -73,13 +75,13 @@ public class DataLog {
 
             String DATE_FORMAT = "yyyyMMdd HHmmss";
             SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-            
+
             String logFileName = "log " + sdf.format(aCalendar.getTime()) + ".csv";
 
             // Create file
             fstream = new FileWriter(logFileName);
             output = new BufferedWriter(fstream);
-            
+
             String header = "Time; Packet Type; Latitude; Longitude; GPS Altitude; Barometer Altitude;Real Altitude Time;";
             header += "Good Packets; Bad Packets";
             synchronized (output) {
@@ -91,6 +93,24 @@ public class DataLog {
             return false;
         }
 
+    }
+
+    public void logData(String data) {
+        synchronized (output) {
+            try {
+                String DATE_FORMAT = "HH:mm:ss";
+                SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+                Calendar c1 = Calendar.getInstance();
+                String line = sdf.format(c1.getTime()) + ":" + (c1.getTimeInMillis() % 1000) + ";";
+                line += data;
+
+                output.write(line);
+            } catch (IOException ex) {
+                Logger.getLogger(DataLog.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+
+        }
     }
 
     /**
@@ -120,20 +140,19 @@ public class DataLog {
 
                 synchronized (output) {
                     output.write(line);
-                    
-                    
+
+
                 }
 
             }
             return true;
 
         } catch (IOException e) {
-            
+
             return false;
         }
     }
 
- 
     /**
      * Close the log
      */
@@ -141,12 +160,11 @@ public class DataLog {
 
         try {
             synchronized (output) {
-                
-                    output.close();
+
+                output.close();
             }
 
         } catch (IOException e) {
-           
         }
     }
 }

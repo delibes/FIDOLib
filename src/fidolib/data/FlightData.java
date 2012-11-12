@@ -16,13 +16,17 @@ import java.util.List;
  *
  * @author Steen Andersen
  */
-public class FlightData implements DataParser{
+public class FlightData implements DataParser, GetPosition {
 
     /**
      * Self reference
      */
     private static FlightData aFlightData = null;
-
+    /**
+     * Parse sentence $GPGGA
+     */
+    private String GPGGAPrefix = "$GPGGA";
+    
     /** 
      * Time stamp of last data package
      */
@@ -91,6 +95,7 @@ public class FlightData implements DataParser{
 
     public void setData(String dataArg) {
         data = dataArg;
+        parseData(dataArg);
         Calendar calender = Calendar.getInstance();
         lastValidDataTimeStamp = calender.getTime().getTime();
 
@@ -224,8 +229,52 @@ public class FlightData implements DataParser{
 
     @Override
     public void parseData(String data) {
-        
+        if (data!= null)
+        {
+            DataLog.getInstance().logData(data);
+        }
+        if ((data != null) && (data.startsWith(GPGGAPrefix)))
+        {
+            String[] s = data.split(",");
+            if (s.length > 4)
+            {
+                String latStr = s[2];
+                String lonStr = s[4];
+                try {
+                    
+                double latitude = Double.parseDouble(latStr) ;
+		double dLat = (int)latitude /100;
+		double mLat = latitude - (dLat*100);
+		this.rocketPosition.lat = dLat + (mLat/60.0);
+
+                double longitude = Double.parseDouble(lonStr);
+	        double dLon = (int)longitude /100;
+		double mLon = longitude - (dLon*100);
+		this.rocketPosition.lon = dLon + (mLon/60.0);
+              //  System.out.println("Lat: " + this.rocketPosition.lat);
+              //  System.out.println("Lon: " + this.rocketPosition.lon);
+                
+                }
+                catch (Exception e)
+                {
+                    
+                }
+            }
+        }
     }
 
+    @Override
+    public double getLatitude() {
+        return this.rocketPosition.lat;
+    }
+
+    @Override
+    public double getLongitude() {
+        return this.rocketPosition.lon;
+    }
+    @Override
+    public Position getPosition() {
+        return this.rocketPosition;
+    }
     
 }

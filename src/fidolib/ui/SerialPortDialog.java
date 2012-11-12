@@ -50,13 +50,13 @@ public class SerialPortDialog extends javax.swing.JDialog {
                     portComboBox.insertItemAt((String) portList.remove(0), 0);
                 }
                 portComboBox.setSelectedIndex(0);
-                if (aCOMPort.isCOMPortOpen() == true) {
+                /*if (aCOMPort.isCOMPortOpen() == true) {
                     this.openButton.setEnabled(false);
                     this.closeButton.setEnabled(true);
                 } else {
                     this.openButton.setEnabled(true);
                     this.closeButton.setEnabled(false);
-                }
+                }*/
             }
         } catch (Exception e) {
         }

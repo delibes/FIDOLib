@@ -39,11 +39,11 @@ public class Constants {
     /**
      * Gradient color start
      */
-    public static Color gradientColorStart = Color.BLACK;
+    public static Color gradientColorStart = Color.BLUE;
     /**
      * Gradient color start
      */
-    public static Color gradientColorStop = Color.BLUE;
+    public static Color gradientColorStop = Color.BLACK;
     // Fonts
     public static Font boldFont = new Font("SansSerif", Font.BOLD, 12);
     public static Font plainFont = new Font("SansSerif", Font.PLAIN, 12);

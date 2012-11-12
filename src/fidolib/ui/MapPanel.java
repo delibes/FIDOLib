@@ -28,10 +28,7 @@ public class MapPanel extends JPanel {
      * 
      */
     private AISData aAISData = null;
-    /**
-     * The chart image
-     */
-    private ImageIcon img;
+    
     /**
      * The panel containing the image
      */
@@ -53,14 +50,11 @@ public class MapPanel extends JPanel {
      */
     private boolean dragMode = true;
 
-    public MapPanel(AISData aAISData) {
+    public MapPanel(AISData aAISData, String imageStr) {
         super(new BorderLayout());
-
         this.aAISData = aAISData;
-        imgPanel = new ImagePanel("images/ESD138139.jpg", aAISData);
+        imgPanel = new ImagePanel(aAISData,imageStr);
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-
-        
         JViewport vport = new JViewport() {
 
             private boolean flag = false;
@@ -99,6 +93,10 @@ public class MapPanel extends JPanel {
                 repaint();
             }
         }, delay, period);
+    }
+    public void loadImage(String imageStr)
+    {
+        this.imgPanel.loadImage(imageStr);
     }
 
     /** Returns an ImageIcon, or null if the path was invalid. */

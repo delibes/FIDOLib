@@ -225,11 +225,11 @@ public class Position {
     public static void calcLatLonPixels(Position p, int width, int height) {
 
         //TODO: remove before flight
-//         p.latPixels = ((int) (((p.lat - 0.5 - Constants.upperLeftCornerLat) / (Constants.lowerRightCornerLat - Constants.upperLeftCornerLat)) * height));
-//          p.lonPixels = ((int) ((p.lon + 3.0 - Constants.upperLeftCornerLon) / (Constants.lowerRightCornerLon - Constants.upperLeftCornerLon) * width));
+//       p.latPixels = ((int) (((p.lat - 0.5 - Constants.upperLeftCornerLat) / (Constants.lowerRightCornerLat - Constants.upperLeftCornerLat)) * height));
+//         p.lonPixels = ((int) ((p.lon + 3.0 - Constants.upperLeftCornerLon) / (Constants.lowerRightCornerLon - Constants.upperLeftCornerLon) * width));
 //
        p.latPixels = ((int) (((p.lat - Constants.upperLeftCornerLat) / (Constants.lowerRightCornerLat - Constants.upperLeftCornerLat)) * height));
-        p.lonPixels = ((int) ((p.lon - Constants.upperLeftCornerLon) / (Constants.lowerRightCornerLon - Constants.upperLeftCornerLon) * width));
+       p.lonPixels = ((int) ((p.lon - Constants.upperLeftCornerLon) / (Constants.lowerRightCornerLon - Constants.upperLeftCornerLon) * width));
 
     }
 

@@ -58,7 +58,7 @@ public class COMPortSerialReader implements Runnable, COMPortSerialReaderIF {
      * The run methed for parsing AIS messages
      */
     private void runAISParser() {
-        byte[] buffer = new byte[1024];
+       byte[] buffer = new byte[1024];
         LinkedList<Byte> data = new LinkedList<Byte>();
 
         int len = -1;
@@ -112,25 +112,29 @@ public class COMPortSerialReader implements Runnable, COMPortSerialReaderIF {
             byte x2 = 0;
             while (((len = this.in.read(buffer)) > -1) && (closeConnection == false)) {
 
-                for (int i = 0; (i < len) && (i < buffer.length); i++) {
+                                for (int i = 0; (i < len) && (i < buffer.length); i++) {
                     data.add(buffer[i]);
+                    //System.out.print(buffer[i]);
 
                     x2 = buffer[i];
-                    if ((data.size() >= Constants.packetLength)
-                            && (x1 == 0x0D) && (x2 == 0x0A)) {
-                        for (int j = 0; j < Constants.packetLength; j++) {
+                    if ((x1 == 0x0D) && (x2 == 0x0A)) {
+                        buffer = new byte[data.size()];
+
+                        for (int j = 0; j < buffer.length; j++) {
 
 
-                            buffer[(Constants.packetLength - j) - 1] = data.getLast();
-                            data.removeLast();
+                            buffer[j] = data.getFirst();
+                            data.removeFirst();
 
                         }
-                        FlightData.getInstance().setData(buffer, len);
+                      //  System.out.println("");
+                        aDataParser.parseData(new String(buffer));
                         data.clear();
 
                     }
                     x1 = x2;
                 }
+
 
             }
 

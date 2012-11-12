@@ -35,7 +35,7 @@ import javax.swing.JPanel;
 public class ImagePanel extends JPanel {
 
     private double m_zoom = 1.0;
-    private double m_zoomPercentage;
+   
     private Image m_image;
     /**
      * Reference to the AIS data
@@ -70,18 +70,6 @@ public class ImagePanel extends JPanel {
      * Other vessels icon size
      */
     private int otherVesselsIconSize = 16;
-    /**
-     * Text Color
-     */
-    private Color textColor = Constants.textColor;
-    /**
-     * The line thickness
-     */
-    private int lineThickness = 2;
-    /**
-     * The origon of the panel
-     */
-    private Point origon = new Point();
     /**
      * The latitude for the mouse pointer when on the map
      */
@@ -121,11 +109,15 @@ public class ImagePanel extends JPanel {
      * @param image 
      * @param zoomPercentage 
      */
-    public ImagePanel(String imageStr, AISData aAISData) {
+    public ImagePanel(AISData aAISData, String imageStr) {
         m_image = createImageIcon(imageStr).getImage();
         this.aAISData = aAISData;
     }
 
+    public void loadImage(String imageStr)
+    {
+        m_image = createImageIcon(imageStr).getImage();
+    }
     /** Returns an ImageIcon, or null if the path was invalid. */
     protected static ImageIcon createImageIcon(String path) {
 
@@ -252,8 +244,7 @@ public class ImagePanel extends JPanel {
                 Font font = new Font("New Courier", Font.BOLD, Constants.knotsLabelSize);
                 g.setFont(font);
                 g.setColor(Color.BLACK);
-                String MMSI = aAISData.getMMSI(mouseX, mouseY, this.getWidth(), this.getHeight());
-
+                
                 int xPos = this.getVisibleRect().x + Constants.knotsLabelSize + 25;
                 int yPos = this.getVisibleRect().y + Constants.knotsLabelSize + 30;
 
@@ -300,8 +291,9 @@ public class ImagePanel extends JPanel {
 
                 int xSpace = Constants.knotsLabelSize * 4;
                 int ySpace = (int) (((double) Constants.knotsLabelSize) * 1.4);
-                String latDegree = Position.formatDegrees(mouseLat);
-                String lonDegree = Position.formatDegrees(mouseLon);
+//                String latDegree = Position.formatDegrees(mouseLat);
+//                String lonDegree = Position.formatDegrees(mouseLon);
+               
                 int width = (int) (Constants.knotsLabelSize * 14);
                 int height = 0;
                 if (!MMSI.equals("")) // The pointer is at a vessel
@@ -460,9 +452,9 @@ public class ImagePanel extends JPanel {
 
     public void paintRocket(Graphics g) {
 
-        Position.calcLatLonPixels(FlightData.getInstance().rocketPosition, this.getWidth(), this.getHeight());
+        Position.calcLatLonPixels(FlightData.getInstance().getPosition(), this.getWidth(), this.getHeight());
         g.setColor(Constants.smaragdColor);
-        g.fillOval(FlightData.getInstance().rocketPosition.lonPixels - (smaragdIconSize / 2), FlightData.getInstance().rocketPosition.latPixels - (smaragdIconSize / 2), smaragdIconSize, smaragdIconSize);
+        g.fillOval(FlightData.getInstance().getPosition().lonPixels - (smaragdIconSize / 2), FlightData.getInstance().getPosition().latPixels - (smaragdIconSize / 2), smaragdIconSize, smaragdIconSize);
 
     }
 
