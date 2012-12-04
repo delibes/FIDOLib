@@ -26,7 +26,6 @@ public class FlightData implements DataParser, GetPosition {
      * Parse sentence $GPGGA
      */
     private String GPGGAPrefix = "$GPGGA";
-    
     /** 
      * Time stamp of last data package
      */
@@ -35,11 +34,14 @@ public class FlightData implements DataParser, GetPosition {
      * Last data received
      */
     public String data = null;
-    
     /**
      * Barometer based altitude
      */
     public int barometerAltitude = 0;
+    /**
+     * UTC received fromon board GPS
+     */
+    private long UTC = 0;
     /** MC time stamp for the barometer altitude calc
      * 
      */
@@ -152,7 +154,7 @@ public class FlightData implements DataParser, GetPosition {
         } else {
             flying = false;
         }
-        
+
 
         switch (packetType) {
 
@@ -172,11 +174,10 @@ public class FlightData implements DataParser, GetPosition {
                     rocketPosition.longitudeGood = false;
                 }
                 rocketPosition.GPSAltitude = AuxiliaryFunctions.byteArrayToINT16(packet, 5);
-                if (flying && rocketPosition.latitudeGood && rocketPosition.longitudeGood)
-                {
+                if (flying && rocketPosition.latitudeGood && rocketPosition.longitudeGood) {
                     Position p = new Position(rocketPosition.lat, rocketPosition.lon, rocketPosition.GPSAltitude);
                     positions.add(p);
-                    if (positions.size()> 7200) // two hours of data
+                    if (positions.size() > 7200) // two hours of data
                     {
                         positions.remove(1); // do not remove the first position
                     }
@@ -187,7 +188,7 @@ public class FlightData implements DataParser, GetPosition {
             case 2:
 
                 realAltitudeTime = AuxiliaryFunctions.byteArrayToINT32(packet, 1);
-                
+
                 barometerAltitude = AuxiliaryFunctions.byteArrayToINT16(packet, 7);
 
                 DataLog.getInstance().logData(2);
@@ -198,13 +199,12 @@ public class FlightData implements DataParser, GetPosition {
         }
     }
 
-    
     private static int packetType(byte[] packet) {
         int packetType = -1;
         if (packet == null) {
             return -1;
         }
-        
+
         int packetTypeByte = 0;
         byte pType1Mask = 0x02;
         byte pType2Mask = 0x04;
@@ -229,35 +229,29 @@ public class FlightData implements DataParser, GetPosition {
 
     @Override
     public void parseData(String data) {
-        if (data!= null)
-        {
+        if (data != null) {
             DataLog.getInstance().logData(data);
         }
-        if ((data != null) && (data.startsWith(GPGGAPrefix)))
-        {
+        if ((data != null) && (data.startsWith(GPGGAPrefix))) {
             String[] s = data.split(",");
-            if (s.length > 4)
-            {
+            if (s.length > 4) {
                 String latStr = s[2];
                 String lonStr = s[4];
                 try {
-                    
-                double latitude = Double.parseDouble(latStr) ;
-		double dLat = (int)latitude /100;
-		double mLat = latitude - (dLat*100);
-		this.rocketPosition.lat = dLat + (mLat/60.0);
 
-                double longitude = Double.parseDouble(lonStr);
-	        double dLon = (int)longitude /100;
-		double mLon = longitude - (dLon*100);
-		this.rocketPosition.lon = dLon + (mLon/60.0);
-              //  System.out.println("Lat: " + this.rocketPosition.lat);
-              //  System.out.println("Lon: " + this.rocketPosition.lon);
-                
-                }
-                catch (Exception e)
-                {
-                    
+                    double latitude = Double.parseDouble(latStr);
+                    double dLat = (int) latitude / 100;
+                    double mLat = latitude - (dLat * 100);
+                    this.rocketPosition.lat = dLat + (mLat / 60.0);
+
+                    double longitude = Double.parseDouble(lonStr);
+                    double dLon = (int) longitude / 100;
+                    double mLon = longitude - (dLon * 100);
+                    this.rocketPosition.lon = dLon + (mLon / 60.0);
+                    //  System.out.println("Lat: " + this.rocketPosition.lat);
+                    //  System.out.println("Lon: " + this.rocketPosition.lon);
+
+                } catch (Exception e) {
                 }
             }
         }
@@ -272,9 +266,30 @@ public class FlightData implements DataParser, GetPosition {
     public double getLongitude() {
         return this.rocketPosition.lon;
     }
+
     @Override
     public Position getPosition() {
         return this.rocketPosition;
+    }
+
+    public String getUTC() {
+        if (UTC == 0) {
+            return Constants.naString;
+        } else {
+            String hoursStr = String.format("%02d", (UTC / 3600));
+            String minutesStr = String.format("%02d", (UTC / 60 % 60));
+            String secondsStr = String.format("%02d", (UTC % 60));
+            return hoursStr + ":"+ minutesStr + ":"+ secondsStr;
+            
+        }
+    }
+    public String getETA() {
+        return Constants.naString;
+        
+    }
+    public String getMCBearing() {
+        return Constants.naString;
+        
     }
     
 }

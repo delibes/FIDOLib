@@ -118,18 +118,17 @@ public class FlightDataPanel extends ColorPanel {
         int deltaTextPos = this.getWidth() / 5 + 40;
         Font font = new Font("SansSerif", Font.BOLD, fontSize);
         g.setFont(font);
-        int maxFontSizeFactor = 8;
+        int maxFontSizeFactor = 9;
         int fontSizeFactor = maxFontSizeFactor;
-        g.drawString("GPS data", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        //g.drawString("GPS data", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Telemetry", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Latitude ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Longitude ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        //g.drawString("Altitude ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        //g.drawString("B.A. ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("Time ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("D. MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-
-        maxFontSizeFactor = 7;
+        g.drawString("Dist. MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("GPS", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("ETA", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("BRG", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        
         textPos += deltaTextPos;
         // Print time since last valid data reception
         fontSizeFactor = maxFontSizeFactor;
@@ -158,18 +157,15 @@ public class FlightDataPanel extends ColorPanel {
         String latStr = "" + aFlightData.rocketPosition.getLat();
         if (aFlightData.rocketPosition.latitudeGood != true) {
 
-            latStr = "(" + latStr + ")";
+            latStr =  Constants.naString;
         }
         String lonStr = "" + aFlightData.rocketPosition.getLon();
         if (aFlightData.rocketPosition.longitudeGood != true) {
-            lonStr = "(" + lonStr + ")";
+            lonStr = Constants.naString;
         }
         g.drawString(latStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString(lonStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-       // g.drawString("" + aFlightData.rocketPosition.GPSAltitude + " m", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        //  g.drawString("" + aFlightData.barometerAltitude + " m", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("" + AuxiliaryFunctions.getTimeStamp(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        if (aAISData.getVessel(aAISData.hjortoeMMSI) != null) {
+         if (aAISData.getVessel(aAISData.hjortoeMMSI) != null) {
             double disanceNauticalMiles = Position.disanceNauticalMiles(aFlightData.rocketPosition, aAISData.getVessel(aAISData.hjortoeMMSI).pos);
             double distanceMeters = disanceNauticalMiles * Constants.nauticalMile;
 
@@ -183,6 +179,13 @@ public class FlightDataPanel extends ColorPanel {
             g.drawString(distStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
         }
+        else {
+             g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        }
+        g.drawString("" + aFlightData.getUTC(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("" + aFlightData.getETA(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("" + aFlightData.getMCBearing(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        
         fontSizeFactor = maxFontSizeFactor;
         textPos += deltaTextPos +40;
         g.drawString("Alt", textPos, this.getHeight() - (fontSize * fontSizeFactor--));

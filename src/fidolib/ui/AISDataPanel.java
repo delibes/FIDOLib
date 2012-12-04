@@ -129,7 +129,7 @@ public class AISDataPanel extends ColorPanel {
         g.drawString("COG ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("SOG ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("TH ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("D. MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("Dist. MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
 
         textPos += deltaTextPos;
@@ -140,6 +140,13 @@ public class AISDataPanel extends ColorPanel {
         if (sputnik == null) {
             deltaTSputnikData = Constants.naString;
             g.drawString("Sputnik " + deltaTSputnikData, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+             g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+               
         } else {
             if (sputnik.timeStamp != 0) {
 
@@ -160,6 +167,9 @@ public class AISDataPanel extends ColorPanel {
                 g.drawString(sputnik.getTH(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
             }
+            else {
+                
+            }
             if ((aAISData.getVessel(aAISData.hjortoeMMSI) != null) && ((aAISData.getVessel(aAISData.sputnikMMSI) != null))) {
                 double disanceNauticalMiles = Position.disanceNauticalMiles(aAISData.getVessel(aAISData.hjortoeMMSI).pos, aAISData.getVessel(aAISData.sputnikMMSI).pos);
                 double distanceMeters = disanceNauticalMiles * Constants.nauticalMile;
@@ -174,20 +184,13 @@ public class AISDataPanel extends ColorPanel {
                 g.drawString(distStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
             } else {
-                //  g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                  g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
             }
         }
 
         // Hjortoe
         textPos += deltaTextPos + 20;
-        fontSizeFactor = maxFontSizeFactor;//
- //       g.drawString("Hjortø", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-//        g.drawString("Latitude ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-//        g.drawString("Longitude ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-//        g.drawString("COG ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-//        g.drawString("SOG ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-//        g.drawString("TH ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-
+        fontSizeFactor = maxFontSizeFactor;
         //textPos += deltaTextPos / 2;
        
         String deltaTHjortoeData = "";
@@ -196,6 +199,12 @@ public class AISDataPanel extends ColorPanel {
         if (hjortoe == null) {
             deltaTHjortoeData = Constants.naString;
             g.drawString("Hjortø " + deltaTHjortoeData, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         } else {
             if (hjortoe.timeStamp != 0) {
 
@@ -214,6 +223,14 @@ public class AISDataPanel extends ColorPanel {
                 g.drawString("" + hjortoe.cog + Constants.degreeChar, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
                 g.drawString("" + hjortoe.getSOG(true), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
                 g.drawString(hjortoe.getTH(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            }
+            else {
+                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
             }
         }
     }

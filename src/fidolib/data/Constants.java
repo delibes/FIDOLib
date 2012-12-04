@@ -14,6 +14,7 @@ public class Constants {
 
     // Colors
     public static Color backGroundColor = new Color(0, 16, 100);
+    public static Color blueish = new Color(109,140,169);
     public static Color rollGradientStartColor = Color.darkGray;
     public static Color rollGradientStopColor = Color.BLACK;
     public static Color textColor = Color.white;
@@ -24,10 +25,11 @@ public class Constants {
     public static Color progressBarColor = Color.GRAY;
     public static Color flightStatusNOKcolor = Color.GREEN;
     public static Color flightStatusConfirmedColor = Color.RED;
-    public static Color ESD139Color = Color.BLUE;
+    public static Color ESD139Color = Color.BLACK;
+    public static Color mousePositionColor = blueish.darker();
     public static Color sputnikColor = Color.RED;
-    public static Color hjortoeColor = Color.BLUE;
-    public static Color smaragdColor = Color.GREEN;
+    public static Color hjortoeColor = Color.DARK_GRAY;
+    public static Color smaragdColor = blueish.darker();
     public static Color otherVesselsColor = Color.YELLOW;
     public static Color otherVesselsNoMovementColor = Color.WHITE;
     public static Color baseStationColor = Color.BLUE;
@@ -39,7 +41,7 @@ public class Constants {
     /**
      * Gradient color start
      */
-    public static Color gradientColorStart = Color.BLUE;
+    public static Color gradientColorStart = blueish;
     /**
      * Gradient color start
      */

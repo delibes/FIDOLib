@@ -40,9 +40,12 @@ public class AltitudePanel extends ColorPanel {
     private Calendar calendar = Calendar.getInstance();
     private int xAxesBorder = 60; // Pixels
     private int yAxesBorder = 60; // Pixels
-    private int xAxesScale = 10; // Km
+    private int xAxesScale = 5; // Km
     private int yAxesScale = 10; // Km
-    private int ticks = 10;
+    private int xAxesScaleIncrement = xAxesScale;
+    private int yAxesScaleIncrement = yAxesScale;
+    private int xTicks = 5; // has to be <= xAxesScale
+    private int yTicks = 10; // has to be <= xAxesScale
     private int lineWidth = 3;
     private int ticksLineWidth = 2;
     private int fontSize = 12;
@@ -65,8 +68,8 @@ public class AltitudePanel extends ColorPanel {
     private FlightData aFlightData = null;
 
     /** Creates new form AltPanel */
-    public AltitudePanel(boolean useGradientColors, Color textColor, Color backgroundColor, Color gradientColorStart,Color gradientColorStop,FlightData aFlightData) {
-         this.useGradientColors = useGradientColors;
+    public AltitudePanel(boolean useGradientColors, Color textColor, Color backgroundColor, Color gradientColorStart, Color gradientColorStop, FlightData aFlightData) {
+        this.useGradientColors = useGradientColors;
         this.textColor = textColor;
         this.backgroundColor = backgroundColor;
         this.gradientColorStart = gradientColorStart;
@@ -107,12 +110,9 @@ public class AltitudePanel extends ColorPanel {
         if ((calendar.getTimeInMillis() - lastSpotPaint) > deltaSpotPaint) {
             lastSpotPaint = calendar.getTimeInMillis();
             spotSize = (spotSize + deltaSpotSize);
-            if (spotSize >= maxSpotSize)
-            {
+            if (spotSize >= maxSpotSize) {
                 deltaSpotSize *= -1;
-            }
-            else if (spotSize <= minSpotSize)
-            {
+            } else if (spotSize <= minSpotSize) {
                 deltaSpotSize *= -1;
             }
 
@@ -128,7 +128,7 @@ public class AltitudePanel extends ColorPanel {
                 double xDist = Position.disanceNauticalMiles((Position) positions.get(0), p1)
                         * Constants.nauticalMile;
                 if (xDist > (xAxesScale * 1000)) {
-                    xAxesScale += 10;
+                    xAxesScale += xAxesScaleIncrement;
                 }
 
                 int x1 = (int) (xDist / 1000.0 * xTicksPixels + xAxesBorder);
@@ -137,7 +137,7 @@ public class AltitudePanel extends ColorPanel {
 
                 int y1 = height - yAxesBorder - (int) (p1.GPSAltitude * yTicksPixels / 1000.0);
                 if (p2.GPSAltitude > (yAxesScale * 1000)) {
-                    yAxesScale += 10;
+                    yAxesScale += yAxesScaleIncrement;
                 }
 
                 int y2 = height - yAxesBorder - (int) (p2.GPSAltitude * yTicksPixels / 1000.0);
@@ -174,7 +174,7 @@ public class AltitudePanel extends ColorPanel {
 
         int width = this.getWidth();
         int height = this.getHeight();
-        
+
         if (useGradientColors == true) {
             Graphics2D g2 = (Graphics2D) g;
             GradientPaint gp = new GradientPaint(0, 0, gradientColorStart, 0, height, gradientColorStop, true);
@@ -201,8 +201,8 @@ public class AltitudePanel extends ColorPanel {
 
         // X axes
         int xTicksPixels = (int) ((width - xAxesBorder * 2) / xAxesScale);
-        for (int i = 0; i <= xAxesScale; i += xAxesScale / ticks) {
-            g.fillRect(xAxesBorder + (i * xTicksPixels / (xAxesScale / xAxesScale)), height - yAxesBorder, ticksLineWidth, ticksLineWidth * 4);
+        for (int i = 0; i <= xAxesScale; i += xAxesScale / xTicks) {
+            g.fillRect(xAxesBorder + (i * xTicksPixels), height - yAxesBorder, ticksLineWidth, ticksLineWidth * 4);
             sLength = g.getFontMetrics().stringWidth("" + i);
             g.drawString("" + i, xAxesBorder + (i * xTicksPixels) - sLength / 4, height - yAxesBorder / 2);
         }
@@ -212,7 +212,7 @@ public class AltitudePanel extends ColorPanel {
 
         // Y axes
         int yTicksPixels = (int) ((height - yAxesBorder * 2) / yAxesScale);
-        for (int i = 0; i <= yAxesScale; i += yAxesScale / ticks) {
+        for (int i = 0; i <= yAxesScale; i += yAxesScale / yTicks) {
             g.fillRect(xAxesBorder - ticksLineWidth * 4, height - yAxesBorder - (i * yTicksPixels), ticksLineWidth * 4, ticksLineWidth);
             sLength = g.getFontMetrics().stringWidth("" + i);
             g.drawString("" + i, xAxesBorder / 3 * 2 - sLength, height + (fontSize / 2) - yAxesBorder - (i * yTicksPixels) - sLength / 4);

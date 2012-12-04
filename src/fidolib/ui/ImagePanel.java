@@ -227,7 +227,7 @@ public class ImagePanel extends JPanel {
             Font font = new Font("New Courier", Font.BOLD, (Constants.knotsLabelSize));
             g.setFont(font);
             int widthStr = g.getFontMetrics().stringWidth(distStr);
-            g.setColor(Color.DARK_GRAY);
+            g.setColor(Constants.blueish.darker());
             g.fill3DRect(p2a.x + this.getVisibleRect().x - (widthStr / 2), p2a.y + this.getVisibleRect().y - ((int)(Constants.knotsLabelSize * 2.4)), widthStr + 10, (int) (Constants.knotsLabelSize * 2), true);
             g.setColor(Constants.textColor);
             g.drawString(distStr, p2a.x + this.getVisibleRect().x - (widthStr / 2) + Constants.knotsLabelSize / 2, p2a.y + this.getVisibleRect().y - Constants.knotsLabelSize);
@@ -243,7 +243,7 @@ public class ImagePanel extends JPanel {
             if ((mouseLat != 0.0) && (mouseLon != 0.0)) {
                 Font font = new Font("New Courier", Font.BOLD, Constants.knotsLabelSize);
                 g.setFont(font);
-                g.setColor(Color.BLACK);
+                g.setColor(Constants.mousePositionColor);
                 
                 int xPos = this.getVisibleRect().x + Constants.knotsLabelSize + 25;
                 int yPos = this.getVisibleRect().y + Constants.knotsLabelSize + 30;
@@ -482,7 +482,6 @@ public class ImagePanel extends JPanel {
     public void mouseMoved(double x, double y) {
         double width = this.getWidth();
         double height = this.getHeight();
-        //System.out.println(""+ x +" "+ this.getVisibleRect().x + " " + width);
         mouseX = (int) x + this.getVisibleRect().x;
         mouseY = (int) y + this.getVisibleRect().y;
         mouseLat = (mouseY / height) * (Constants.lowerRightCornerLat - Constants.upperLeftCornerLat) + Constants.upperLeftCornerLat;

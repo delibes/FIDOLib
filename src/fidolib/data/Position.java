@@ -71,6 +71,7 @@ public class Position {
      */
     private DecimalFormat df = new DecimalFormat("", decimalSymbols);
 
+    private Position etaPosition = null;
     /**
      * Constructor
      */
