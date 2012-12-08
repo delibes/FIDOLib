@@ -47,16 +47,16 @@ public class AuxiliaryFunctions {
      * @return true or false
      */
     public static boolean checkSum(byte[] packet) {
-        // unsigned sum af bytes 0..9
+        // unsigned sum af bytes 0..packet.length-4
         int sum = 0;
         if ((packet == null)) {
             return false;
         }
-        for (int i = 0; (i <= 8) && (i < packet.length); i++) {
-            sum = sum + ((packet[i] & 0xFF));
+        for (int i = 0; i < packet.length-4; i++) {
+            sum = sum + (int)((packet[i] & 0xff));
             
         }
-        int checkSum = byteArrayToINT16(packet, 9);
+        int checkSum = byteArrayToINT16(packet, packet.length-4);
         return (checkSum == sum);
     }
 
@@ -85,6 +85,7 @@ public class AuxiliaryFunctions {
      */
     public static int byteArrayToINT16(byte[] packet, int offset) {
         int value = 0;
+        // TODO: check for array out of range
         value = packet[offset] & 0x000000FF;
         value += (packet[offset + 1] & 0x000000FF) << 8;
         if (value > (Short.MAX_VALUE)) {

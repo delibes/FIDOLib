@@ -10,7 +10,7 @@
  */
 package fidolib.ui;
 
-import fidolib.data.Position;
+import fidolib.data.RocketInfo;
 import fidolib.data.Constants;
 import fidolib.data.FlightData;
 import java.awt.BasicStroke;
@@ -45,7 +45,7 @@ public class AltitudePanel extends ColorPanel {
     private int xAxesScaleIncrement = xAxesScale;
     private int yAxesScaleIncrement = yAxesScale;
     private int xTicks = 5; // has to be <= xAxesScale
-    private int yTicks = 10; // has to be <= xAxesScale
+    private int yTicks = 10; // has to be <= yAxesScale
     private int lineWidth = 3;
     private int ticksLineWidth = 2;
     private int fontSize = 12;
@@ -120,34 +120,39 @@ public class AltitudePanel extends ColorPanel {
         int xTicksPixels = (int) ((width - xAxesBorder * 2) / xAxesScale);
         int yTicksPixels = (int) ((height - yAxesBorder * 2) / yAxesScale);
 
+        if (aFlightData.rocketPosition.downRange > (xAxesScale * 1000)) {
+                    xAxesScale += xAxesScaleIncrement;
+                }
+        if (aFlightData.rocketPosition.GPSAltitude > (yAxesScale * 1000)) {
+                    yAxesScale += yAxesScaleIncrement;
+                    
+                }
         List positions = aFlightData.positions;
         if (positions != null && positions.size() > 2) {
             for (int i = 0; i < positions.size() - 1; i++) {
-                Position p1 = (Position) positions.get(i);
-                Position p2 = (Position) positions.get(i + 1);
-                double xDist = Position.disanceNauticalMiles((Position) positions.get(0), p1)
+                RocketInfo p1 = (RocketInfo) positions.get(i);
+                RocketInfo p2 = (RocketInfo) positions.get(i + 1);
+                double xDist = RocketInfo.disanceNauticalMiles((RocketInfo) positions.get(0), p1)
                         * Constants.nauticalMile;
-                if (xDist > (xAxesScale * 1000)) {
-                    xAxesScale += xAxesScaleIncrement;
-                }
+                
 
                 int x1 = (int) (xDist / 1000.0 * xTicksPixels + xAxesBorder);
-                int x2 = (int) (Position.disanceNauticalMiles((Position) positions.get(0), p2)
+                int x2 = (int) (RocketInfo.disanceNauticalMiles((RocketInfo) positions.get(0), p2)
                         * Constants.nauticalMile / 1000.0 * xTicksPixels + xAxesBorder);
 
                 int y1 = height - yAxesBorder - (int) (p1.GPSAltitude * yTicksPixels / 1000.0);
-                if (p2.GPSAltitude > (yAxesScale * 1000)) {
-                    yAxesScale += yAxesScaleIncrement;
-                }
+                
 
+                
                 int y2 = height - yAxesBorder - (int) (p2.GPSAltitude * yTicksPixels / 1000.0);
                 g.drawLine(x1, y1, x2, y2);
             }
         }
 
+        
         g.setColor(Constants.rocketColor);
         int xPos = 0;
-        if ((positions != null) && (positions.size() > 0)) {
+        if (aFlightData.rocketPosition != null) {
             xPos = (int) (aFlightData.rocketPosition.downRange / 1000.0 * xTicksPixels + xAxesBorder - spotSize / 2);
         } else {
             xPos = xAxesBorder - spotSize / 2;

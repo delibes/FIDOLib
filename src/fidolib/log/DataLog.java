@@ -132,8 +132,6 @@ public class DataLog {
                         + df.format(FlightData.getInstance().rocketPosition.lat) + ";"
                         + df.format(FlightData.getInstance().rocketPosition.lon) + ";"
                         + FlightData.getInstance().rocketPosition.GPSAltitude + ";"
-                        + FlightData.getInstance().barometerAltitude + ";"
-                        + FlightData.getInstance().realAltitudeTime + ";"
                         + FlightData.getInstance().noGoodPackets + ";"
                         + FlightData.getInstance().noBadPackets + ";"
                         + "\n";

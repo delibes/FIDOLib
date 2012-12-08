@@ -38,10 +38,10 @@ public class SerialPortDialog extends javax.swing.JDialog {
         else if (this.aCOMPort.portType == COMPort.PortType.TELEMETRYPORT)
         {
             this.setTitle("Telemetry Serial port");
-            this.baudRateComboBox.setSelectedIndex(2);
+            this.baudRateComboBox.setSelectedIndex(5);
         }
         
-        
+        this.openButton.requestFocus();
         // Get available ports 
         try {
             List portList = aCOMPort.listPorts();

@@ -214,7 +214,7 @@ public class Constants {
     /**
      * Serial port packet length
      */
-    public static int packetLength = 13;
+    public static int packetLength = 21;
     /**
      * Begin sim after this period (in 1/10 sec)
      */
@@ -238,19 +238,19 @@ public class Constants {
     /**
      * E139 corner
      */
-    public static Position E139NorthWest = new Position();
+    public static RocketInfo E139NorthWest = new RocketInfo();
     /**
      * E139 corner
      */
-    public static Position E139NorthEast = new Position();
+    public static RocketInfo E139NorthEast = new RocketInfo();
     /**
      * E139 corner
      */
-    public static Position E139SouthWest = new Position();
+    public static RocketInfo E139SouthWest = new RocketInfo();
     /**
      * E139 corner
      */
-    public static Position E139SouthEast = new Position();
+    public static RocketInfo E139SouthEast = new RocketInfo();
     /**
      * Paint ESD139
      */

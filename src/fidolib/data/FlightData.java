@@ -6,11 +6,13 @@ package fidolib.data;
 
 import fidolib.com.DataParser;
 import fidolib.misc.AuxiliaryFunctions;
-import fidolib.log.DataLog;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 /**
  *
@@ -22,10 +24,6 @@ public class FlightData implements DataParser, GetPosition {
      * Self reference
      */
     private static FlightData aFlightData = null;
-    /**
-     * Parse sentence $GPGGA
-     */
-    private String GPGGAPrefix = "$GPGGA";
     /** 
      * Time stamp of last data package
      */
@@ -35,18 +33,6 @@ public class FlightData implements DataParser, GetPosition {
      */
     public String data = null;
     /**
-     * Barometer based altitude
-     */
-    public int barometerAltitude = 0;
-    /**
-     * UTC received fromon board GPS
-     */
-    private long UTC = 0;
-    /** MC time stamp for the barometer altitude calc
-     * 
-     */
-    public int realAltitudeTime = 0;
-    /**
      * Number of good packets
      */
     public int noGoodPackets = 0;
@@ -55,32 +41,31 @@ public class FlightData implements DataParser, GetPosition {
      */
     public int noBadPackets = 0;
     /**
-     * Are Tycho flying?
-     */
-    public boolean flying = false;
-    /**
      * The latitude and longitude position of the rocket
      */
-    public Position rocketPosition = new Position();
+    public RocketInfo rocketPosition = new RocketInfo();
     /**
      * The position if the rocket at lift off
      */
-    public Position liftOffPosition = new Position();
+    public RocketInfo liftOffPosition = null;
     /**
      * 
      */
-    public ArrayList<Position> arrayList = new ArrayList<Position>();
+    public ArrayList<RocketInfo> arrayList = new ArrayList<RocketInfo>();
     /**
      * List of positions after lift off
      */
     public List positions = Collections.synchronizedList(arrayList);
+    /**
+     * Voltage of the power supply of the AAU
+     */
+    public double AAUVoltage = 0.0;
 
     /**
      * Constructor
      */
     public FlightData() {
-        Calendar calender = Calendar.getInstance();
-        lastValidDataTimeStamp = calender.getTime().getTime();
+        
     }
 
     /**
@@ -94,22 +79,6 @@ public class FlightData implements DataParser, GetPosition {
         return aFlightData;
 
     }
-
-    public void setData(String dataArg) {
-        data = dataArg;
-        parseData(dataArg);
-        Calendar calender = Calendar.getInstance();
-        lastValidDataTimeStamp = calender.getTime().getTime();
-
-    }
-
-    public void setData(byte[] buffer, int length) {
-        parseData(buffer);
-        Calendar calender = Calendar.getInstance();
-        lastValidDataTimeStamp = calender.getTime().getTime();
-
-    }
-
     /**
      * Parse the data packets
      * @return -1 = error,  1 = new and valid data
@@ -130,15 +99,14 @@ public class FlightData implements DataParser, GetPosition {
             }
             noGoodPackets++;
         }
+
         switch (packetType) {
             case 1:
-
+                Calendar calender = Calendar.getInstance();
+                lastValidDataTimeStamp = calender.getTime().getTime();
                 extractValues(packet, 1);
                 break;
-            case 2:
 
-                extractValues(packet, 2);
-                break;
             default:
 
                 return -1;
@@ -150,17 +118,18 @@ public class FlightData implements DataParser, GetPosition {
     private void extractValues(byte[] packet, int packetType) {
         int flyingMask = 0x01;
         if ((packet[0] & flyingMask) == flyingMask) {
-            flying = true;
-        } else {
-            flying = false;
+            rocketPosition.flying = true;
+
         }
 
 
         switch (packetType) {
 
             case 1:
-                double lat = AuxiliaryFunctions.byteArrayToDouble(packet, 1);
-                double lon = AuxiliaryFunctions.byteArrayToDouble(packet, 5);
+                AAUVoltage = (double) (packet[1] & 0xff) / 10.0;
+                rocketPosition.GPSTime = AuxiliaryFunctions.byteArrayToINT32(packet, 2);
+                double lat = AuxiliaryFunctions.byteArrayToDouble(packet, 6);
+                double lon = AuxiliaryFunctions.byteArrayToDouble(packet, 10);
                 if (lat != 0.0) {
                     rocketPosition.lat = lat / Constants.latLonConvertionFactor;
                     rocketPosition.latitudeGood = true;
@@ -173,29 +142,48 @@ public class FlightData implements DataParser, GetPosition {
                 } else {
                     rocketPosition.longitudeGood = false;
                 }
-                rocketPosition.GPSAltitude = AuxiliaryFunctions.byteArrayToINT16(packet, 5);
-                if (flying && rocketPosition.latitudeGood && rocketPosition.longitudeGood) {
-                    Position p = new Position(rocketPosition.lat, rocketPosition.lon, rocketPosition.GPSAltitude);
-                    positions.add(p);
-                    if (positions.size() > 7200) // two hours of data
-                    {
-                        positions.remove(1); // do not remove the first position
+                rocketPosition.GPSAltitude = AuxiliaryFunctions.byteArrayToINT16(packet, 14);
+                rocketPosition.GPSFix = (packet[16] & 0xff);
+
+                if (positions.size() > 0) {
+                    RocketInfo previousPos = (RocketInfo) positions.get(positions.size() - 1);
+                    if (previousPos != null) {
+                        if ((rocketPosition.lat != previousPos.lat)
+                                || (rocketPosition.lon != previousPos.lon)
+                                || (rocketPosition.GPSAltitude != previousPos.GPSAltitude)
+                                || (rocketPosition.onBoardTimeStamp != previousPos.onBoardTimeStamp)) // Different position
+                        {
+                            rocketPosition.COG = RocketInfo.initialBearing(previousPos, rocketPosition);
+
+                            rocketPosition.downRange = RocketInfo.disanceNauticalMiles(rocketPosition, liftOffPosition) * Constants.nauticalMile;
+
+                            double deltaT = (rocketPosition.onBoardTimeStamp - previousPos.onBoardTimeStamp) / 1000.0;
+                            if (deltaT != 0) {
+                                rocketPosition.verticalVelocity = (rocketPosition.GPSAltitude - previousPos.GPSAltitude) / deltaT;
+                                rocketPosition.horizontalVelocity = (RocketInfo.disanceNauticalMiles(rocketPosition, previousPos) * Constants.nauticalMile) / deltaT;
+                                rocketPosition.velocity = Math.sqrt(Math.pow(rocketPosition.verticalVelocity, 2) + Math.pow(rocketPosition.horizontalVelocity, 2));
+                                if (rocketPosition.verticalVelocity <= 0.0) {
+                                    rocketPosition.ETA = (int) (rocketPosition.GPSAltitude / (rocketPosition.verticalVelocity * -1));
+                                }
+
+                            }
+                            RocketInfo p = new RocketInfo(rocketPosition);
+                            positions.add(p);
+                            if ((rocketPosition.flying == true) || (rocketPosition.GPSAltitude > 200) && (this.liftOffPosition == null)) {
+                                liftOffPosition = new RocketInfo(rocketPosition);
+                            }
+                            if (positions.size() > 7200) // Approximately 2 hours of GPS positions
+                            {
+                                positions.remove(0);
+                            }
+                        }
+
                     }
+
+                } else { // Add the first one without doing calculations of velocity etc.
+                    RocketInfo p = new RocketInfo(rocketPosition);
+                    positions.add(p);
                 }
-                DataLog.getInstance().logData(1);
-
-                break;
-            case 2:
-
-                realAltitudeTime = AuxiliaryFunctions.byteArrayToINT32(packet, 1);
-
-                barometerAltitude = AuxiliaryFunctions.byteArrayToINT16(packet, 7);
-
-                DataLog.getInstance().logData(2);
-                break;
-
-            default:
-            //  System.out.println("Packet no good");
         }
     }
 
@@ -219,7 +207,7 @@ public class FlightData implements DataParser, GetPosition {
         }
 
 
-        return packetType;
+        return -1;
 
     }
 
@@ -229,32 +217,6 @@ public class FlightData implements DataParser, GetPosition {
 
     @Override
     public void parseData(String data) {
-        if (data != null) {
-            DataLog.getInstance().logData(data);
-        }
-        if ((data != null) && (data.startsWith(GPGGAPrefix))) {
-            String[] s = data.split(",");
-            if (s.length > 4) {
-                String latStr = s[2];
-                String lonStr = s[4];
-                try {
-
-                    double latitude = Double.parseDouble(latStr);
-                    double dLat = (int) latitude / 100;
-                    double mLat = latitude - (dLat * 100);
-                    this.rocketPosition.lat = dLat + (mLat / 60.0);
-
-                    double longitude = Double.parseDouble(lonStr);
-                    double dLon = (int) longitude / 100;
-                    double mLon = longitude - (dLon * 100);
-                    this.rocketPosition.lon = dLon + (mLon / 60.0);
-                    //  System.out.println("Lat: " + this.rocketPosition.lat);
-                    //  System.out.println("Lon: " + this.rocketPosition.lon);
-
-                } catch (Exception e) {
-                }
-            }
-        }
     }
 
     @Override
@@ -268,28 +230,67 @@ public class FlightData implements DataParser, GetPosition {
     }
 
     @Override
-    public Position getPosition() {
+    public RocketInfo getPosition() {
         return this.rocketPosition;
     }
 
-    public String getUTC() {
-        if (UTC == 0) {
+    public String getGPSTime() {
+        if (rocketPosition.GPSTime == 0) {
             return Constants.naString;
         } else {
-            String hoursStr = String.format("%02d", (UTC / 3600));
-            String minutesStr = String.format("%02d", (UTC / 60 % 60));
-            String secondsStr = String.format("%02d", (UTC % 60));
-            return hoursStr + ":"+ minutesStr + ":"+ secondsStr;
-            
+            String hoursStr = String.format("%02d", (rocketPosition.GPSTime / 3600));
+            String minutesStr = String.format("%02d", (rocketPosition.GPSTime / 60 % 60));
+            String secondsStr = String.format("%02d", (rocketPosition.GPSTime % 60));
+            return hoursStr + ":" + minutesStr + ":" + secondsStr;
+
         }
     }
+
     public String getETA() {
-        return Constants.naString;
-        
+        if (rocketPosition.ETA > 0) {
+            String hoursStr = String.format("%02d", (rocketPosition.ETA / 3600));
+            String minutesStr = String.format("%02d", (rocketPosition.ETA / 60 % 60));
+            String secondsStr = String.format("%02d", (rocketPosition.ETA % 60));
+            return hoursStr + ":" + minutesStr + ":" + secondsStr;
+        } else {
+            return Constants.naString;
+        }
+
     }
+
+    public String getMCDistance() {
+        VesselInfo mc = AISData.getInstance().getVessel(AISData.getInstance().mcMMSI);
+        if (mc != null) {
+            double disanceNauticalMiles = RocketInfo.disanceNauticalMiles(aFlightData.rocketPosition, mc.pos);
+            double distanceMeters = disanceNauticalMiles * Constants.nauticalMile;
+
+            String distStr = "";
+            DecimalFormatSymbols decimalSymbols = new DecimalFormatSymbols(new Locale("da", "DK"));
+            decimalSymbols.setDecimalSeparator('.');
+            decimalSymbols.setGroupingSeparator(',');
+            DecimalFormat df = new DecimalFormat("0.0", decimalSymbols);
+            distStr = "" + df.format(disanceNauticalMiles) + " / " + df.format(distanceMeters / 1000);
+            return distStr;
+        } else {
+            return Constants.naString;
+        }
+
+    }
+
     public String getMCBearing() {
+        VesselInfo mc = AISData.getInstance().getVessel(AISData.getInstance().mcMMSI);
+        if (mc != null) {
+            int brg = RocketInfo.initialBearing(rocketPosition, mc.pos);
+            if (brg >= 0) {
+                return "" + brg;
+            }
+        }
+
         return Constants.naString;
-        
+
     }
-    
+
+    public String gettAAUVoltage() {
+        return "" + AAUVoltage;
+    }
 }

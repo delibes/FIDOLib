@@ -31,9 +31,9 @@ public class AISData implements DataParser {
      */
     public String sputnikMMSI = "";
     /**
-     * Hjortø info
+     * Mission control info
      */
-    public String hjortoeMMSI = "";
+    public String mcMMSI = "";
     /**
      * Self reference
      */
@@ -378,7 +378,7 @@ public class AISData implements DataParser {
             while (iterator.hasNext()) {
                 VesselInfo aVesselInfo = (VesselInfo) iterator.next();
                 if (aVesselInfo != null) {
-                    Position.calcLatLonPixels(aVesselInfo.pos, width, height);
+                    RocketInfo.calcLatLonPixels(aVesselInfo.pos, width, height);
                     double distance = Math.sqrt(Math.pow(x - aVesselInfo.pos.lonPixels, 2.0) + Math.pow(y - aVesselInfo.pos.latPixels, 2.0));
                     if ((distance < minDist) && (distance < 30)) {
                         minDist = distance;

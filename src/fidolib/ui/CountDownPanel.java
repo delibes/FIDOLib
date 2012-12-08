@@ -95,7 +95,16 @@ public class CountDownPanel extends ColorPanel {
         String timeStr = AuxiliaryFunctions.long2StringTime(CountDownData.remainingTime);
         sLength = g.getFontMetrics().stringWidth(timeStr);
         g.drawString(timeStr, (width / 2) - (sLength / 2), height / 2 + fontSize / 3);
-
+        
+        String realTimeStr = AuxiliaryFunctions.getTimeStamp();
+        fontSize = ((int) (((double) smallest / (1.7*5))));
+        font = new Font("New Courier", Font.BOLD, fontSize);
+        g.setFont(font);
+        
+        
+        sLength = g.getFontMetrics().stringWidth(realTimeStr);
+        g.drawString(realTimeStr, (width / 2) - (sLength / 2), height - fontSize );
+        
 
 
 

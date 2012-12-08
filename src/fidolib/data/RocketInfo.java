@@ -12,7 +12,7 @@ import java.util.Locale;
  *
  * @author Steen Andersen
  */
-public class Position {
+public class RocketInfo {
 
     /**
      * The latitude in decimal degrees
@@ -26,6 +26,14 @@ public class Position {
      * GPS altitude in meters
      */
     public int GPSAltitude = 0;
+    /**
+     * Course over ground
+     */
+    public int COG = 0;
+    /**
+     * GPS Fix  (1 = no fix, 2 = 2d fix and 3 = 3d fix)
+     */
+    public int GPSFix = 1;
     /**
      * Down range from launch point in meter
      */
@@ -63,6 +71,18 @@ public class Position {
      */
     public int lonPixels = 0;
     /**
+     * ETA of impact in seconds calculated if vertical velocity < 0;
+     */
+    public int ETA = -1;
+    /**
+     * Are the rocket flying?
+     */
+    public boolean flying = false;
+    /**
+     * GPS time stamp at MCU (milli s) 
+     */
+    public int GPSTime = 0;
+    /**
      * Decimal symbols
      */
     private static DecimalFormatSymbols decimalSymbols = new DecimalFormatSymbols(new Locale("da", "DK"));
@@ -70,40 +90,50 @@ public class Position {
      * Formatting  
      */
     private DecimalFormat df = new DecimalFormat("", decimalSymbols);
+    private RocketInfo etaPosition = null;
 
-    private Position etaPosition = null;
     /**
      * Constructor
      */
-    public Position() {
+    public RocketInfo() {
         decimalSymbols.setDecimalSeparator('.');
         decimalSymbols.setGroupingSeparator(',');
 
     }
-    
+
     /**
      * Constructor
      */
-    public Position(double lat, double lon, int GPSAltitude) {
+    public RocketInfo(double lat, double lon, int GPSAltitude) {
         decimalSymbols.setDecimalSeparator('.');
         decimalSymbols.setGroupingSeparator(',');
         this.lat = lat;
         this.lon = lon;
         this.GPSAltitude = GPSAltitude;
-        
+
 
     }
+
     /**
      * Constructor
      */
-    public Position(double lat, double lon, int GPSAltitude, int ts) {
+    public RocketInfo(RocketInfo aPosition) {
         decimalSymbols.setDecimalSeparator('.');
         decimalSymbols.setGroupingSeparator(',');
-        this.lat = lat;
-        this.lon = lon;
-        this.GPSAltitude = GPSAltitude;
-        this.onBoardTimeStamp = ts;
-        
+        this.lat = aPosition.lat;
+        this.lon = aPosition.lon;
+        this.latitudeGood = aPosition.latitudeGood;
+        this.longitudeGood = aPosition.longitudeGood;
+        this.GPSAltitude = aPosition.GPSAltitude;
+        this.COG = aPosition.COG;
+        this.onBoardTimeStamp = aPosition.onBoardTimeStamp;
+        this.GPSFix = aPosition.GPSFix;
+        this.downRange = aPosition.downRange;
+        this.etaPosition = aPosition.etaPosition;
+        this.velocity = aPosition.velocity;
+        this.horizontalVelocity = aPosition.horizontalVelocity;
+        this.verticalVelocity = aPosition.verticalVelocity;
+        this.flying = aPosition.flying;
 
     }
 
@@ -113,9 +143,9 @@ public class Position {
      * @param p2 the second point
      * @return
      */
-    public static double disanceNauticalMiles(Position p1, Position p2) {
+    public static double disanceNauticalMiles(RocketInfo p1, RocketInfo p2) {
         if ((p1 == null) || (p2 == null)) {
-            return -1.0;
+            return 0.0;
         }
         if ((p1.lat == 0.0) || (p1.lon == 0.0) || (p2.lat == 0.0) || (p2.lat == 0.0)) {
             return 0.0;
@@ -134,7 +164,7 @@ public class Position {
     /**
      * Calculate the initial bearing from point p1 to p2 along the greate circle path 
      */
-    public static int initialBearing(Position p1, Position p2) {
+    public static int initialBearing(RocketInfo p1, RocketInfo p2) {
         if ((p1 == null) || (p2 == null)) {
             return -1;
         }
@@ -146,7 +176,7 @@ public class Position {
         double lon1 = p1.lon * Math.PI / 180;
         double lat2 = p2.lat * Math.PI / 180;
         double lon2 = p2.lon * Math.PI / 180;
-       // double dLat = lat2 - lat1;
+        // double dLat = lat2 - lat1;
         double dLon = lon2 - lon1;
 
         double y = Math.sin(dLon) * Math.cos(lat2);
@@ -158,13 +188,28 @@ public class Position {
     }
 
     /**
+     * Return initial bearing as string
+     */
+     public static String initialBearingAsString(RocketInfo p1, RocketInfo p2) {
+         int brg = initialBearing(p1,p2);
+         if (brg < 0)
+         {
+             return Constants.naString;
+         }
+         else {
+             return "" + brg;
+         }
+         
+     }
+    
+    /**
      * Caluculate the new position given x and y meters from the original
      * including the MLP heading
      * @param p the position to be adjusted
      * @param x the x distance in meters
      * @param y the y distance in meters
      */
-    public static void latLonRadialDistance(Position p1, double x, double y) {
+    public static void latLonRadialDistance(RocketInfo p1, double x, double y) {
         double lat, lon = 0.0;
         double lat1 = p1.lat * Math.PI / 180;
         double lon1 = p1.lon * Math.PI / 180;
@@ -218,22 +263,21 @@ public class Position {
             return "";
         }
     }
-    
+
     /**
      * Calculate the latitude in pixels
      * @param p the position p in lat/lon
      */
-    public static void calcLatLonPixels(Position p, int width, int height) {
+    public static void calcLatLonPixels(RocketInfo p, int width, int height) {
 
         //TODO: remove before flight
 //       p.latPixels = ((int) (((p.lat - 0.5 - Constants.upperLeftCornerLat) / (Constants.lowerRightCornerLat - Constants.upperLeftCornerLat)) * height));
 //         p.lonPixels = ((int) ((p.lon + 3.0 - Constants.upperLeftCornerLon) / (Constants.lowerRightCornerLon - Constants.upperLeftCornerLon) * width));
 //
-       p.latPixels = ((int) (((p.lat - Constants.upperLeftCornerLat) / (Constants.lowerRightCornerLat - Constants.upperLeftCornerLat)) * height));
-       p.lonPixels = ((int) ((p.lon - Constants.upperLeftCornerLon) / (Constants.lowerRightCornerLon - Constants.upperLeftCornerLon) * width));
+        p.latPixels = ((int) (((p.lat - Constants.upperLeftCornerLat) / (Constants.lowerRightCornerLat - Constants.upperLeftCornerLat)) * height));
+        p.lonPixels = ((int) ((p.lon - Constants.upperLeftCornerLon) / (Constants.lowerRightCornerLon - Constants.upperLeftCornerLon) * width));
 
     }
-
 
     /**
      * Return latitude as string according to the format
@@ -247,5 +291,21 @@ public class Position {
      */
     public String getLon() {
         return Constants.northSouth + " " + formatDegrees(lon);
+    }
+
+    /**
+     * Return the GPS fix s string
+     */
+    public String getGPSFix() {
+        switch (GPSFix) {
+            case 1:
+                return Constants.naString;
+            case 2:
+                return "2D";
+            case 3:
+                return "3D";
+            default:
+                return Constants.naString;
+        }
     }
 }

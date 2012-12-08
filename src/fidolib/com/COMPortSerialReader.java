@@ -4,7 +4,6 @@
  */
 package fidolib.com;
 
-
 import fidolib.data.AISData;
 import fidolib.data.Constants;
 import fidolib.data.FlightData;
@@ -58,7 +57,7 @@ public class COMPortSerialReader implements Runnable, COMPortSerialReaderIF {
      * The run methed for parsing AIS messages
      */
     private void runAISParser() {
-       byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[1024];
         LinkedList<Byte> data = new LinkedList<Byte>();
 
         int len = -1;
@@ -112,27 +111,30 @@ public class COMPortSerialReader implements Runnable, COMPortSerialReaderIF {
             byte x2 = 0;
             while (((len = this.in.read(buffer)) > -1) && (closeConnection == false)) {
 
-                                for (int i = 0; (i < len) && (i < buffer.length); i++) {
+                for (int i = 0; (i < len) && (i < buffer.length); i++) {
                     data.add(buffer[i]);
-                    //System.out.print(buffer[i]);
-
+                    
                     x2 = buffer[i];
-                    if ((x1 == 0x0D) && (x2 == 0x0A)) {
-                        buffer = new byte[data.size()];
+                    if ((x1 == 0x0D) && (x2 == 0x0A) && (data.size() >= Constants.packetLength)) {
+                       byte[] dataBuffer = new byte[Constants.packetLength];
 
-                        for (int j = 0; j < buffer.length; j++) {
+                        for (int j = 0; j < dataBuffer.length; j++) {
 
 
-                            buffer[j] = data.getFirst();
-                            data.removeFirst();
+                            dataBuffer[j] = data.get(data.size() - (Constants.packetLength-j));
+                            
 
                         }
-                      //  System.out.println("");
-                        aDataParser.parseData(new String(buffer));
+                        // System.out.println("Parser " + buffer);
+                        aDataParser.parseData(dataBuffer);
                         data.clear();
 
                     }
                     x1 = x2;
+                    if (data.size()> (Constants.packetLength*2))
+                    {
+                        
+                    }
                 }
 
 

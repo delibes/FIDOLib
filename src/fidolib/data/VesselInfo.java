@@ -22,8 +22,8 @@ public class VesselInfo {
     public int nav_status = -1;       // navigational status
     public int rot;               // Rate of turn - right or left, 0 to 720 degrees per minute (input from rate-of-turn indicator)
     public double sog;               // Speed Over Ground Knots
-    public int pos_acc;           //  Position Accuracy
-    public Position pos = new Position(); // Lat/Long decimal degress
+    public int pos_acc;           //  RocketInfo Accuracy
+    public RocketInfo pos = new RocketInfo(); // Lat/Long decimal degress
     public int cog;               // Course over Ground
     public int true_heading;      // True heading
     public int utc_sec;           // UTC Seconds

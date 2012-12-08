@@ -148,9 +148,15 @@ public class Nmea {
 		} catch (IndexOutOfBoundsException e) {
 			return 2;
 		}
-		
-		if ( Integer.parseInt(msgChecksum,16) != this.checksum )
+		try {
+                    if ( Integer.parseInt(msgChecksum,16) != this.checksum )
 			return 1;
+                }
+                catch (java.lang.NumberFormatException e)
+                {
+                    return 2;
+                }
+		
 		return 0;
 	}
 }

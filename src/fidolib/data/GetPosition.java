@@ -12,7 +12,7 @@ public interface GetPosition {
     
     public double getLatitude();
     public double getLongitude();
-    public Position getPosition();
+    public RocketInfo getPosition();
     
     
 }

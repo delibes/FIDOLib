@@ -13,8 +13,8 @@ package fidolib.ui;
 import fidolib.data.AISData;
 import fidolib.data.Constants;
 import fidolib.data.FlightData;
-import fidolib.data.Position;
-import fidolib.misc.AuxiliaryFunctions;
+import fidolib.data.RocketInfo;
+import fidolib.data.VesselInfo;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GradientPaint;
@@ -122,12 +122,13 @@ public class FlightDataPanel extends ColorPanel {
         int fontSizeFactor = maxFontSizeFactor;
         //g.drawString("GPS data", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Telemetry", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("Latitude ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("Longitude ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("Latitude", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("Longitude", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Dist. MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("BRG MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("GPS", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("ETA", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("BRG", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("AAU v", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         
         textPos += deltaTextPos;
         // Print time since last valid data reception
@@ -165,38 +166,25 @@ public class FlightDataPanel extends ColorPanel {
         }
         g.drawString(latStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString(lonStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-         if (aAISData.getVessel(aAISData.hjortoeMMSI) != null) {
-            double disanceNauticalMiles = Position.disanceNauticalMiles(aFlightData.rocketPosition, aAISData.getVessel(aAISData.hjortoeMMSI).pos);
-            double distanceMeters = disanceNauticalMiles * Constants.nauticalMile;
-
-            String distStr = "";
-            DecimalFormatSymbols decimalSymbols = new DecimalFormatSymbols(new Locale("da", "DK"));
-            decimalSymbols.setDecimalSeparator('.');
-            decimalSymbols.setGroupingSeparator(',');
-            DecimalFormat df = new DecimalFormat("0.0", decimalSymbols);
-            distStr = "" + df.format(disanceNauticalMiles) + " / " + df.format(distanceMeters / 1000);
-
-            g.drawString(distStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-
-        }
-        else {
-             g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        }
-        g.drawString("" + aFlightData.getUTC(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("" + aFlightData.getETA(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString(aFlightData.getMCDistance(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("" + aFlightData.getMCBearing(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("" + aFlightData.getGPSTime(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("" + aFlightData.getETA(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("" + aFlightData.gettAAUVoltage(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         
-        fontSizeFactor = maxFontSizeFactor;
+        fontSizeFactor = maxFontSizeFactor - 1;
         textPos += deltaTextPos +40;
         g.drawString("Alt", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Dwn", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("Fix", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("V", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("V v", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("V h", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        fontSizeFactor = maxFontSizeFactor;
+        fontSizeFactor = maxFontSizeFactor - 1;
         textPos += deltaTextPos -60;
         g.drawString("" + aFlightData.rocketPosition.GPSAltitude  + " m", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("" + (int) (aFlightData.rocketPosition.downRange) + " m", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("" + aFlightData.rocketPosition.getGPSFix(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("" + (int) (aFlightData.rocketPosition.velocity) + " m/s", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("" + (int) (aFlightData.rocketPosition.verticalVelocity) + " m/s", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("" + (int) (aFlightData.rocketPosition.horizontalVelocity) + " m/s", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
