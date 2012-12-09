@@ -176,6 +176,7 @@ public class FlightDataPanel extends ColorPanel {
         textPos += deltaTextPos +40;
         g.drawString("Alt", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Dwn", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("COG", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Fix", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("V", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("V v", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
@@ -184,6 +185,7 @@ public class FlightDataPanel extends ColorPanel {
         textPos += deltaTextPos -60;
         g.drawString("" + aFlightData.rocketPosition.GPSAltitude  + " m", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("" + (int) (aFlightData.rocketPosition.downRange) + " m", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("" + (int) (aFlightData.rocketPosition.COG) + Constants.degreeChar, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("" + aFlightData.rocketPosition.getGPSFix(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("" + (int) (aFlightData.rocketPosition.velocity) + " m/s", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("" + (int) (aFlightData.rocketPosition.verticalVelocity) + " m/s", textPos, this.getHeight() - (fontSize * fontSizeFactor--));

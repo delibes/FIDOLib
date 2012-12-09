@@ -130,6 +130,7 @@ public class AISDataPanel extends ColorPanel {
         g.drawString("SOG ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("TH ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Dist. MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("BRG MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
 
         textPos += deltaTextPos;
@@ -165,7 +166,7 @@ public class AISDataPanel extends ColorPanel {
                 g.drawString("" + sputnik.cog + Constants.degreeChar, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
                 g.drawString("" + sputnik.getSOG(true), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
                 g.drawString(sputnik.getTH(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-
+               
             }
             else {
                 
@@ -182,8 +183,11 @@ public class AISDataPanel extends ColorPanel {
                 distStr = "" + df.format(disanceNauticalMiles) + " / " + df.format(distanceMeters / 1000);
 
                 g.drawString(distStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                String brgStr = "" +RocketInfo.initialBearing(aAISData.getVessel(aAISData.mcMMSI).pos, aAISData.getVessel(aAISData.sputnikMMSI).pos)+Constants.degreeChar;
+                g.drawString(brgStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
             } else {
+                  g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
                   g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
             }
         }

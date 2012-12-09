@@ -162,6 +162,33 @@ public class RocketInfo {
     }
 
     /**
+     * Calculate the initial bearing from point p1 to p2 along the greate circle path used in the image
+     */
+    public static int initialBearingImg(RocketInfo p1, RocketInfo p2) {
+        if ((p1 == null) || (p2 == null)) {
+            return -1;
+        }
+        if ((p1.lat == 0.0) || (p1.lon == 0.0) || (p2.lat == 0.0) || (p2.lat == 0.0)) {
+            return -1;
+        }
+        // Use radians
+        double lat1 = p1.lat * Math.PI / 180;
+        double lon1 = p1.lon * Math.PI / 180;
+        double lat2 = p2.lat * Math.PI / 180;
+        double lon2 = p2.lon * Math.PI / 180;
+        // double dLat = lat2 - lat1;
+        double dLon = lon2 - lon1;
+
+        double y = Math.sin(dLon) * Math.cos(lat2);
+        double x = Math.cos(lat1) * Math.sin(lat2)
+                - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+        double bearing = Math.atan2(y, x) / Math.PI * 180;
+        int brg = (360 - (int) (bearing + 90 + 360) % 360);
+        return (brg == 360) ? 0 : brg;
+        
+    }
+
+    /**
      * Calculate the initial bearing from point p1 to p2 along the greate circle path 
      */
     public static int initialBearing(RocketInfo p1, RocketInfo p2) {
@@ -183,10 +210,13 @@ public class RocketInfo {
         double x = Math.cos(lat1) * Math.sin(lat2)
                 - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
         double bearing = Math.atan2(y, x) / Math.PI * 180;
-        int brng = (360 - (int) (bearing + 90 + 360) % 360);
-        return (brng == 360) ? 0 : brng;
+        int brg = (int)bearing;
+        if (brg < 0)
+        {
+            brg = 360 + brg; 
+        }
+        return (brg == 360) ? 0 : brg;
     }
-
     /**
      * Return initial bearing as string
      */
@@ -244,19 +274,19 @@ public class RocketInfo {
     public static String formatDegrees(double degree) {
 
         if (Constants.degreeFormat == Constants.DegreeFormat.DECIMAL) {
-            DecimalFormat df = new DecimalFormat("00.00000", decimalSymbols);
+            DecimalFormat df = new DecimalFormat("00.000000", decimalSymbols);
             return df.format(degree) + Constants.degreeChar;
         } else if (Constants.degreeFormat == Constants.DegreeFormat.DECIMALMINUTE) {
             int d = (int) degree;
             double m = (degree - d) * 60;
-            DecimalFormat df = new DecimalFormat("00.000", decimalSymbols);
+            DecimalFormat df = new DecimalFormat("00.0000", decimalSymbols);
             return "" + d + Constants.degreeChar + " " + df.format(m) + "'";
         } else if (Constants.degreeFormat == Constants.DegreeFormat.DECIMALMINSEC) {
             int d = (int) degree;
             double m = (degree - d) * 60;
             double s = (m - Math.floor(m)) * 60;
             DecimalFormat dfmin = new DecimalFormat("00", decimalSymbols);
-            DecimalFormat df = new DecimalFormat("00.00", decimalSymbols);
+            DecimalFormat df = new DecimalFormat("00.000", decimalSymbols);
 
             return "" + d + Constants.degreeChar + " " + dfmin.format(m) + "' " + df.format(s) + "\"";
         } else {
@@ -271,11 +301,11 @@ public class RocketInfo {
     public static void calcLatLonPixels(RocketInfo p, int width, int height) {
 
         //TODO: remove before flight
-//       p.latPixels = ((int) (((p.lat - 0.5 - Constants.upperLeftCornerLat) / (Constants.lowerRightCornerLat - Constants.upperLeftCornerLat)) * height));
-//         p.lonPixels = ((int) ((p.lon + 3.0 - Constants.upperLeftCornerLon) / (Constants.lowerRightCornerLon - Constants.upperLeftCornerLon) * width));
+       p.latPixels = ((int) (((p.lat - 0.5 - Constants.upperLeftCornerLat) / (Constants.lowerRightCornerLat - Constants.upperLeftCornerLat)) * height));
+       p.lonPixels = ((int) ((p.lon + 3.0 - Constants.upperLeftCornerLon) / (Constants.lowerRightCornerLon - Constants.upperLeftCornerLon) * width));
 //
-        p.latPixels = ((int) (((p.lat - Constants.upperLeftCornerLat) / (Constants.lowerRightCornerLat - Constants.upperLeftCornerLat)) * height));
-        p.lonPixels = ((int) ((p.lon - Constants.upperLeftCornerLon) / (Constants.lowerRightCornerLon - Constants.upperLeftCornerLon) * width));
+//        p.latPixels = ((int) (((p.lat - Constants.upperLeftCornerLat) / (Constants.lowerRightCornerLat - Constants.upperLeftCornerLat)) * height));
+//        p.lonPixels = ((int) ((p.lon - Constants.upperLeftCornerLon) / (Constants.lowerRightCornerLon - Constants.upperLeftCornerLon) * width));
 
     }
 

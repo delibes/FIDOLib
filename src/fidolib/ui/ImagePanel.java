@@ -35,7 +35,6 @@ import javax.swing.JPanel;
 public class ImagePanel extends JPanel {
 
     private double m_zoom = 1.0;
-   
     private Image m_image;
     /**
      * Reference to the AIS data
@@ -114,10 +113,10 @@ public class ImagePanel extends JPanel {
         this.aAISData = aAISData;
     }
 
-    public void loadImage(String imageStr)
-    {
+    public void loadImage(String imageStr) {
         m_image = createImageIcon(imageStr).getImage();
     }
+
     /** Returns an ImageIcon, or null if the path was invalid. */
     protected static ImageIcon createImageIcon(String path) {
 
@@ -130,6 +129,7 @@ public class ImagePanel extends JPanel {
             return null;
         }
     }
+
     /** 
      * This method is overriden to draw the image 
      * and scale the graphics accordingly 
@@ -149,7 +149,7 @@ public class ImagePanel extends JPanel {
         // Remove obsolete vessels
         aAISData.removeObsoleteVesselInfo();
         if (Constants.showESD139 == true) {
-           paintESD139(g);
+            paintESD139(g);
         }
 
         paintVessels(g);
@@ -203,7 +203,7 @@ public class ImagePanel extends JPanel {
             int xDist = Math.abs(p1a.x - p2a.x);
             int yDist = Math.abs(p1a.y - p2a.y);
             int largestDist = (int) Math.sqrt(xDist * xDist + yDist * yDist);
-            g.drawOval(p1a.x - (largestDist ) + this.getVisibleRect().x, p1a.y - (largestDist ) + this.getVisibleRect().y, largestDist * 2, largestDist * 2);
+            g.drawOval(p1a.x - (largestDist) + this.getVisibleRect().x, p1a.y - (largestDist) + this.getVisibleRect().y, largestDist * 2, largestDist * 2);
 
             RocketInfo pos1 = new RocketInfo();
             RocketInfo pos2 = new RocketInfo();
@@ -216,19 +216,19 @@ public class ImagePanel extends JPanel {
 
             double disanceNauticalMiles = RocketInfo.disanceNauticalMiles(pos1, pos2);
             double distanceMeters = disanceNauticalMiles * Constants.nauticalMile;
-            int initialBearing = RocketInfo.initialBearing(pos1, pos2);
+            int initialBearing = RocketInfo.initialBearingImg(pos1, pos2);
             String distStr = "";
             DecimalFormatSymbols decimalSymbols = new DecimalFormatSymbols(new Locale("da", "DK"));
             decimalSymbols.setDecimalSeparator('.');
             decimalSymbols.setGroupingSeparator(',');
             DecimalFormat df = new DecimalFormat("0.0", decimalSymbols);
-            distStr = " " + df.format(disanceNauticalMiles) + " Nm  (" + df.format(distanceMeters/1000) + " km)  "    
+            distStr = " " + df.format(disanceNauticalMiles) + " Nm  (" + df.format(distanceMeters / 1000) + " km)  "
                     + initialBearing + Constants.degreeChar + " ";
             Font font = new Font("New Courier", Font.BOLD, (Constants.knotsLabelSize));
             g.setFont(font);
             int widthStr = g.getFontMetrics().stringWidth(distStr);
             g.setColor(Constants.blueish.darker());
-            g.fill3DRect(p2a.x + this.getVisibleRect().x - (widthStr / 2), p2a.y + this.getVisibleRect().y - ((int)(Constants.knotsLabelSize * 2.4)), widthStr + 10, (int) (Constants.knotsLabelSize * 2), true);
+            g.fill3DRect(p2a.x + this.getVisibleRect().x - (widthStr / 2), p2a.y + this.getVisibleRect().y - ((int) (Constants.knotsLabelSize * 2.4)), widthStr + 10, (int) (Constants.knotsLabelSize * 2), true);
             g.setColor(Constants.textColor);
             g.drawString(distStr, p2a.x + this.getVisibleRect().x - (widthStr / 2) + Constants.knotsLabelSize / 2, p2a.y + this.getVisibleRect().y - Constants.knotsLabelSize);
 
@@ -244,7 +244,7 @@ public class ImagePanel extends JPanel {
                 Font font = new Font("New Courier", Font.BOLD, Constants.knotsLabelSize);
                 g.setFont(font);
                 g.setColor(Constants.mousePositionColor);
-                
+
                 int xPos = this.getVisibleRect().x + Constants.knotsLabelSize + 25;
                 int yPos = this.getVisibleRect().y + Constants.knotsLabelSize + 30;
 
@@ -258,8 +258,8 @@ public class ImagePanel extends JPanel {
                 g.fill3DRect(xPos - Constants.knotsLabelSize, yPos - (int) (((double) Constants.knotsLabelSize) * 1.5), width, height, true);
 
 
-               
-            
+
+
                 g.setColor(Constants.textColor);
                 g.drawString(Constants.latStr, xPos, yPos);
                 g.drawString(Constants.lonStr, xPos, yPos + ySpace);
@@ -267,7 +267,7 @@ public class ImagePanel extends JPanel {
                 g.drawString("" + latDegree, xPos + xSpace, yPos);
                 g.drawString("" + lonDegree, xPos + xSpace, yPos + ySpace);
                 g.drawString("" + aAISData.getAISDeltaT(), xPos + xSpace, yPos + ySpace * 2);
-                
+
 
 
             }
@@ -283,7 +283,8 @@ public class ImagePanel extends JPanel {
             if ((mouseLat != 0.0) && (mouseLon != 0.0)) {
                 Font font = new Font("New Courier", Font.BOLD, Constants.knotsLabelSize);
                 g.setFont(font);
-                g.setColor(Color.BLACK);
+                g.setColor(Constants.mousePositionColor);
+
                 String MMSI = aAISData.getMMSI(mouseX, mouseY, this.getWidth(), this.getHeight());
 
                 int xPos = this.getVisibleRect().x + Constants.knotsLabelSize + 25;
@@ -293,7 +294,7 @@ public class ImagePanel extends JPanel {
                 int ySpace = (int) (((double) Constants.knotsLabelSize) * 1.4);
 //                String latDegree = RocketInfo.formatDegrees(mouseLat);
 //                String lonDegree = RocketInfo.formatDegrees(mouseLon);
-               
+
                 int width = (int) (Constants.knotsLabelSize * 14);
                 int height = 0;
                 if (!MMSI.equals("")) // The pointer is at a vessel
@@ -328,8 +329,8 @@ public class ImagePanel extends JPanel {
             Iterator iterator = allVessels.iterator();
             // reference to sputnik (to be painted after "other" vessels
             VesselInfo sputnik = null;
-            // reference to hjortoe (to be painted after "other" vessels
-            VesselInfo hjortoe = null;
+            // reference to mc (to be painted after "other" vessels
+            VesselInfo mc = null;
             // selected vessel
             while (iterator.hasNext()) {
                 VesselInfo aVesselInfo = (VesselInfo) iterator.next();
@@ -337,7 +338,7 @@ public class ImagePanel extends JPanel {
                     if (aVesselInfo.MMSI.equals(aAISData.sputnikMMSI)) {
                         sputnik = aVesselInfo;
                     } else if (aVesselInfo.MMSI.equals(aAISData.mcMMSI)) {
-                        hjortoe = aVesselInfo;
+                        mc = aVesselInfo;
                     } else {
                         paintSingleVessel(g, aVesselInfo, Constants.otherVesselsColor);
                     }
@@ -345,8 +346,8 @@ public class ImagePanel extends JPanel {
             }
 
 
-            if (hjortoe != null) {
-                paintSingleVessel(g, hjortoe, Constants.hjortoeColor);
+            if (mc != null) {
+                paintSingleVessel(g, mc, Constants.mcColor);
             }
             if (sputnik != null) {
                 paintSingleVessel(g, sputnik, Constants.sputnikColor);
@@ -450,10 +451,49 @@ public class ImagePanel extends JPanel {
 
     }
 
+    public void paintRocketArrow(Graphics g, RocketInfo aRocketInfo, Color vesselColor) {
+    }
+
     public void paintRocket(Graphics g) {
 
-        RocketInfo.calcLatLonPixels(FlightData.getInstance().getPosition(), this.getWidth(), this.getHeight());
         g.setColor(Constants.smaragdColor);
+
+        RocketInfo aRocketInfo = FlightData.getInstance().getPosition();
+        if (aRocketInfo == null) {
+            return;
+        }
+        RocketInfo.calcLatLonPixels(aRocketInfo, this.getWidth(), this.getHeight());
+        int ovalWidth = 140;
+        int ovalHeight = 100;
+        int offSetY = 0;
+
+        if (aRocketInfo.horizontalVelocity > 1) {
+            double direction = aRocketInfo.COG;
+
+
+            double arrowSpike = (direction + deltaDegree) * Math.PI / 180;
+            double arrowRight = (((direction + deltaDegree) + 270) % 360) * Math.PI / 180;
+            double arrowLeft = (((direction + deltaDegree) + 90) % 360) * Math.PI / 180;
+            double arrowBack = (((direction + deltaDegree) + 180) % 360) * Math.PI / 180;
+
+            xPoints[0] = (int) (Math.cos(arrowSpike) * ovalWidth / 2.3) + aRocketInfo.lonPixels;
+            yPoints[0] = (int) (Math.sin(arrowSpike) * ovalHeight / 2.3) + aRocketInfo.latPixels + offSetY;
+
+
+            xPoints[1] = (int) (Math.cos(arrowRight) * ovalWidth / arrayWidthFraction) + aRocketInfo.lonPixels;
+            yPoints[1] = (int) (Math.sin(arrowRight) * ovalHeight / arrayWidthFraction) + aRocketInfo.latPixels + offSetY;
+
+            xPoints[2] = (int) (Math.cos(arrowBack) * ovalWidth / 6) + aRocketInfo.lonPixels;
+            yPoints[2] = (int) (Math.sin(arrowBack) * ovalHeight / 6) + aRocketInfo.latPixels + offSetY;
+
+
+            xPoints[3] = (int) (Math.cos(arrowLeft) * ovalWidth / arrayWidthFraction) + aRocketInfo.lonPixels;
+            yPoints[3] = (int) (Math.sin(arrowLeft) * ovalHeight / arrayWidthFraction) + aRocketInfo.latPixels + offSetY;
+
+
+            g.fillPolygon(xPoints, yPoints, nPolygon);
+        }
+
         g.fillOval(FlightData.getInstance().getPosition().lonPixels - (smaragdIconSize / 2), FlightData.getInstance().getPosition().latPixels - (smaragdIconSize / 2), smaragdIconSize, smaragdIconSize);
 
     }

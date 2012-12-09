@@ -128,16 +128,19 @@ public class AltitudePanel extends ColorPanel {
                     
                 }
         List positions = aFlightData.positions;
-        if (positions != null && positions.size() > 2) {
-            for (int i = 0; i < positions.size() - 1; i++) {
+        RocketInfo liftOffPosition = aFlightData.liftOffPosition;
+        if (positions != null && liftOffPosition != null && positions.size() > 2) {
+            for (int i = 0; i < positions.size() - 2; i++) {
                 RocketInfo p1 = (RocketInfo) positions.get(i);
                 RocketInfo p2 = (RocketInfo) positions.get(i + 1);
-                double xDist = RocketInfo.disanceNauticalMiles((RocketInfo) positions.get(0), p1)
+                double xDist = RocketInfo.disanceNauticalMiles(liftOffPosition, p1)
                         * Constants.nauticalMile;
                 
 
-                int x1 = (int) (xDist / 1000.0 * xTicksPixels + xAxesBorder);
-                int x2 = (int) (RocketInfo.disanceNauticalMiles((RocketInfo) positions.get(0), p2)
+              //  System.out.println(xDist);
+                int x1 = (int) (RocketInfo.disanceNauticalMiles(liftOffPosition, p1)
+                        * Constants.nauticalMile / 1000.0 * xTicksPixels + xAxesBorder);
+                int x2 = (int) (RocketInfo.disanceNauticalMiles(liftOffPosition, p2)
                         * Constants.nauticalMile / 1000.0 * xTicksPixels + xAxesBorder);
 
                 int y1 = height - yAxesBorder - (int) (p1.GPSAltitude * yTicksPixels / 1000.0);

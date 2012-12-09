@@ -128,6 +128,7 @@ public class FlightData implements DataParser, GetPosition {
             case 1:
                 AAUVoltage = (double) (packet[1] & 0xff) / 10.0;
                 rocketPosition.GPSTime = AuxiliaryFunctions.byteArrayToINT32(packet, 2);
+                rocketPosition.onBoardTimeStamp=rocketPosition.GPSTime;
                 double lat = AuxiliaryFunctions.byteArrayToDouble(packet, 6);
                 double lon = AuxiliaryFunctions.byteArrayToDouble(packet, 10);
                 if (lat != 0.0) {
@@ -145,13 +146,13 @@ public class FlightData implements DataParser, GetPosition {
                 rocketPosition.GPSAltitude = AuxiliaryFunctions.byteArrayToINT16(packet, 14);
                 rocketPosition.GPSFix = (packet[16] & 0xff);
 
-                if (positions.size() > 0) {
+                if (positions.size() > 1) {
                     RocketInfo previousPos = (RocketInfo) positions.get(positions.size() - 1);
                     if (previousPos != null) {
                         if ((rocketPosition.lat != previousPos.lat)
                                 || (rocketPosition.lon != previousPos.lon)
                                 || (rocketPosition.GPSAltitude != previousPos.GPSAltitude)
-                                || (rocketPosition.onBoardTimeStamp != previousPos.onBoardTimeStamp)) // Different position
+                               ) // Different position
                         {
                             rocketPosition.COG = RocketInfo.initialBearing(previousPos, rocketPosition);
 
@@ -162,9 +163,24 @@ public class FlightData implements DataParser, GetPosition {
                                 rocketPosition.verticalVelocity = (rocketPosition.GPSAltitude - previousPos.GPSAltitude) / deltaT;
                                 rocketPosition.horizontalVelocity = (RocketInfo.disanceNauticalMiles(rocketPosition, previousPos) * Constants.nauticalMile) / deltaT;
                                 rocketPosition.velocity = Math.sqrt(Math.pow(rocketPosition.verticalVelocity, 2) + Math.pow(rocketPosition.horizontalVelocity, 2));
-                                if (rocketPosition.verticalVelocity <= 0.0) {
-                                    rocketPosition.ETA = (int) (rocketPosition.GPSAltitude / (rocketPosition.verticalVelocity * -1));
+                                double avgVSpeed = 0;
+                                int count =0;
+                                for (int i = positions.size()-1; (i >=0) && (i> positions.size()-10);i--)
+                                {
+                                    avgVSpeed += ((RocketInfo)positions.get(i)).verticalVelocity;
+                                    count++;
                                 }
+                                if (count > 0)
+                                {
+                                    avgVSpeed = avgVSpeed / count;
+                                }
+                                if (avgVSpeed < 0.0) {
+                                    rocketPosition.ETA = (int) (rocketPosition.GPSAltitude / (avgVSpeed* -1));
+                                }
+                                else {
+                                rocketPosition.ETA = 0;    
+                                }
+                                
 
                             }
                             RocketInfo p = new RocketInfo(rocketPosition);
@@ -280,9 +296,9 @@ public class FlightData implements DataParser, GetPosition {
     public String getMCBearing() {
         VesselInfo mc = AISData.getInstance().getVessel(AISData.getInstance().mcMMSI);
         if (mc != null) {
-            int brg = RocketInfo.initialBearing(rocketPosition, mc.pos);
+            int brg = RocketInfo.initialBearing( mc.pos,rocketPosition);
             if (brg >= 0) {
-                return "" + brg;
+                return "" + brg + Constants.degreeChar;
             }
         }
 

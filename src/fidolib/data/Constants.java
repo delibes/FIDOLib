@@ -28,8 +28,8 @@ public class Constants {
     public static Color ESD139Color = Color.BLACK;
     public static Color mousePositionColor = blueish.darker();
     public static Color sputnikColor = Color.RED;
-    public static Color hjortoeColor = Color.DARK_GRAY;
-    public static Color smaragdColor = blueish.darker();
+    public static Color mcColor = Color.DARK_GRAY;
+    public static Color smaragdColor = Color.GREEN;
     public static Color otherVesselsColor = Color.YELLOW;
     public static Color otherVesselsNoMovementColor = Color.WHITE;
     public static Color baseStationColor = Color.BLUE;
