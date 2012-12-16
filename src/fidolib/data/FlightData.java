@@ -5,6 +5,7 @@
 package fidolib.data;
 
 import fidolib.com.DataParser;
+import fidolib.log.DataLog;
 import fidolib.misc.AuxiliaryFunctions;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -62,10 +63,41 @@ public class FlightData implements DataParser, GetPosition {
     public double AAUVoltage = 0.0;
 
     /**
+     * Indices in the packet received from the AAU
+     */
+    public enum PacketIndices {
+
+        packetTypeIndex(0),
+        voltageIndex(1),
+        MCUGPSTimeIndex(2),
+        latitudeAsLongIndex(6),
+        longitudeAsLongIndex(10),
+        altitudeIndex(14),
+        GPSFixIndex(16),
+        gyroXIndex(17),
+        gyroYIndex(21),
+        gyroZIndex(25),
+        accXIndex(29),
+        accYIndex(33),
+        accZIndex(37),
+        packetNumberIndex(41),
+        CSIndex(45),
+        packetLength(49);
+        private final int index;
+
+        PacketIndices(int index) {
+            this.index = index;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+    }
+
+    /**
      * Constructor
      */
     public FlightData() {
-        
     }
 
     /**
@@ -79,6 +111,7 @@ public class FlightData implements DataParser, GetPosition {
         return aFlightData;
 
     }
+
     /**
      * Parse the data packets
      * @return -1 = error,  1 = new and valid data
@@ -90,16 +123,22 @@ public class FlightData implements DataParser, GetPosition {
             noBadPackets++;
             return -1;
         }
+      //  System.out.println(PacketIndices.CSIndex.getIndex());
+      //  System.out.println(PacketIndices.GPSFixIndex.getIndex());
         int packetType = packetType(packet);
+
+       // System.out.println(">" + packetType);
         if (Constants.useCheckSum == true) {
-            boolean checkSumValid = AuxiliaryFunctions.getInstance().checkSum(packet);
+            boolean checkSumValid = AuxiliaryFunctions.getInstance().checkSum(packet,PacketIndices.CSIndex.getIndex());
             if (checkSumValid == false) {
+     //   System.out.println(checkSumValid);
                 noBadPackets++;
                 return -1;
             }
             noGoodPackets++;
         }
 
+       // System.out.println(packetType);
         switch (packetType) {
             case 1:
                 Calendar calender = Calendar.getInstance();
@@ -123,14 +162,15 @@ public class FlightData implements DataParser, GetPosition {
         }
 
 
+        int packetNumber;
+        
         switch (packetType) {
 
             case 1:
-                AAUVoltage = (double) (packet[1] & 0xff) / 10.0;
-                rocketPosition.GPSTime = AuxiliaryFunctions.byteArrayToINT32(packet, 2);
-                rocketPosition.onBoardTimeStamp=rocketPosition.GPSTime;
-                double lat = AuxiliaryFunctions.byteArrayToDouble(packet, 6);
-                double lon = AuxiliaryFunctions.byteArrayToDouble(packet, 10);
+                AAUVoltage = (double) (packet[PacketIndices.voltageIndex.getIndex()] & 0xff) / 10.0;
+                rocketPosition.MCUGPSFixTime = AuxiliaryFunctions.byteArrayToINT32(packet, PacketIndices.MCUGPSTimeIndex.getIndex());
+                double lat = AuxiliaryFunctions.byteArrayToDouble(packet, PacketIndices.latitudeAsLongIndex.getIndex());
+                double lon = AuxiliaryFunctions.byteArrayToDouble(packet, PacketIndices.longitudeAsLongIndex.getIndex());
                 if (lat != 0.0) {
                     rocketPosition.lat = lat / Constants.latLonConvertionFactor;
                     rocketPosition.latitudeGood = true;
@@ -143,44 +183,42 @@ public class FlightData implements DataParser, GetPosition {
                 } else {
                     rocketPosition.longitudeGood = false;
                 }
-                rocketPosition.GPSAltitude = AuxiliaryFunctions.byteArrayToINT16(packet, 14);
-                rocketPosition.GPSFix = (packet[16] & 0xff);
-
+                rocketPosition.GPSAltitude = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.altitudeIndex.getIndex());
+                rocketPosition.GPSFix = (packet[PacketIndices.GPSFixIndex.getIndex()] & 0xff);
+               packetNumber = AuxiliaryFunctions.byteArrayToINT32(packet, PacketIndices.packetNumberIndex.getIndex());
                 if (positions.size() > 1) {
                     RocketInfo previousPos = (RocketInfo) positions.get(positions.size() - 1);
                     if (previousPos != null) {
                         if ((rocketPosition.lat != previousPos.lat)
                                 || (rocketPosition.lon != previousPos.lon)
-                                || (rocketPosition.GPSAltitude != previousPos.GPSAltitude)
-                               ) // Different position
+                                || (rocketPosition.GPSAltitude != previousPos.GPSAltitude)) // Different position
                         {
                             rocketPosition.COG = RocketInfo.initialBearing(previousPos, rocketPosition);
 
                             rocketPosition.downRange = RocketInfo.disanceNauticalMiles(rocketPosition, liftOffPosition) * Constants.nauticalMile;
 
-                            double deltaT = (rocketPosition.onBoardTimeStamp - previousPos.onBoardTimeStamp) / 1000.0;
+                            // System.out.println(rocketPosition.MCUGPSFixTime + " " + previousPos.MCUGPSFixTime);
+                            double deltaT = (rocketPosition.MCUGPSFixTime - previousPos.MCUGPSFixTime) / 1000.0;
                             if (deltaT != 0) {
                                 rocketPosition.verticalVelocity = (rocketPosition.GPSAltitude - previousPos.GPSAltitude) / deltaT;
+                                //System.out.println("v v " +  rocketPosition.GPSAltitude + " " +  previousPos.GPSAltitude + " " +deltaT);
                                 rocketPosition.horizontalVelocity = (RocketInfo.disanceNauticalMiles(rocketPosition, previousPos) * Constants.nauticalMile) / deltaT;
                                 rocketPosition.velocity = Math.sqrt(Math.pow(rocketPosition.verticalVelocity, 2) + Math.pow(rocketPosition.horizontalVelocity, 2));
                                 double avgVSpeed = 0;
-                                int count =0;
-                                for (int i = positions.size()-1; (i >=0) && (i> positions.size()-10);i--)
-                                {
-                                    avgVSpeed += ((RocketInfo)positions.get(i)).verticalVelocity;
+                                int count = 0;
+                                for (int i = positions.size() - 1; (i >= 0) && (i > positions.size() - 10); i--) {
+                                    avgVSpeed += ((RocketInfo) positions.get(i)).verticalVelocity;
                                     count++;
                                 }
-                                if (count > 0)
-                                {
+                                if (count > 0) {
                                     avgVSpeed = avgVSpeed / count;
                                 }
-                                if (avgVSpeed < 0.0) {
-                                    rocketPosition.ETA = (int) (rocketPosition.GPSAltitude / (avgVSpeed* -1));
+                                if (avgVSpeed <= -1.0) {
+                                    rocketPosition.ETA = (int) (rocketPosition.GPSAltitude / (avgVSpeed * -1));
+                                } else {
+                                    rocketPosition.ETA = 0;
                                 }
-                                else {
-                                rocketPosition.ETA = 0;    
-                                }
-                                
+
 
                             }
                             RocketInfo p = new RocketInfo(rocketPosition);
@@ -188,7 +226,7 @@ public class FlightData implements DataParser, GetPosition {
                             if ((rocketPosition.flying == true) || (rocketPosition.GPSAltitude > 200) && (this.liftOffPosition == null)) {
                                 liftOffPosition = new RocketInfo(rocketPosition);
                             }
-                            if (positions.size() > 7200) // Approximately 2 hours of GPS positions
+                            if (positions.size() > 3600) // Approximately 2 hours of GPS positions
                             {
                                 positions.remove(0);
                             }
@@ -200,6 +238,7 @@ public class FlightData implements DataParser, GetPosition {
                     RocketInfo p = new RocketInfo(rocketPosition);
                     positions.add(p);
                 }
+                DataLog.getInstance().logData(rocketPosition, AAUVoltage, packetNumber, noGoodPackets, noBadPackets);
         }
     }
 
@@ -251,12 +290,12 @@ public class FlightData implements DataParser, GetPosition {
     }
 
     public String getGPSTime() {
-        if (rocketPosition.GPSTime == 0) {
+        if (rocketPosition.MCUGPSFixTime == 0) {
             return Constants.naString;
         } else {
-            String hoursStr = String.format("%02d", (rocketPosition.GPSTime / 3600));
-            String minutesStr = String.format("%02d", (rocketPosition.GPSTime / 60 % 60));
-            String secondsStr = String.format("%02d", (rocketPosition.GPSTime % 60));
+            String hoursStr = String.format("%02d", (rocketPosition.MCUGPSFixTime / 3600));
+            String minutesStr = String.format("%02d", (rocketPosition.MCUGPSFixTime / 60 % 60));
+            String secondsStr = String.format("%02d", (rocketPosition.MCUGPSFixTime % 60));
             return hoursStr + ":" + minutesStr + ":" + secondsStr;
 
         }
@@ -296,7 +335,7 @@ public class FlightData implements DataParser, GetPosition {
     public String getMCBearing() {
         VesselInfo mc = AISData.getInstance().getVessel(AISData.getInstance().mcMMSI);
         if (mc != null) {
-            int brg = RocketInfo.initialBearing( mc.pos,rocketPosition);
+            int brg = RocketInfo.initialBearing(mc.pos, rocketPosition);
             if (brg >= 0) {
                 return "" + brg + Constants.degreeChar;
             }
@@ -306,7 +345,27 @@ public class FlightData implements DataParser, GetPosition {
 
     }
 
-    public String gettAAUVoltage() {
-        return "" + AAUVoltage;
+    public String getAAUVoltage() {
+        if (lastValidDataTimeStamp > 0) {
+            return "" + AAUVoltage;
+        } else {
+            return Constants.naString;
+        }
+    }
+
+    public String getFlying() {
+        if (lastValidDataTimeStamp > 0) {
+            if (rocketPosition.flying == true) {
+                return "Yes";
+            } else {
+                return "No";
+            }
+        } else {
+            return Constants.naString;
+        }
+    }
+    public int getPacketLength()
+    {
+        return PacketIndices.packetLength.getIndex(); 
     }
 }

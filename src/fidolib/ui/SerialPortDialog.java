@@ -59,6 +59,7 @@ public class SerialPortDialog extends javax.swing.JDialog {
                 }*/
             }
         } catch (Exception e) {
+            
         }
 
     }
@@ -238,8 +239,8 @@ public class SerialPortDialog extends javax.swing.JDialog {
 		int baudRate = Integer.parseInt((String) baudRateComboBox.getSelectedItem());             
 		int dataBits = Integer.parseInt((String) dataBitsComboBox.getSelectedItem());             
 		int stopBits = Integer.parseInt((String) stopBitComboBox.getSelectedItem());             
-		int parity = Integer.parseInt((String) parityComboBox.getSelectedItem());              
-		aCOMPort.connect(portName, baudRate, dataBits, stopBits, parity);             
+		int parity = Integer.parseInt((String) parityComboBox.getSelectedItem());
+                aCOMPort.connect(portName, baudRate, dataBits, stopBits, parity);             
 		this.openButton.setEnabled(false);             
 		this.closeButton.setEnabled(true);             
 		this.dispose();          

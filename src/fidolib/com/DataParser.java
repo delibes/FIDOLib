@@ -21,5 +21,4 @@ public interface DataParser {
     public int parseData(byte[] packet);
     
     
-    
 }

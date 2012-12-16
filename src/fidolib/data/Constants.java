@@ -212,10 +212,6 @@ public class Constants {
      */
     public static double latLonConvertionFactor = 1000000.0;
     /**
-     * Serial port packet length
-     */
-    public static int packetLength = 21;
-    /**
      * Begin sim after this period (in 1/10 sec)
      */
     public static double sinceLastData = 20;

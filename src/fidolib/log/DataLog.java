@@ -8,15 +8,13 @@ package fidolib.log;
  *
  * @author Steen Andersen
  */
-import fidolib.data.FlightData;
+import fidolib.data.Constants;
+import fidolib.data.RocketInfo;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,22 +32,12 @@ public class DataLog {
      * Buffered writer
      */
     private BufferedWriter output = null;
-    /**
-     * Decimal symbols
-     */
-    private DecimalFormatSymbols decimalSymbols = new DecimalFormatSymbols(new Locale("da", "DK"));
-    /**
-     * Formatting  
-     */
-    private DecimalFormat df = new DecimalFormat("", decimalSymbols);
-
+   
     /**
      * Constructor
      */
     public DataLog() {
-        decimalSymbols.setDecimalSeparator(',');
-        decimalSymbols.setGroupingSeparator('.');
-
+   
 
     }
 
@@ -82,8 +70,10 @@ public class DataLog {
             fstream = new FileWriter(logFileName);
             output = new BufferedWriter(fstream);
 
-            String header = "Time; Packet Type; Latitude; Longitude; GPS Altitude; Barometer Altitude;Real Altitude Time;";
-            header += "Good Packets; Bad Packets";
+            String header = "Time (GMT+1);Time ms;Packet #;Flying;GPS Fix;Latitude " + Constants.northSouth +";Longitude " +Constants.eastWest +";GPS Altitude (m);";
+            header += "AAU GPS Fix Time;Velocity (m/s);Vertical velocity (m/s);Horizontal velocity (m/s);";
+            header += "COG;ETA (s);Down range (m);Voltage (v);";
+            header += "Good Packets;Bad Packets";
             synchronized (output) {
                 output.write(header + "\n");
             }
@@ -113,13 +103,14 @@ public class DataLog {
         }
     }
 
+    
     /**
      * Save a log entry
      * @param packetType the packet type triggering the log entry
      * 0..30 are packet types, and -1 is used when it's the timer
      * triggering the log entry.
      */
-    public boolean logData(int packetType) {
+    public boolean logData(RocketInfo aRocketInfo, double voltage, int packetNumber, int goodPackages, int badPackages) {
 
         try {
             if ((output != null)) {
@@ -127,13 +118,24 @@ public class DataLog {
                 String DATE_FORMAT = "HH:mm:ss";
                 SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
                 Calendar c1 = Calendar.getInstance();
-                String line = sdf.format(c1.getTime()) + ":" + (c1.getTimeInMillis() % 1000) + ";"
-                        + packetType + ";"
-                        + df.format(FlightData.getInstance().rocketPosition.lat) + ";"
-                        + df.format(FlightData.getInstance().rocketPosition.lon) + ";"
-                        + FlightData.getInstance().rocketPosition.GPSAltitude + ";"
-                        + FlightData.getInstance().noGoodPackets + ";"
-                        + FlightData.getInstance().noBadPackets + ";"
+                String line = sdf.format(c1.getTime()) + ";"
+                        + c1.getTimeInMillis() + ";"
+                        + packetNumber + ";"
+                        + aRocketInfo.flying + ";"
+                        + aRocketInfo.GPSFix + ";"
+                        + aRocketInfo.lat + ";"
+                        + aRocketInfo.lon + ";"
+                        + aRocketInfo.GPSAltitude + ";"
+                        + aRocketInfo.MCUGPSFixTime + ";"
+                        + aRocketInfo.velocity + ";"
+                        + aRocketInfo.verticalVelocity + ";"
+                        + aRocketInfo.horizontalVelocity + ";"
+                        + aRocketInfo.COG + ";"
+                        + aRocketInfo.ETA + ";"
+                        + aRocketInfo.downRange + ";"
+                        + voltage + ";"
+                        + goodPackages + ";"
+                        + badPackages + ";"
                         + "\n";
 
                 synchronized (output) {

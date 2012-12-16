@@ -57,7 +57,15 @@ public class AISDataPanel extends ColorPanel {
      */
     private Timer timer = new Timer();
 
-    /** Creates new form AISDataPanel */
+    /** Creates new form AISDataPanel
+     * @param useGradientColors 
+     * @param aAISData
+     * @param textColor 
+     * @param gradientColorStart
+     * @param gradientColorStop 
+     * @param backgroundColor
+     * @param aFlightData  
+     */
     public AISDataPanel(boolean useGradientColors, Color textColor, Color backgroundColor, Color gradientColorStart,Color gradientColorStop,AISData aAISData, FlightData aFlightData) {
          this.useGradientColors = useGradientColors;
         this.textColor = textColor;
@@ -79,10 +87,7 @@ public class AISDataPanel extends ColorPanel {
     public void paint(Graphics g) {
         int width = this.getWidth();
         int height = this.getHeight();
-        int smallest = (int) ((double) width / 2.6);
-        if (height < smallest) {
-            smallest = height;
-        }
+        
         // Clear the background
         if (useGradientColors == true) {
             Graphics2D g2 = (Graphics2D) g;
@@ -92,27 +97,29 @@ public class AISDataPanel extends ColorPanel {
         } else {
             g.setColor(backgroundColor);
         }
-
         g.fillRect(0, 0, width, height);
-        // Set text color and font size
-        g.setColor(Constants.textColor);
-        int sLength = 0;
-        // Larger font for count down clock
-        int fontSize = ((int) (((double) smallest / 1.7)));
-        Font font = new Font("New Courier", Font.BOLD, fontSize);
-
-        g.setFont(font);
-
-        if (Constants.paintData == true) {
-            paintData(g);
-        }
+        
+        paintData(g);
+        
 
 
     }
 
+    /**
+     * 
+     * @param g
+     */
     public void paintData(Graphics g) {
 
-        int fontSize = this.getWidth() / 25;
+        // Set text color and font size
+        g.setColor(Constants.textColor);
+        int width = this.getWidth();
+        int height = this.getHeight() / 12;
+        int smallest = (int) ((double) width / 26);
+        if (height < smallest) {
+            smallest = height;
+        }
+        int fontSize = smallest;
         int textPos = 10;
         int deltaTextPos = this.getWidth() / 4 + 20;
         Font font = new Font("New Courier", Font.BOLD, fontSize);
@@ -123,7 +130,6 @@ public class AISDataPanel extends ColorPanel {
         // Spunik
 
         fontSizeFactor = maxFontSizeFactor - 1;
-        //g.drawString("Sputnik", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Latitude ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Longitude ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("COG ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
@@ -147,6 +153,7 @@ public class AISDataPanel extends ColorPanel {
                 g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
                 g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
                 g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+               g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
                
         } else {
             if (sputnik.timeStamp != 0) {

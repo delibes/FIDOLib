@@ -7,6 +7,8 @@ package fidolib.com;
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
+import gnu.io.SerialPortEvent;
+import gnu.io.SerialPortEventListener;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,6 +37,8 @@ public class COMPort {
      * 
      */
     private DataParser aDataParser = null;
+
+    
     /**
      * Enum the port types
      */
@@ -108,7 +112,16 @@ public class COMPort {
                 if (commPort instanceof SerialPort) {
                     SerialPort serialPort = (SerialPort) commPort;
                     serialPort.setSerialPortParams(baudRate, dataBits, stopBits, parity);
-
+/*
+                    serialPort.addEventListener(this);
+                    serialPort.notifyOnOverrunError(true);
+                    serialPort.notifyOnBreakInterrupt(true);
+                    //serialPort.notifyOnDataAvailable(true);
+                    serialPort.notifyOnFramingError(true);
+                    serialPort.notifyOnOutputEmpty(true);
+                    serialPort.notifyOnParityError(true);
+                    serialPort.notifyOnRingIndicator(true);
+*/                    
                     InputStream in = serialPort.getInputStream();
   
                     if (portType == PortType.AISPORT) {

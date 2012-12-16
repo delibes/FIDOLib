@@ -46,17 +46,18 @@ public class AuxiliaryFunctions {
      * @param packet the packet
      * @return true or false
      */
-    public static boolean checkSum(byte[] packet) {
+    public static boolean checkSum(byte[] packet, int csIndex) {
         // unsigned sum af bytes 0..packet.length-4
         int sum = 0;
         if ((packet == null)) {
             return false;
         }
-        for (int i = 0; i < packet.length-4; i++) {
+        for (int i = 0; i < csIndex; i++) {
             sum = sum + (int)((packet[i] & 0xff));
             
         }
-        int checkSum = byteArrayToINT16(packet, packet.length-4);
+        int checkSum = byteArrayToINT16(packet, csIndex);
+       // System.out.println("" + sum + " " + checkSum);
         return (checkSum == sum);
     }
 

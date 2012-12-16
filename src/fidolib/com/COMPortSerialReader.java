@@ -109,22 +109,21 @@ public class COMPortSerialReader implements Runnable, COMPortSerialReaderIF {
         try {
             byte x1 = 0;
             byte x2 = 0;
+            
             while (((len = this.in.read(buffer)) > -1) && (closeConnection == false)) {
 
-                System.out.println("len " + len);
                 
                 for (int i = 0; (i < len) && (i < buffer.length); i++) {
-                System.out.println("len 1 " + len);
                     data.add(buffer[i]);
                     
                     x2 = buffer[i];
-                    if ((x1 == 0x0D) && (x2 == 0x0A) && (data.size() >= Constants.packetLength)) {
-                       byte[] dataBuffer = new byte[Constants.packetLength];
+                    if ((x1 == 0x0D) && (x2 == 0x0A) && (data.size() >= ((FlightData)aDataParser).getPacketLength())) {
+                       byte[] dataBuffer = new byte[((FlightData)aDataParser).getPacketLength()];
 
                         for (int j = 0; j < dataBuffer.length; j++) {
 
 
-                            dataBuffer[j] = data.get(data.size() - (Constants.packetLength-j));
+                            dataBuffer[j] = data.get(data.size() - (((FlightData)aDataParser).getPacketLength()-j));
                             
 
                         }
@@ -134,11 +133,11 @@ public class COMPortSerialReader implements Runnable, COMPortSerialReaderIF {
 
                     }
                     x1 = x2;
-                    System.out.println("data.size " + data.size());
+                   // System.out.println("data.size " + data.size());
                 
-                    if (data.size()> (Constants.packetLength*2))
+                    if (data.size()> (((FlightData)aDataParser).getPacketLength()*2))
                     {
-                        
+                        data.clear();
                     }
                 }
 

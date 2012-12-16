@@ -51,10 +51,6 @@ public class RocketInfo {
      */
     public double velocity = 0.0;
     /**
-     * On board time stamp
-     */
-    public double onBoardTimeStamp = 0.0;
-    /**
      * Good latitude reading?
      */
     public boolean latitudeGood = false;
@@ -81,7 +77,7 @@ public class RocketInfo {
     /**
      * GPS time stamp at MCU (milli s) 
      */
-    public int GPSTime = 0;
+    public int MCUGPSFixTime = 0;
     /**
      * Decimal symbols
      */
@@ -126,8 +122,8 @@ public class RocketInfo {
         this.longitudeGood = aPosition.longitudeGood;
         this.GPSAltitude = aPosition.GPSAltitude;
         this.COG = aPosition.COG;
-        this.onBoardTimeStamp = aPosition.onBoardTimeStamp;
         this.GPSFix = aPosition.GPSFix;
+        this.MCUGPSFixTime = aPosition.MCUGPSFixTime;
         this.downRange = aPosition.downRange;
         this.etaPosition = aPosition.etaPosition;
         this.velocity = aPosition.velocity;
@@ -313,14 +309,24 @@ public class RocketInfo {
      * Return latitude as string according to the format
      */
     public String getLat() {
-        return Constants.northSouth + " " + formatDegrees(lat);
+        String latStr = Constants.northSouth + " " + formatDegrees(lat);
+        if (latitudeGood != true) {
+
+            latStr = "(" + latStr +")";
+        }
+        return latStr;
     }
 
     /**
      * Return longitude as string according to the format
      */
     public String getLon() {
-        return Constants.northSouth + " " + formatDegrees(lon);
+        String lonStr = Constants.eastWest + " " + formatDegrees(lon);
+        if (longitudeGood != true) {
+
+            lonStr = "(" + lonStr +")";
+        }
+        return lonStr; 
     }
 
     /**
@@ -336,6 +342,54 @@ public class RocketInfo {
                 return "3D";
             default:
                 return Constants.naString;
+        }
+    }
+    public String getAltitude() {
+        if (FlightData.getInstance().lastValidDataTimeStamp > 0) {
+          return "" + GPSAltitude + " m";   
+        }
+        else {
+            return Constants.naString;
+        }
+    }
+    public String getDownrange() {
+        if (FlightData.getInstance().lastValidDataTimeStamp > 0) {
+          return "" + ((int)downRange) + " m";   
+        }
+        else {
+            return Constants.naString;
+        }
+    }
+     public String getCOG() {
+        if (FlightData.getInstance().lastValidDataTimeStamp > 0) {
+          return "" + COG + Constants.degreeChar;   
+        }
+        else {
+            return Constants.naString;
+        }
+    }
+      public String getVelocity() {
+        if (FlightData.getInstance().lastValidDataTimeStamp > 0) {
+          return "" + ((int)velocity) + " m/s";   
+        }
+        else {
+            return Constants.naString;
+        }
+    }
+       public String getHorizontalVelocity() {
+        if (FlightData.getInstance().lastValidDataTimeStamp > 0) {
+          return "" + ((int)horizontalVelocity) + " m/s";   
+        }
+        else {
+            return Constants.naString;
+        }
+    }
+       public String getVerticalVelocity() {
+        if (FlightData.getInstance().lastValidDataTimeStamp > 0) {
+          return "" + ((int)verticalVelocity) + " m/s";   
+        }
+        else {
+            return Constants.naString;
         }
     }
 }
