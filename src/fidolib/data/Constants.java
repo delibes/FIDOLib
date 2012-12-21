@@ -203,9 +203,9 @@ public class Constants {
      */
     public static int progressbarEND = -1;
     /**
-     * The g force
+     * The G force
      */
-    public static double g = 9.81;
+    public static double G = 9.81;
     /** 
      * Latitude and longitude convertion factor fom long to double
      * 

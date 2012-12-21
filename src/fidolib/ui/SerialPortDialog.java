@@ -26,7 +26,7 @@ public class SerialPortDialog extends javax.swing.JDialog {
      */
     private COMPort aCOMPort = null;
     /** Creates new form SerialPortDialog */
-    public SerialPortDialog(java.awt.Frame parent, boolean modal,COMPort aCOMPort) {
+    public SerialPortDialog(java.awt.Frame parent, boolean modal,COMPort aCOMPort) throws  java.lang.NoClassDefFoundError{
         super(parent, modal);
         this.aCOMPort = aCOMPort;
         initComponents();
@@ -43,7 +43,7 @@ public class SerialPortDialog extends javax.swing.JDialog {
         
         this.openButton.requestFocus();
         // Get available ports 
-        try {
+        
             List portList = aCOMPort.listPorts();
             if (portList != null) {
                 while (!portList.isEmpty()) {
@@ -58,9 +58,7 @@ public class SerialPortDialog extends javax.swing.JDialog {
                     this.closeButton.setEnabled(false);
                 }*/
             }
-        } catch (Exception e) {
-            
-        }
+       
 
     }
 

@@ -112,16 +112,7 @@ public class COMPort {
                 if (commPort instanceof SerialPort) {
                     SerialPort serialPort = (SerialPort) commPort;
                     serialPort.setSerialPortParams(baudRate, dataBits, stopBits, parity);
-/*
-                    serialPort.addEventListener(this);
-                    serialPort.notifyOnOverrunError(true);
-                    serialPort.notifyOnBreakInterrupt(true);
-                    //serialPort.notifyOnDataAvailable(true);
-                    serialPort.notifyOnFramingError(true);
-                    serialPort.notifyOnOutputEmpty(true);
-                    serialPort.notifyOnParityError(true);
-                    serialPort.notifyOnRingIndicator(true);
-*/                    
+    
                     InputStream in = serialPort.getInputStream();
   
                     if (portType == PortType.AISPORT) {

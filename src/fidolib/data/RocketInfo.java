@@ -79,6 +79,38 @@ public class RocketInfo {
      */
     public int MCUGPSFixTime = 0;
     /**
+     * Acc X
+     */
+    public int accX = 0;
+    /**
+     * Acc Y
+     */
+    public int accY = 0;
+    /**
+     * Acc Z
+     */
+    public int accZ = 0;
+    /**
+     * Acc time stamp
+     */
+    public int accTime = 0;
+    /**
+     * Gyro X
+     */
+    public int gyroX = 0;
+    /**
+     * Gyro Y
+     */
+    public int gyroY = 0;
+    /**
+     * Gyro Z
+     */
+    public int gyroZ = 0;
+    /**
+     * Gyro time stamp
+     */
+    public int gyroTime = 0;
+    /**
      * Decimal symbols
      */
     private static DecimalFormatSymbols decimalSymbols = new DecimalFormatSymbols(new Locale("da", "DK"));
@@ -392,4 +424,32 @@ public class RocketInfo {
             return Constants.naString;
         }
     }
+       /**
+        * Return the acceleration in m/^2
+        * @return 
+        */
+       public String getAccX()
+       {
+           DecimalFormat df = new DecimalFormat("0.0", decimalSymbols);
+
+           return "" + df.format(((double)accX / 1000)) + " G";
+       }
+       /**
+        * Return the acceleration in m/^2
+        * @return 
+        */
+       public String getAccY()
+       {
+           DecimalFormat df = new DecimalFormat("0.0", decimalSymbols);
+           return "" + df.format(((double)accY / 1000)) + " G";
+       }
+       /**
+        * Return the acceleration in m/^2
+        * @return 
+        */
+       public String getAccZ()
+       {
+           DecimalFormat df = new DecimalFormat("0.0", decimalSymbols);
+           return "" + df.format(((double)accZ / 1000 )) + " G";
+       }
 }

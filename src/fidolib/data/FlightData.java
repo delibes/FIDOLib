@@ -75,14 +75,16 @@ public class FlightData implements DataParser, GetPosition {
         altitudeIndex(14),
         GPSFixIndex(16),
         gyroXIndex(17),
-        gyroYIndex(21),
-        gyroZIndex(25),
-        accXIndex(29),
-        accYIndex(33),
-        accZIndex(37),
-        packetNumberIndex(41),
-        CSIndex(45),
-        packetLength(49);
+        gyroYIndex(19),
+        gyroZIndex(21),
+        gyroTimeStampIndex(23),
+        accXIndex(27),
+        accYIndex(29),
+        accZIndex(31),
+        accTimeStampIndex(33),
+        packetNumberIndex(37),
+        CSIndex(41),
+        packetLength(45);
         private final int index;
 
         PacketIndices(int index) {
@@ -169,6 +171,16 @@ public class FlightData implements DataParser, GetPosition {
             case 1:
                 AAUVoltage = (double) (packet[PacketIndices.voltageIndex.getIndex()] & 0xff) / 10.0;
                 rocketPosition.MCUGPSFixTime = AuxiliaryFunctions.byteArrayToINT32(packet, PacketIndices.MCUGPSTimeIndex.getIndex());
+                rocketPosition.gyroX = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.gyroXIndex.getIndex());
+                rocketPosition.gyroY = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.gyroYIndex.getIndex());
+                rocketPosition.gyroZ = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.gyroZIndex.getIndex());
+                rocketPosition.gyroTime = AuxiliaryFunctions.byteArrayToINT32(packet, PacketIndices.gyroTimeStampIndex.getIndex());
+                
+                rocketPosition.accX = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.accXIndex.getIndex());
+                rocketPosition.accY = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.accYIndex.getIndex());
+                rocketPosition.accZ = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.accZIndex.getIndex());
+                rocketPosition.accTime  = AuxiliaryFunctions.byteArrayToINT32(packet, PacketIndices.accTimeStampIndex.getIndex());
+
                 double lat = AuxiliaryFunctions.byteArrayToDouble(packet, PacketIndices.latitudeAsLongIndex.getIndex());
                 double lon = AuxiliaryFunctions.byteArrayToDouble(packet, PacketIndices.longitudeAsLongIndex.getIndex());
                 if (lat != 0.0) {
