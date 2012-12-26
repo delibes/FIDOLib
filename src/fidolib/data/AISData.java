@@ -39,25 +39,31 @@ public class AISData implements DataParser {
      * Self reference
      */
     private static AISData aAISData = null;
+    
     /**
      * Collection of all vessels received by AIS
      */
-    public LinkedList<VesselInfo> allVessels = new LinkedList<VesselInfo>();
+    public final LinkedList<VesselInfo> allVessels = new LinkedList<VesselInfo>();
     /**
      * Time stamp of last AIS message
      */
     public long AISTimeStamp = 0;
 
     /**
+     * AIS log
+     */
+    private AISLog aAISLog;
+    /**
      * Constructor
      */
-    public AISData() {
+    public AISData(AISLog aAISLog) {
+       this.aAISLog = aAISLog;
     }
 
     /**
      * Get instance
      */
-    public static AISData getInstance() {
+/*    public static AISData getInstance() {
 
         if (aAISData == null) {
             aAISData = new AISData();
@@ -65,18 +71,18 @@ public class AISData implements DataParser {
         return aAISData;
 
     }
-
+*/
     /**
      * Parse AIS data receives the data and parses the AIS string
      */
     @Override
-    public void parseData(String data) {
+    public synchronized void parseData(String data) {
         Nmea nmea_message = new Nmea();
         nmea_message.init(data);
 
         if (nmea_message.checkChecksum() != 0) {
             data = data.substring(0, data.length() - 2); // remove trailing CR and LF
-            AISLog.getInstance().logData(data + Constants.AISColumnSeparator + " => Checksum is BAD" + "\n");
+            aAISLog.logData(data + Constants.AISColumnSeparator + " => Checksum is BAD" + "\n");
             return;
 
         }
@@ -124,11 +130,11 @@ public class AISData implements DataParser {
 
             }
 
-            AISLog.getInstance().logData(data);
+            aAISLog.logData(data);
 
         } catch (Exception e) {
             data = data.substring(0, data.length() - 2); // remove trailing CR and LF
-            AISLog.getInstance().logData(data + Constants.AISColumnSeparator + "Exception parsing AIS data. " + e.getMessage() + "\n");
+            aAISLog.logData(data + Constants.AISColumnSeparator + "Exception parsing AIS data. " + e.getMessage() + "\n");
         }
 
 
@@ -137,7 +143,7 @@ public class AISData implements DataParser {
     /**
      * Parse AIS data receives the data and parses the AIS string
      */
-    public void parseMessage(Messages msg) {
+    public synchronized void parseMessage(Messages msg) {
         if (msg == null) {
             return;
         }
@@ -236,7 +242,7 @@ public class AISData implements DataParser {
 
     }
 
-    public void updateVesselCallSign(String MMSI, Messages msg) {
+    public synchronized void updateVesselCallSign(String MMSI, Messages msg) {
         synchronized (allVessels) {
             Iterator iterator = allVessels.iterator();
             while (iterator.hasNext()) {
@@ -281,7 +287,7 @@ public class AISData implements DataParser {
 
     }
 
-    public void updateVessels(VesselInfo aVesselInfoArg) {
+    public synchronized void updateVessels(VesselInfo aVesselInfoArg) {
         synchronized (allVessels) {
             Iterator iterator = allVessels.iterator();
             while (iterator.hasNext()) {
@@ -312,7 +318,7 @@ public class AISData implements DataParser {
 
     }
 
-    public void printAllVessels() {
+    public synchronized void printAllVessels() {
         synchronized (allVessels) {
             Iterator iterator = allVessels.iterator();
             while (iterator.hasNext()) {
@@ -323,7 +329,7 @@ public class AISData implements DataParser {
 
     }
 
-    public VesselInfo getVessel(String MMSI) {
+    public synchronized VesselInfo getVessel(String MMSI) {
         synchronized (allVessels) {
 
             Iterator iterator = allVessels.iterator();
@@ -342,14 +348,14 @@ public class AISData implements DataParser {
 
     }
 
-    public LinkedList<VesselInfo> getAllVessels() {
+    public synchronized LinkedList<VesselInfo> getAllVessels() {
         return allVessels;
     }
 
     /**
      * Remove vessel which havent been update in Constants.removeVesselMinutes
      */
-    public void removeObsoleteVesselInfo() {
+    public synchronized void removeObsoleteVesselInfo() {
         Calendar c1 = Calendar.getInstance();
         synchronized (allVessels) {
 
@@ -370,7 +376,7 @@ public class AISData implements DataParser {
     /**
      * Get the nearest ship MMSI according to x,y pos of mouse
      */
-    public String getMMSI(int x, int y, int width, int height) {
+    public synchronized String getMMSI(int x, int y, int width, int height) {
         String MMSI = "";
         double minDist = Double.MAX_VALUE;
         synchronized (allVessels) {
@@ -394,8 +400,7 @@ public class AISData implements DataParser {
         return MMSI;
     }
 
-    public void setSelected(String MMSI) {
-        Calendar c1 = Calendar.getInstance();
+    public synchronized void setSelected(String MMSI) {
         synchronized (allVessels) {
             Iterator iterator = allVessels.iterator();
             while (iterator.hasNext()) {
@@ -413,7 +418,7 @@ public class AISData implements DataParser {
         }
     }
 
-    public String getAISDeltaT() {
+    public synchronized String getAISDeltaT() {
         if (AISTimeStamp != 0) {
             Calendar calender = Calendar.getInstance();
             long now = calender.getTime().getTime();
@@ -430,7 +435,7 @@ public class AISData implements DataParser {
     }
 
     @Override
-    public int parseData(byte[] packet) {
+    public synchronized int parseData(byte[] packet) {
       return -1; 
     }
 

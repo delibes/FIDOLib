@@ -1,7 +1,5 @@
 package fidolib.aisparser;
 
-import fidolib.aisparser.Itdma;
-
 /**
  * AIS Parser SDK
  * AIS Message 9 Class
@@ -57,7 +55,9 @@ public class Message9 extends Messages {
 		throws SixbitsExhaustedException, AISMessageException
 	{
 		if (six_state.bit_length() != 168)
-			throw new AISMessageException("Message 9 wrong length");
+                {
+                    throw new AISMessageException("Message 9 wrong length");
+                }
 		
 		super.parse( 9, six_state );
         

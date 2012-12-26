@@ -28,10 +28,9 @@ import java.util.Locale;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
-/** 
- * This class is the Image Panel where the image 
- * is drawn and scaled. 
- *  
+/**
+ * This class is the Image Panel where the image is drawn and scaled.
+ *
  * @author Steen
  */
 public class ImagePanel extends JPanel {
@@ -40,9 +39,14 @@ public class ImagePanel extends JPanel {
     private Image m_image;
     /**
      * Reference to the AIS data
-     * 
+     *
      */
     private AISData aAISData = null;
+    /**
+     * The flight data
+     */
+    private FlightData aFlightData;
+    
     /**
      * Delta degrees between rad and degree
      */
@@ -96,30 +100,33 @@ public class ImagePanel extends JPanel {
      */
     private boolean isMouseOver = false;
     /**
-     * Distance line start 
+     * Distance line start
      */
     private Point p1;
     /**
-     * Distance line end 
+     * Distance line end
      */
     private Point p2;
 
-    /** 
-     * Constructor 
-     *  
-     * @param image 
-     * @param zoomPercentage 
+    /**
+     * Constructor
+     *
+     * @param image
+     * @param zoomPercentage
      */
-    public ImagePanel(AISData aAISData, String imageStr) {
+    public ImagePanel(AISData aAISData, FlightData aFlightData,String imageStr) {
         m_image = createImageIcon(imageStr).getImage();
         this.aAISData = aAISData;
+        this.aFlightData = aFlightData;
     }
 
     public void loadImage(String imageStr) {
         m_image = createImageIcon(imageStr).getImage();
     }
 
-    /** Returns an ImageIcon, or null if the path was invalid. */
+    /**
+     * Returns an ImageIcon, or null if the path was invalid.
+     */
     protected static ImageIcon createImageIcon(String path) {
 
         java.net.URL imgURL = ImagePanel.class.getResource(path);
@@ -132,22 +139,27 @@ public class ImagePanel extends JPanel {
         }
     }
 
-    /** 
-     * This method is overriden to draw the image 
-     * and scale the graphics accordingly 
+    /**
+     * This method is overriden to draw the image and scale the graphics
+     * accordingly
      */
     @Override
     public void paintComponent(Graphics g) {
 
-        Graphics2D g2D = (Graphics2D) g;
+        Graphics2D g2;
+        if (g instanceof Graphics2D) {
+            g2 = (Graphics2D) g;
+        } else {
+            return;
+        }
 
         //set the background color to white 
-        g2D.setColor(Color.WHITE);
+        g2.setColor(Color.WHITE);
         //fill the rect 
-        g2D.fillRect(0, 0, getWidth(), getHeight());
+        g2.fillRect(0, 0, getWidth(), getHeight());
 
         //draw the image 
-        g2D.drawImage(m_image, 0, 0, this);
+        g2.drawImage(m_image, 0, 0, this);
         // Remove obsolete vessels
         aAISData.removeObsoleteVesselInfo();
         if (Constants.showESD139 == true) {
@@ -167,9 +179,13 @@ public class ImagePanel extends JPanel {
 
     public void paintESD139(Graphics g) {
         g.setColor(Constants.ESD139Color);
-        Graphics2D g2D = (Graphics2D) g;
-
-        g2D.setStroke(new BasicStroke(4F));  // set stroke width of 10
+        Graphics2D g2;
+        if (g instanceof Graphics2D) {
+            g2 = (Graphics2D) g;
+        } else {
+            return;
+        }
+        g2.setStroke(new BasicStroke(4F));  // set stroke width of 10
 
 
         AuxiliaryFunctions.calcLatLonPixels(Constants.E139NorthWest, this.getWidth(), this.getHeight());
@@ -197,7 +213,12 @@ public class ImagePanel extends JPanel {
 
         if (p1a != null && p2a != null) {
             g.setColor(Constants.backGroundColor);
-            Graphics2D g2 = (Graphics2D) g;
+            Graphics2D g2;
+            if (g instanceof Graphics2D) {
+                g2 = (Graphics2D) g;
+            } else {
+                return;
+            }
 
             g2.setStroke(new BasicStroke(3));
             g.drawLine(p1a.x + this.getVisibleRect().x, p1a.y + this.getVisibleRect().y,
@@ -219,12 +240,11 @@ public class ImagePanel extends JPanel {
             double disanceNauticalMiles = AuxiliaryFunctions.disanceNauticalMiles(pos1, pos2);
             double distanceMeters = disanceNauticalMiles * Constants.nauticalMile;
             int initialBearing = AuxiliaryFunctions.initialBearingImg(pos1, pos2);
-            String distStr = "";
             DecimalFormatSymbols decimalSymbols = new DecimalFormatSymbols(new Locale("da", "DK"));
             decimalSymbols.setDecimalSeparator('.');
             decimalSymbols.setGroupingSeparator(',');
             DecimalFormat df = new DecimalFormat("0.0", decimalSymbols);
-            distStr = " " + df.format(disanceNauticalMiles) + " Nm  (" + df.format(distanceMeters / 1000) + " km)  "
+            String distStr = " " + df.format(disanceNauticalMiles) + " Nm  (" + df.format(distanceMeters / 1000) + " km)  "
                     + initialBearing + Constants.degreeChar + " ";
             Font font = new Font("New Courier", Font.BOLD, (Constants.knotsLabelSize));
             g.setFont(font);
@@ -255,8 +275,7 @@ public class ImagePanel extends JPanel {
                 String latDegree = Constants.northSouth + " " + AuxiliaryFunctions.getInstance().formatDegrees(mouseLat);
                 String lonDegree = Constants.eastWest + " " + AuxiliaryFunctions.getInstance().formatDegrees(mouseLon);
                 int width = (int) (Constants.knotsLabelSize * 14);
-                int height = 0;
-                height = (int) (ySpace * 3.5);
+                int height = (int) (ySpace * 3.5);
                 g.fill3DRect(xPos - Constants.knotsLabelSize, yPos - (int) (((double) Constants.knotsLabelSize) * 1.5), width, height, true);
 
 
@@ -298,10 +317,9 @@ public class ImagePanel extends JPanel {
 //                String lonDegree = RocketInfo.formatDegrees(mouseLon);
 
                 int width = (int) (Constants.knotsLabelSize * 14);
-                int height = 0;
                 if (!MMSI.equals("")) // The pointer is at a vessel
                 {
-                    height = ySpace * (aAISData.getVessel(MMSI).getVesselInfo().length + 1) - 8;
+                    int height = ySpace * (aAISData.getVessel(MMSI).getVesselInfo().length + 1) - 8;
                     g.fill3DRect(xPos - Constants.knotsLabelSize, yPos - (int) (((double) Constants.knotsLabelSize) * 1.5), width, height, true);
                 }
 
@@ -385,8 +403,12 @@ public class ImagePanel extends JPanel {
 
             if (vessel.isSelected == true) {
                 g.setColor(Color.DARK_GRAY);
-                Graphics2D g2 = (Graphics2D) g;
-
+                Graphics2D g2;
+                if (g instanceof Graphics2D) {
+                    g2 = (Graphics2D) g;
+                } else {
+                    return;
+                }
                 g2.setStroke(new BasicStroke(4));
                 g.fillOval(vessel.pos.lonPixels - (otherVesselsIconSize / 2), vessel.pos.latPixels - (otherVesselsIconSize / 2), otherVesselsIconSize, otherVesselsIconSize);
 
@@ -434,7 +456,12 @@ public class ImagePanel extends JPanel {
         g.fillPolygon(xPoints, yPoints, nPolygon);
         if (vessel.isSelected == true) {
             g.setColor(Color.DARK_GRAY);
-            Graphics2D g2 = (Graphics2D) g;
+            Graphics2D g2;
+            if (g instanceof Graphics2D) {
+                g2 = (Graphics2D) g;
+            } else {
+                return;
+            }
 
             g2.setStroke(new BasicStroke(4));
             g.drawPolygon(xPoints, yPoints, nPolygon);
@@ -460,7 +487,7 @@ public class ImagePanel extends JPanel {
 
         g.setColor(Constants.smaragdColor);
 
-        RocketInfo aRocketInfo = FlightData.getInstance().getPosition();
+        RocketInfo aRocketInfo = aFlightData.getPosition();
         if (aRocketInfo == null) {
             return;
         }
@@ -496,16 +523,16 @@ public class ImagePanel extends JPanel {
             g.fillPolygon(xPoints, yPoints, nPolygon);
         }
 
-        g.fillOval(FlightData.getInstance().getPosition().lonPixels - (smaragdIconSize / 2), FlightData.getInstance().getPosition().latPixels - (smaragdIconSize / 2), smaragdIconSize, smaragdIconSize);
+        g.fillOval(aFlightData.getPosition().lonPixels - (smaragdIconSize / 2), aFlightData.getPosition().latPixels - (smaragdIconSize / 2), smaragdIconSize, smaragdIconSize);
 
     }
 
-    /** 
-     * This method is overriden to return the preferred size 
-     * which will be the width and height of the image plus 
-     * the zoomed width width and height.  
-     * while zooming out the zoomed width and height is negative 
+    /**
+     * This method is overriden to return the preferred size which will be the
+     * width and height of the image plus the zoomed width width and height.
+     * while zooming out the zoomed width and height is negative
      */
+    @Override
     public Dimension getPreferredSize() {
         return new Dimension((int) (m_image.getWidth(this)
                 + (m_image.getWidth(this) * (m_zoom - 1))),

@@ -46,6 +46,7 @@ public class CountDownTimer {
     public void startTimer() {
         timer.scheduleAtFixedRate(new TimerTask() {
 
+            @Override
             public void run() {
                 long now = (new Date()).getTime() / Constants.countDownTimerDelta_T;
                 if ((now - lastTimerClick) >=  1)

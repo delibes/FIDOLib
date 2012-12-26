@@ -29,7 +29,9 @@ public class Sotdma {
 	throws SixbitsExhaustedException, AISMessageException
 	{
 		if (six_state.bit_length() < 19)
-			throw new AISMessageException("SOTDMA wrong length");
+                {
+                    throw new AISMessageException("SOTDMA wrong length");
+                }
 	
         this.sync_state   = (char)  six_state.get( 2  );
         this.slot_timeout = (char)  six_state.get( 3  );

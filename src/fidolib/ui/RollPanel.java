@@ -10,17 +10,15 @@
  */
 package fidolib.ui;
 
+import fidolib.data.Constants;
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Point;
-import java.awt.geom.Ellipse2D;
 import java.util.Date;
-import fidolib.data.Constants;
 
 /**
  *
@@ -166,7 +164,16 @@ public class RollPanel extends javax.swing.JPanel  {
      * @param g
      */
     public void paintCompass(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g;
+        Graphics2D g2;
+        if (g instanceof Graphics2D)
+        {
+            g2 = (Graphics2D) g;
+        }
+        else 
+        {
+            return;
+        }
+        
         g2.setStroke(new BasicStroke(lineThickness));
 
         int width = this.getWidth();
@@ -183,8 +190,7 @@ public class RollPanel extends javax.swing.JPanel  {
         int ovalHeight = height - circleBorderHeight * 2;
 
         int circleDistance = 1;
-        // GradientPaint gradientpaint = new GradientPaint(new Point(), new Color(130, 130, 255), new Point(), new Color(130, 255, 255));
-        GradientPaint gp = new GradientPaint(width / 2, circleBorderHeight, Constants.rollGradientStartColor, width / 2, height - circleBorderHeight, Constants.rollGradientStopColor, true);
+        GradientPaint gp = new GradientPaint((float)(width / 2.0), circleBorderHeight, Constants.rollGradientStartColor, (float)(width / 2.0), height - circleBorderHeight, Constants.rollGradientStopColor, true);
         Paint p = g2.getPaint();
         g2.setPaint(gp);
         // g2.setColor(Constants.rollMeterColor);
@@ -204,11 +210,10 @@ public class RollPanel extends javax.swing.JPanel  {
             g2.drawString("" + rollDegree + degreeChar + rollAngleStr, width / 2, stringBorderY - 5);
         }
         String ravS = "" + Math.abs(((int) (rollAngleVelocity))) + degreeChar + "/s" + rollAngleVelocityStr;
-        int sLength = g2.getFontMetrics().stringWidth(ravS);
         g2.drawString(ravS, stringBorderX, height - stringBorderY + 6);
 
         String ravHz = "" + Math.abs(((int) (rollAngleVelocity * 10 / 360)) / 10.0) + " Hz" + rollAngleVelocityStr;
-        sLength = g2.getFontMetrics().stringWidth(ravHz);
+        int sLength = g2.getFontMetrics().stringWidth(ravHz);
         g2.drawString(ravHz, width - sLength - stringBorderX, height - stringBorderY + 6);
 
         int iStart = 0;
@@ -244,7 +249,7 @@ public class RollPanel extends javax.swing.JPanel  {
             } else if (i % (5) == 0)// draw small ticks
             {
                 double rad = i * Math.PI / 180;
-                g2.setStroke(new BasicStroke(lineThickness / 2));
+                g2.setStroke(new BasicStroke(((float)(lineThickness / 2.0))));
                 lineStartPoint.x = (int) (Math.cos(rad) * ovalWidth / 2.2) + origon.x;
                 lineStartPoint.y = (int) (Math.sin(rad) * ovalHeight / 2.2) + origon.y;
                 lineEndPoint.x = (int) (Math.cos(rad) * ovalWidth / 2.1) + origon.x;

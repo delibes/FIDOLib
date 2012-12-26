@@ -30,7 +30,9 @@ public class Message10 extends Messages {
 		throws SixbitsExhaustedException, AISMessageException
 	{
 		if (six_state.bit_length() != 72)
-			throw new AISMessageException("Message 10 wrong length");
+                {
+                    throw new AISMessageException("Message 10 wrong length");
+                }
 		
 		super.parse( 10, six_state );
         

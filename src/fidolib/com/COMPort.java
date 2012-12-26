@@ -7,8 +7,6 @@ package fidolib.com;
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
-import gnu.io.SerialPortEvent;
-import gnu.io.SerialPortEventListener;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,10 +17,7 @@ import java.util.List;
  */
 public class COMPort {
     
-    /**
-     * Self reference
-     */
-    private static COMPort aCOMPort = null;
+    
     /**
      * COM Port reader
      */
@@ -30,7 +25,7 @@ public class COMPort {
     /**
      * The COMM Port
      */
-    private static CommPort commPort = null;
+    private CommPort commPort = null;
 
     /**
      * Reference to the data
@@ -64,7 +59,7 @@ public class COMPort {
      * Return available ports
      * @return 
      */
-    public static List listPorts() {
+    public List listPorts() {
         List list = new LinkedList();
         java.util.Enumeration<CommPortIdentifier> portEnum = CommPortIdentifier.getPortIdentifiers();
         while (portEnum.hasMoreElements()) {
@@ -130,7 +125,7 @@ public class COMPort {
             }
 
         } catch (gnu.io.NoSuchPortException nspe) {
-            throw new Exception("Error: no such port: " + portName);
+            throw new Exception("Error: no such port: " + portName + "\nException: " + nspe.getMessage());
         }
 
 

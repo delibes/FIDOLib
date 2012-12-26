@@ -15,6 +15,11 @@ import java.util.Locale;
  */
 public class RocketInfo extends Position {
 
+    /** 
+     * Time stamp of last data package
+     */
+    public long lastValidDataTimeStamp = 0;
+    
     /**
      * Course over ground
      */
@@ -87,10 +92,8 @@ public class RocketInfo extends Position {
      * Decimal symbols
      */
     private static DecimalFormatSymbols decimalSymbols = new DecimalFormatSymbols(new Locale("da", "DK"));
-    /**
-     * Formatting  
-     */
-    private DecimalFormat df = new DecimalFormat("", decimalSymbols);
+
+    
     private RocketInfo etaPosition = null;
 
     /**
@@ -105,12 +108,13 @@ public class RocketInfo extends Position {
     /**
      * Constructor
      */
-    public RocketInfo(double lat, double lon, int GPSAltitude) {
+    public RocketInfo(double lat, double lon, int GPSAltitude, long lastValidDataTimeStamp) {
         decimalSymbols.setDecimalSeparator('.');
         decimalSymbols.setGroupingSeparator(',');
         this.lat = lat;
         this.lon = lon;
         this.GPSAltitude = GPSAltitude;
+        this.lastValidDataTimeStamp = lastValidDataTimeStamp;
 
 
     }
@@ -135,6 +139,7 @@ public class RocketInfo extends Position {
         this.horizontalVelocity = aRocketInfo.horizontalVelocity;
         this.verticalVelocity = aRocketInfo.verticalVelocity;
         this.flying = aRocketInfo.flying;
+        this.lastValidDataTimeStamp = aRocketInfo.lastValidDataTimeStamp;
 
     }
     /**
@@ -177,7 +182,7 @@ public class RocketInfo extends Position {
         }
     }
     public String getAltitude() {
-        if (FlightData.getInstance().lastValidDataTimeStamp > 0) {
+        if (lastValidDataTimeStamp > 0) {
           return "" + GPSAltitude + " m";   
         }
         else {
@@ -185,7 +190,7 @@ public class RocketInfo extends Position {
         }
     }
     public String getDownrange() {
-        if (FlightData.getInstance().lastValidDataTimeStamp > 0) {
+        if (lastValidDataTimeStamp > 0) {
           return "" + ((int)downRange) + " m";   
         }
         else {
@@ -193,7 +198,7 @@ public class RocketInfo extends Position {
         }
     }
      public String getCOG() {
-        if (FlightData.getInstance().lastValidDataTimeStamp > 0) {
+        if (lastValidDataTimeStamp > 0) {
           return "" + COG + Constants.degreeChar;   
         }
         else {
@@ -201,7 +206,7 @@ public class RocketInfo extends Position {
         }
     }
       public String getVelocity() {
-        if (FlightData.getInstance().lastValidDataTimeStamp > 0) {
+        if (lastValidDataTimeStamp > 0) {
           return "" + ((int)velocity) + " m/s";   
         }
         else {
@@ -209,7 +214,7 @@ public class RocketInfo extends Position {
         }
     }
        public String getHorizontalVelocity() {
-        if (FlightData.getInstance().lastValidDataTimeStamp > 0) {
+        if (lastValidDataTimeStamp > 0) {
           return "" + ((int)horizontalVelocity) + " m/s";   
         }
         else {
@@ -217,7 +222,7 @@ public class RocketInfo extends Position {
         }
     }
        public String getVerticalVelocity() {
-        if (FlightData.getInstance().lastValidDataTimeStamp > 0) {
+        if (lastValidDataTimeStamp > 0) {
           return "" + ((int)verticalVelocity) + " m/s";   
         }
         else {

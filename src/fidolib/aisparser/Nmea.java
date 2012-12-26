@@ -75,7 +75,9 @@ public class Nmea {
 		for (char x : msgArray)
 		{
 			if ((x == '!') || (x == '$'))
-				return i;
+                        {
+                            return i;
+                        }
 			i++;
 		}
 		throw new StartNotFoundException("NMEA Start Not Found");
@@ -105,10 +107,14 @@ public class Nmea {
 	    for ( char c : msgArray )
 	    {
 	    	if ( (c == '!') || (c == '$'))
-	    		throw new IllegalNMEACharacterException("Start Character Found before Checksum");
+                {
+                    throw new IllegalNMEACharacterException("Start Character Found before Checksum");
+                }
 	    	
 	    	if (c == '*')
-	    		break;
+                {
+                    break;
+                }
 	    	
 		    this.checksum ^= c;
 	    }
@@ -141,7 +147,9 @@ public class Nmea {
 		
 		ptr = msg.indexOf('*');
 		if (ptr < 0)
-			return 2;
+                {
+                    return 2;
+                }
 		
 		try {
 			msgChecksum = msg.substring(ptr+1, ptr+3);
@@ -150,7 +158,9 @@ public class Nmea {
 		}
 		try {
                     if ( Integer.parseInt(msgChecksum,16) != this.checksum )
-			return 1;
+                    {
+                        return 1;
+                    }
                 }
                 catch (java.lang.NumberFormatException e)
                 {

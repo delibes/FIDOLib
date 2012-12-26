@@ -16,11 +16,6 @@ import java.util.Calendar;
  * @author Steen
  */
 public class AISLog {
-
-    /**
-     * Self reference
-     */
-    private static AISLog logRef = null;
     /**
      * Log file
      */
@@ -33,34 +28,31 @@ public class AISLog {
     /**
      * Get instance
      */
-    public static AISLog getInstance() {
+  /*  public static AISLog getInstance() {
 
-        if (logRef == null) {
-            logRef = new AISLog();
+        if (aAISLog == null) {
+            aAISLog = new AISLog();
         }
-        return logRef;
+        return aAISLog;
 
     }
-
+    */ 
     /**
      * Open the log file
+     *
      * @param fileName
      */
-    public boolean openLog(Calendar aCalendar) {
+    public synchronized boolean openLog(Calendar aCalendar) {
         try {
-
-
             String DATE_FORMAT = "yyyyMMdd HHmmss";
             SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-            String logFileName = "AIS log " + sdf.format(aCalendar.getTime()) + ".csv";
+            String logFileName = "log AIS " + sdf.format(aCalendar.getTime()) + ".csv";
 
             // Create file
             fstream = new FileWriter(logFileName);
             output = new BufferedWriter(fstream);
             String header = "Time" + Constants.AISColumnSeparator + "AIS msg" + Constants.AISColumnSeparator + "Parser msg" + "\n";
-            synchronized (output) {
-                output.write(header);
-            }
+            output.write(header);
             return true;
         } catch (IOException e) {
             System.out.println("Exception: " + e.getMessage());
@@ -72,7 +64,7 @@ public class AISLog {
     /**
      * Save a log entry
      */
-    public boolean logData(String AISString) {
+    public synchronized boolean logData(String AISString) {
 
         try {
             if ((output != null)) {
@@ -82,18 +74,12 @@ public class AISLog {
                 Calendar c1 = Calendar.getInstance();
                 String line = sdf.format(c1.getTime()) + ":" + (c1.getTimeInMillis() % 1000) + Constants.AISColumnSeparator
                         + AISString;
-
-                synchronized (output) {
-                    output.write(line);
-
-
-                }
-
+                output.write(line);
             }
             return true;
 
         } catch (IOException e) {
-
+            System.out.println("Exception: " + e.getMessage());
             return false;
         }
     }
@@ -101,14 +87,15 @@ public class AISLog {
     /**
      * Close the log
      */
-    public void closeLog() {
+    public synchronized void closeLog() {
 
-        try {
-            synchronized (output) {
+        if (output != null) {
+            try {
                 output.close();
+            } catch (IOException e) {
+                System.out.println("Exception: " + e.getMessage());
             }
-
-        } catch (IOException e) {
         }
+
     }
 }

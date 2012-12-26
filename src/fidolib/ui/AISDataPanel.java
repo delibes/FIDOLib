@@ -20,7 +20,6 @@ import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Paint;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Calendar;
@@ -36,12 +35,12 @@ public class AISDataPanel extends ColorPanel {
 
     /**
      * Reference to the flight data
-     * 
+     *
      */
     private FlightData aFlightData = null;
     /**
      * Reference to the AIS data
-     * 
+     *
      */
     private AISData aAISData = null;
     /**
@@ -55,19 +54,21 @@ public class AISDataPanel extends ColorPanel {
     /**
      * The timer it self
      */
-    private Timer timer = new Timer();
+    private transient Timer timer = new Timer();
 
-    /** Creates new form AISDataPanel
-     * @param useGradientColors 
+    /**
+     * Creates new form AISDataPanel
+     *
+     * @param useGradientColors
      * @param aAISData
-     * @param textColor 
+     * @param textColor
      * @param gradientColorStart
-     * @param gradientColorStop 
+     * @param gradientColorStop
      * @param backgroundColor
-     * @param aFlightData  
+     * @param aFlightData
      */
-    public AISDataPanel(boolean useGradientColors, Color textColor, Color backgroundColor, Color gradientColorStart,Color gradientColorStop,AISData aAISData, FlightData aFlightData) {
-         this.useGradientColors = useGradientColors;
+    public AISDataPanel(boolean useGradientColors, Color textColor, Color backgroundColor, Color gradientColorStart, Color gradientColorStop, AISData aAISData, FlightData aFlightData) {
+        this.useGradientColors = useGradientColors;
         this.textColor = textColor;
         this.backgroundColor = backgroundColor;
         this.gradientColorStart = gradientColorStart;
@@ -76,7 +77,7 @@ public class AISDataPanel extends ColorPanel {
         this.aFlightData = aFlightData;
         initComponents();
         timer.scheduleAtFixedRate(new TimerTask() {
-
+            @Override
             public void run() {
                 repaint();
             }
@@ -87,26 +88,30 @@ public class AISDataPanel extends ColorPanel {
     public void paint(Graphics g) {
         int width = this.getWidth();
         int height = this.getHeight();
-        
+
         // Clear the background
         if (useGradientColors == true) {
-            Graphics2D g2 = (Graphics2D) g;
+            Graphics2D g2;
+            if (g instanceof Graphics2D) {
+                g2 = (Graphics2D) g;
+            } else {
+                return;
+            }
             GradientPaint gp = new GradientPaint(0, 0, gradientColorStart, 0, height, gradientColorStop, true);
-            Paint p = g2.getPaint();
             g2.setPaint(gp);
         } else {
             g.setColor(backgroundColor);
         }
         g.fillRect(0, 0, width, height);
-        
+
         paintData(g);
-        
+
 
 
     }
 
     /**
-     * 
+     *
      * @param g
      */
     public void paintData(Graphics g) {
@@ -125,11 +130,10 @@ public class AISDataPanel extends ColorPanel {
         Font font = new Font("New Courier", Font.BOLD, fontSize);
         g.setFont(font);
         int maxFontSizeFactor = 9;
-        int fontSizeFactor = maxFontSizeFactor;
-        
+        int fontSizeFactor = maxFontSizeFactor - 1;
+
         // Spunik
 
-        fontSizeFactor = maxFontSizeFactor - 1;
         g.drawString("Latitude ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Longitude ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("COG ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
@@ -141,20 +145,20 @@ public class AISDataPanel extends ColorPanel {
 
         textPos += deltaTextPos;
         Calendar c1 = Calendar.getInstance();
-        String deltaTSputnikData = "";
+        String deltaTSputnikData;
         VesselInfo sputnik = aAISData.getVessel(aAISData.sputnikMMSI);
-        fontSizeFactor = maxFontSizeFactor ;
+        fontSizeFactor = maxFontSizeFactor;
         if (sputnik == null) {
             deltaTSputnikData = Constants.naString;
             g.drawString("Sputnik " + deltaTSputnikData, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-             g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-               g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-               
+            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+
         } else {
             if (sputnik.timeStamp != 0) {
 
@@ -173,29 +177,26 @@ public class AISDataPanel extends ColorPanel {
                 g.drawString("" + sputnik.cog + Constants.degreeChar, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
                 g.drawString("" + sputnik.getSOG(true), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
                 g.drawString(sputnik.getTH(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-               
-            }
-            else {
-                
+
+            } else {
             }
             if ((aAISData.getVessel(aAISData.mcMMSI) != null) && ((aAISData.getVessel(aAISData.sputnikMMSI) != null))) {
                 double disanceNauticalMiles = AuxiliaryFunctions.disanceNauticalMiles(aAISData.getVessel(aAISData.mcMMSI).pos, aAISData.getVessel(aAISData.sputnikMMSI).pos);
                 double distanceMeters = disanceNauticalMiles * Constants.nauticalMile;
 
-                String distStr = "";
                 DecimalFormatSymbols decimalSymbols = new DecimalFormatSymbols(new Locale("da", "DK"));
                 decimalSymbols.setDecimalSeparator('.');
                 decimalSymbols.setGroupingSeparator(',');
                 DecimalFormat df = new DecimalFormat("0.0", decimalSymbols);
-                distStr = "" + df.format(disanceNauticalMiles) + " / " + df.format(distanceMeters / 1000);
+                String distStr = "" + df.format(disanceNauticalMiles) + " / " + df.format(distanceMeters / 1000);
 
                 g.drawString(distStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                String brgStr = "" + AuxiliaryFunctions.initialBearing(aAISData.getVessel(aAISData.mcMMSI).pos, aAISData.getVessel(aAISData.sputnikMMSI).pos)+Constants.degreeChar;
+                String brgStr = "" + AuxiliaryFunctions.initialBearing(aAISData.getVessel(aAISData.mcMMSI).pos, aAISData.getVessel(aAISData.sputnikMMSI).pos) + Constants.degreeChar;
                 g.drawString(brgStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
             } else {
-                  g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                  g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
             }
         }
 
@@ -203,19 +204,19 @@ public class AISDataPanel extends ColorPanel {
         textPos += deltaTextPos + 20;
         fontSizeFactor = maxFontSizeFactor;
         //textPos += deltaTextPos / 2;
-       
-        String deltaTMCData = "";
+
+        String deltaTMCData;
         VesselInfo mc = aAISData.getVessel(aAISData.mcMMSI);
-        
+
         if (mc == null) {
             deltaTMCData = Constants.naString;
             g.drawString("MC " + deltaTMCData, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
             g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-               // g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            // g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         } else {
             if (mc.timeStamp != 0) {
 
@@ -227,29 +228,27 @@ public class AISDataPanel extends ColorPanel {
                 deltaTMCData = Constants.naString;
             }
             g.drawString("MC " + deltaTMCData, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-            if (mc.timeStamp != 0) 
-            {
+            if (mc.timeStamp != 0) {
                 g.drawString(mc.pos.getLat(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
                 g.drawString(mc.pos.getLon(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
                 g.drawString("" + mc.cog + Constants.degreeChar, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
                 g.drawString("" + mc.getSOG(true), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
                 g.drawString(mc.getTH(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-            }
-            else {
+            } else {
                 g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
                 g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
                 g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
                 g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
                 g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-               // g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                // g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
             }
         }
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

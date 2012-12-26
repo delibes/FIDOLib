@@ -113,7 +113,9 @@ public class Vdm {
 		nmea_message.init(str);
 		
 		if (nmea_message.checkChecksum() != 0)
-			throw new ChecksumFailedException();
+                {
+                    throw new ChecksumFailedException();
+                }
 		ptr = nmea_message.find_start();
 
 		// Allow any sender type for VDM and VDO messages
@@ -126,7 +128,9 @@ public class Vdm {
 
 		fields = str.split(",|\\*");
 		if (fields.length != 8)
-			throw new VDMSentenceException("Does not have 8 fields");
+                {
+                    throw new VDMSentenceException("Does not have 8 fields");
+                }
 		
 		// Get the message info for multipart messages
 		try {

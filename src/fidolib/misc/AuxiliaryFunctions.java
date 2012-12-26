@@ -4,16 +4,15 @@
  */
 package fidolib.misc;
 
-import fidolib.data.Position;
 import fidolib.data.Constants;
 import fidolib.data.CountDownData;
+import fidolib.data.Position;
 import fidolib.data.RocketInfo;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
 /**
@@ -25,16 +24,11 @@ public class AuxiliaryFunctions {
     /**
      * Self reference
      */
-    private static AuxiliaryFunctions aAuxiliaryFunctions = null;
+    private static volatile AuxiliaryFunctions aAuxiliaryFunctions = null;
     /**
      * Decimal symbols
      */
     private static DecimalFormatSymbols decimalSymbols = new DecimalFormatSymbols(new Locale("da", "DK"));
-    /**
-     * Formatting  
-     */
-    private DecimalFormat df = new DecimalFormat("", decimalSymbols);
-
     /**
      * Enum for selecting little/big endian
      */
@@ -95,7 +89,7 @@ public class AuxiliaryFunctions {
      * @return The int
      */
     public static int byteArrayToUINT16(byte[] packet, int offset, Endian endian) {
-        int value = 0;
+        int value;
         if (endian == Endian.LITTLE) {
             value = packet[offset] & 0x000000FF;
             value += (packet[offset + 1] & 0x000000FF) << 8;
@@ -118,7 +112,7 @@ public class AuxiliaryFunctions {
      * @return The int
      */
     public static int byteArrayToINT16(byte[] packet, int offset, Endian endian) {
-        int value = 0;
+        int value;
         if (endian == Endian.LITTLE) {
             value = packet[offset] & 0x000000FF;
             value += (packet[offset + 1] & 0x000000FF) << 8;
@@ -148,7 +142,7 @@ public class AuxiliaryFunctions {
      * @return The double
      */
     public static double byteArrayToDouble(byte[] packet, int offset, Endian endian) {
-        int value = 0;
+        int value;
         if (endian == Endian.LITTLE) {
             value = packet[offset] & 0x000000FF;
             value += (packet[offset + 1] & 0x000000FF) << 8;
@@ -175,7 +169,7 @@ public class AuxiliaryFunctions {
      * @return The INT32
      */
     public static int byteArrayToINT32(byte[] packet, int offset, Endian endian) {
-        int value = 0;
+        int value;
         if (endian == Endian.LITTLE) {
             value = packet[offset] & 0x000000FF;
             value += (packet[offset + 1] & 0x000000FF) << 8;
@@ -214,9 +208,7 @@ public class AuxiliaryFunctions {
      * @return the count down clock as string
      */
     public static String long2StringTime(long countDownTime) {
-        String time = "";
-
-
+        String time;
         if (countDownTime > 0) {
             time = "T-";
         } else {
@@ -265,7 +257,7 @@ public class AuxiliaryFunctions {
         if ((p1 == null) || (p2 == null)) {
             return 0.0;
         }
-        if ((p1.lat == 0.0) || (p1.lon == 0.0) || (p2.lat == 0.0) || (p2.lat == 0.0)) {
+        if ((p1.lat == 0.0) || (p1.lon == 0.0) || (p2.lat == 0.0) || (p2.lon == 0.0)) {
             return 0.0;
         }
         // Use radians
@@ -286,7 +278,7 @@ public class AuxiliaryFunctions {
         if ((p1 == null) || (p2 == null)) {
             return -1;
         }
-        if ((p1.lat == 0.0) || (p1.lon == 0.0) || (p2.lat == 0.0) || (p2.lat == 0.0)) {
+        if ((p1.lat == 0.0) || (p1.lon == 0.0) || (p2.lat == 0.0) || (p2.lon == 0.0)) {
             return -1;
         }
         // Use radians
@@ -313,7 +305,7 @@ public class AuxiliaryFunctions {
         if ((p1 == null) || (p2 == null)) {
             return -1;
         }
-        if ((p1.lat == 0.0) || (p1.lon == 0.0) || (p2.lat == 0.0) || (p2.lat == 0.0)) {
+        if ((p1.lat == 0.0) || (p1.lon == 0.0) || (p2.lat == 0.0) || (p2.lon == 0.0)) {
             return -1;
         }
         // Use radians
@@ -356,7 +348,8 @@ public class AuxiliaryFunctions {
      * @param y the y distance in meters
      */
     public static void latLonRadialDistance(Position p1, double x, double y) {
-        double lat, lon = 0.0;
+        double lat;
+        double lon;
         double lat1 = p1.lat * Math.PI / 180;
         double lon1 = p1.lon * Math.PI / 180;
 
@@ -378,10 +371,7 @@ public class AuxiliaryFunctions {
      * The modulus function with the sign following the divisor
      */
     public static double mod(double x, double y) {
-        double mod = 0.0;
-        mod = y - x * Math.floor(y / x);
-
-        return mod;
+       return (y - x * Math.floor(y / x));
     }
 
     /**

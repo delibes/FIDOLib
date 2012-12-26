@@ -14,7 +14,6 @@ import fidolib.data.Constants;
 import fidolib.data.CountDownData.PresetComboBox;
 import fidolib.data.CountDownData;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.regex.Pattern;
@@ -106,6 +105,7 @@ public class CountdownControlPanel extends javax.swing.JPanel {
     public void startTimer() {
         timer.scheduleAtFixedRate(new TimerTask() {
 
+            @Override
             public void run() {
                 todo();
             }
@@ -237,13 +237,7 @@ public class CountdownControlPanel extends javax.swing.JPanel {
     private void jButton1StartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1StartActionPerformed
 
         CountDownData.startCountDown();
-//        this.jButton1Start.setEnabled(false);
-//        this.jButton1Hold.setEnabled(true);
-//        this.jButton1Stop.setEnabled(true);
-//        this.jButton1Reset.setEnabled(false);
-//        this.jComboBoxPresets.setEnabled(false);
-//
-//        this.jTextField1manualTimeEntering.setEnabled(false);
+
         if (aCountDownDialog != null)
         {
             aCountDownDialog.dispose();
@@ -264,6 +258,7 @@ public class CountdownControlPanel extends javax.swing.JPanel {
             this.jButton1Stop.setEnabled(true);
             this.jButton1Reset.setEnabled(false);
             this.jComboBoxPresets.setEnabled(false);
+            
 
             this.jTextField1manualTimeEntering.setEnabled(false);
         } else // The restart button is pressed

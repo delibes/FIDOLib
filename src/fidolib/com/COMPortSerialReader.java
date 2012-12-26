@@ -24,7 +24,7 @@ public class COMPortSerialReader implements Runnable, COMPortSerialReaderIF {
     /**
      * Terminate the connection
      */
-    public static boolean closeConnection = false;
+    protected static boolean closeConnection = false;
     /**
      * Reference to the AIS data
      * 

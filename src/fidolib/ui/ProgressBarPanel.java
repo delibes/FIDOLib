@@ -66,6 +66,7 @@ public class ProgressBarPanel extends javax.swing.JPanel {
         initComponents();
         timer.scheduleAtFixedRate(new TimerTask() {
 
+            @Override
             public void run() {
                 repaint();
             }
@@ -101,10 +102,6 @@ public class ProgressBarPanel extends javax.swing.JPanel {
         int fontSize = ((int) (progressBarHeight * 4 / 6));
         Font font = new Font("SansSerif", Font.BOLD, fontSize);
         g.setFont(font);
-        String timeStr = "";
-        int sLength = 0;
-
-
         // Calculate the time distance
         double diffMSec = (double) ((Constants.progressbarEND - Constants.progressbarSTART) * 1000);
         double relativePosOfMECO = (double) (((Constants.progressbarSTART * -1) + Constants.progressbarMECO) * 1000) / diffMSec;
@@ -115,8 +112,8 @@ public class ProgressBarPanel extends javax.swing.JPanel {
         double relativePosOfStart = 0.0;
 
         // Draw T+XX at the end of the time line
-        timeStr = "" + (CountDownData.getMinSec(Constants.progressbarEND));
-        sLength = g.getFontMetrics().stringWidth(timeStr);
+        String timeStr = "" + (CountDownData.getMinSec(Constants.progressbarEND));
+        int sLength = g.getFontMetrics().stringWidth(timeStr);
         g.drawString(timeStr, progressBarStart + progressBarWidth - (sLength / 2), height - 6);
         g.fillRect(progressBarStart + progressBarWidth - (barWidth / 2), border, barWidth, progressBarHeight + 6);
 
@@ -164,7 +161,7 @@ public class ProgressBarPanel extends javax.swing.JPanel {
 
         // Draw the progress
 
-        double relativePosOfRemainingTime = (double) (((Constants.progressbarSTART * -1000) - CountDownData.remainingTime + 500)) / diffMSec;
+        double relativePosOfRemainingTime = (double) (((Constants.progressbarSTART * -1000L) - CountDownData.remainingTime + 500L)) / diffMSec;
         if ((relativePosOfRemainingTime > 0)) {
             if (relativePosOfRemainingTime <= 1.0) {
                 g.fillRect(progressBarStart, progressBarBorder, ((int) ((double) progressBarWidth * relativePosOfRemainingTime)), progressBarHeight);

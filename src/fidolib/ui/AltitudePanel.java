@@ -10,22 +10,21 @@
  */
 package fidolib.ui;
 
-import fidolib.data.RocketInfo;
-import fidolib.data.Constants;
-import fidolib.data.FlightData;
-import fidolib.misc.AuxiliaryFunctions;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Paint;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
+import fidolib.data.RocketInfo;
+import fidolib.data.Constants;
+import fidolib.data.FlightData;
+import fidolib.misc.AuxiliaryFunctions;
 /**
  *
  * @author Steen
@@ -64,11 +63,13 @@ public class AltitudePanel extends ColorPanel {
     private Timer timer = new Timer();
     /**
      * Reference to the flight data
-     * 
+     *
      */
     private FlightData aFlightData = null;
 
-    /** Creates new form AltPanel */
+    /**
+     * Creates new form AltPanel
+     */
     public AltitudePanel(boolean useGradientColors, Color textColor, Color backgroundColor, Color gradientColorStart, Color gradientColorStop, FlightData aFlightData) {
         this.useGradientColors = useGradientColors;
         this.textColor = textColor;
@@ -81,7 +82,7 @@ public class AltitudePanel extends ColorPanel {
 
         // Set and start the timer
         timer.scheduleAtFixedRate(new TimerTask() {
-
+            @Override
             public void run() {
                 repaint();
             }
@@ -99,13 +100,19 @@ public class AltitudePanel extends ColorPanel {
 
     /**
      * Paint the privious rocket positions and the present position
-     * @param g 
+     *
+     * @param g
      */
     public void paintRocketPositions(Graphics g) {
         int width = this.getWidth();
         int height = this.getHeight();
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setStroke(new BasicStroke(lineWidth));
+        Graphics2D g2;
+        if (g instanceof Graphics2D) {
+            g2 = (Graphics2D) g;
+        } else {
+            return;
+        }
+        g2.setStroke(new BasicStroke(lineWidth));
         g.setColor(Constants.textColor);
         calendar = Calendar.getInstance();
         if ((calendar.getTimeInMillis() - lastSpotPaint) > deltaSpotPaint) {
@@ -122,38 +129,38 @@ public class AltitudePanel extends ColorPanel {
         int yTicksPixels = (int) ((height - yAxesBorder * 2) / yAxesScale);
 
         if (aFlightData.rocketPosition.downRange > (xAxesScale * 1000)) {
-                    xAxesScale += xAxesScaleIncrement;
-                }
+            xAxesScale += xAxesScaleIncrement;
+        }
         if (aFlightData.rocketPosition.GPSAltitude > (yAxesScale * 1000)) {
-                    yAxesScale += yAxesScaleIncrement;
-                    
-                }
+            yAxesScale += yAxesScaleIncrement;
+
+        }
         List positions = aFlightData.positions;
         RocketInfo liftOffPosition = aFlightData.liftOffPosition;
         if (positions != null && liftOffPosition != null && positions.size() > 2) {
             for (int i = 0; i < positions.size() - 2; i++) {
                 RocketInfo p1 = (RocketInfo) positions.get(i);
                 RocketInfo p2 = (RocketInfo) positions.get(i + 1);
-                double xDist = AuxiliaryFunctions.disanceNauticalMiles(liftOffPosition, p1)
-                        * Constants.nauticalMile;
-                
+                /* double xDist = AuxiliaryFunctions.disanceNauticalMiles(liftOffPosition, p1)
+                 * Constants.nauticalMile;*/
+
                 int x1 = (int) (AuxiliaryFunctions.disanceNauticalMiles(liftOffPosition, p1)
                         * Constants.nauticalMile / 1000.0 * xTicksPixels + xAxesBorder);
                 int x2 = (int) (AuxiliaryFunctions.disanceNauticalMiles(liftOffPosition, p2)
                         * Constants.nauticalMile / 1000.0 * xTicksPixels + xAxesBorder);
 
                 int y1 = height - yAxesBorder - (int) (p1.GPSAltitude * yTicksPixels / 1000.0);
-                
 
-                
+
+
                 int y2 = height - yAxesBorder - (int) (p2.GPSAltitude * yTicksPixels / 1000.0);
                 g.drawLine(x1, y1, x2, y2);
             }
         }
 
-        
+
         g.setColor(Constants.rocketColor);
-        int xPos = 0;
+        int xPos;
         if (aFlightData.rocketPosition != null) {
             xPos = (int) (aFlightData.rocketPosition.downRange / 1000.0 * xTicksPixels + xAxesBorder - spotSize / 2);
         } else {
@@ -175,7 +182,8 @@ public class AltitudePanel extends ColorPanel {
 
     /**
      * Paint the coordinate system
-     * @param g 
+     *
+     * @param g
      */
     public void paintCoorSys(Graphics g) {
 
@@ -183,9 +191,14 @@ public class AltitudePanel extends ColorPanel {
         int height = this.getHeight();
 
         if (useGradientColors == true) {
-            Graphics2D g2 = (Graphics2D) g;
+            Graphics2D g2;
+            if (g instanceof Graphics2D) {
+                g2 = (Graphics2D) g;
+            } else {
+                return;
+            }
             GradientPaint gp = new GradientPaint(0, 0, gradientColorStart, 0, height, gradientColorStop, true);
-            Paint p = g2.getPaint();
+           // Paint p = g2.getPaint();
             g2.setPaint(gp);
         } else {
             g.setColor(backgroundColor);
@@ -197,8 +210,7 @@ public class AltitudePanel extends ColorPanel {
         Font font = new Font("New Courier", Font.BOLD, fontSize);
         g.setFont(font);
         String title = "GPS data";
-        int sLength = 0;
-        sLength = g.getFontMetrics().stringWidth(title);
+        int sLength = g.getFontMetrics().stringWidth(title);
         g.drawString(title, width / 2 - sLength / 2, yAxesBorder / 2);
 
         g.fillRect(xAxesBorder, height - yAxesBorder, width - xAxesBorder * 2, lineWidth);
@@ -230,10 +242,10 @@ public class AltitudePanel extends ColorPanel {
 
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents

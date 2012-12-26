@@ -6,6 +6,7 @@ package fidolib.ui;
 
 import fidolib.data.AISData;
 import fidolib.data.Constants;
+import fidolib.data.FlightData;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Point;
@@ -28,7 +29,6 @@ public class MapPanel extends JPanel {
      * 
      */
     private AISData aAISData = null;
-    
     /**
      * The panel containing the image
      */
@@ -50,10 +50,10 @@ public class MapPanel extends JPanel {
      */
     private boolean dragMode = true;
 
-    public MapPanel(AISData aAISData, String imageStr) {
+    public MapPanel(AISData aAISData, FlightData aFlightData, String imageStr) {
         super(new BorderLayout());
         this.aAISData = aAISData;
-        imgPanel = new ImagePanel(aAISData,imageStr);
+        imgPanel = new ImagePanel(aAISData, aFlightData,imageStr);
         this.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
         JViewport vport = new JViewport() {
 
@@ -89,6 +89,7 @@ public class MapPanel extends JPanel {
         // Set and start the timer
         timer.scheduleAtFixedRate(new TimerTask() {
 
+            @Override
             public void run() {
                 repaint();
             }
@@ -136,7 +137,6 @@ public class MapPanel extends JPanel {
                 imgPanel.scrollRectToVisible(vpRect);
                 pp.setLocation(cp);
             } else {
-                JViewport vport = (JViewport) e.getSource();
                 Point cp = e.getPoint();
                 imgPanel.drawLine(pp, cp);
                  imgPanel.mouseMoved(e.getX(), e.getY());
@@ -188,8 +188,7 @@ public class MapPanel extends JPanel {
                     dragMode = (dragMode == true) ? false : true;
                     ((JComponent) e.getSource()).setCursor((dragMode == true) ? this.defCursor : crossHairCursor);
                 }
-            } else if (e.getButton() == MouseEvent.BUTTON3) {
-            }
+            } 
         }
 
         @Override

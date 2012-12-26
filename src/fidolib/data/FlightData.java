@@ -25,6 +25,18 @@ public class FlightData implements DataParser, GetPosition {
      * Self reference
      */
     private static FlightData aFlightData = null;
+    /**
+     * AIS data object
+     */
+    private AISData aAISData;
+    /**
+     * Data log
+     */
+    /**
+      * Log for flight data
+      */
+     private DataLog aDataLog; 
+
     /** 
      * Time stamp of last data package
      */
@@ -33,10 +45,6 @@ public class FlightData implements DataParser, GetPosition {
      * Delta T since last GPS reading
      */
     public int GPSDeltaTIndex = 0;
-    /**
-     * Last data received
-     */
-    public String data = null;
     /**
      * Number of good packets
      */
@@ -113,19 +121,9 @@ public class FlightData implements DataParser, GetPosition {
     /**
      * Constructor
      */
-    public FlightData() {
-    }
-
-    /**
-     * Get instance
-     */
-    public static FlightData getInstance() {
-
-        if (aFlightData == null) {
-            aFlightData = new FlightData();
-        }
-        return aFlightData;
-
+    public FlightData(AISData aAISData,DataLog aDataLog) {
+        this.aAISData = aAISData;
+        this.aDataLog = aDataLog;
     }
 
     /**
@@ -133,7 +131,7 @@ public class FlightData implements DataParser, GetPosition {
      * @return -1 = error,  1 = new and valid data
      */
     @Override
-    public int parseData(byte[] packet) {
+    public synchronized int parseData(byte[] packet) {
 
         if (packet == null) {
             noBadPackets++;
@@ -181,6 +179,7 @@ public class FlightData implements DataParser, GetPosition {
                 AAUVoltage = (double) (packet[PacketIndices.voltageIndex.getIndex()] & 0xff) / 10.0;
                 SDCardOK = (int) (packet[PacketIndices.SdCardIndex.getIndex()] & 0xff);
                 GPSDeltaTIndex = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.GPSDeltaTIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
+                rocketPosition.lastValidDataTimeStamp = lastValidDataTimeStamp; 
                 rocketPosition.MCUGPSFixTime = AuxiliaryFunctions.byteArrayToINT32(packet, PacketIndices.MCUGPSTimeIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
                 rocketPosition.gyroX = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.gyroXIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
                 rocketPosition.gyroY = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.gyroYIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
@@ -259,7 +258,7 @@ public class FlightData implements DataParser, GetPosition {
                     RocketInfo p = new RocketInfo(rocketPosition);
                     positions.add(p);
                 }
-                DataLog.getInstance().logData(rocketPosition, AAUVoltage, packetNumber, noGoodPackets, noBadPackets, bytesReceived);
+                aDataLog.logData(rocketPosition, AAUVoltage, packetNumber, noGoodPackets, noBadPackets, bytesReceived);
         }
     }
 
@@ -287,30 +286,27 @@ public class FlightData implements DataParser, GetPosition {
 
     }
 
-    public String getData() {
-        return data;
+    
+    @Override
+    public synchronized void parseData(String data) {
     }
 
     @Override
-    public void parseData(String data) {
-    }
-
-    @Override
-    public double getLatitude() {
+    public synchronized double getLatitude() {
         return this.rocketPosition.lat;
     }
 
     @Override
-    public double getLongitude() {
+    public synchronized double getLongitude() {
         return this.rocketPosition.lon;
     }
 
     @Override
-    public RocketInfo getPosition() {
+    public synchronized RocketInfo getPosition() {
         return this.rocketPosition;
     }
 
-    public String getGPSTime() {
+    public synchronized String getGPSTime() {
         if (rocketPosition.MCUGPSFixTime == 0) {
             return Constants.naString;
         } else {
@@ -322,7 +318,7 @@ public class FlightData implements DataParser, GetPosition {
         }
     }
 
-    public String getETA() {
+    public synchronized String getETA() {
         if (rocketPosition.ETA > 0) {
             String hoursStr = String.format("%02d", (rocketPosition.ETA / 3600));
             String minutesStr = String.format("%02d", (rocketPosition.ETA / 60 % 60));
@@ -334,8 +330,8 @@ public class FlightData implements DataParser, GetPosition {
 
     }
 
-    public String getMCDistance() {
-        VesselInfo mc = AISData.getInstance().getVessel(AISData.getInstance().mcMMSI);
+    public synchronized String getMCDistance() {
+        VesselInfo mc = aAISData.getVessel(aAISData.mcMMSI);
         if (mc != null) {
             double disanceNauticalMiles = AuxiliaryFunctions.disanceNauticalMiles(aFlightData.rocketPosition, mc.pos);
             double distanceMeters = disanceNauticalMiles * Constants.nauticalMile;
@@ -353,8 +349,8 @@ public class FlightData implements DataParser, GetPosition {
 
     }
 
-    public String getMCBearing() {
-        VesselInfo mc = AISData.getInstance().getVessel(AISData.getInstance().mcMMSI);
+    public synchronized String getMCBearing() {
+        VesselInfo mc = aAISData.getVessel(aAISData.mcMMSI);
         if (mc != null) {
             int brg = AuxiliaryFunctions.initialBearing(mc.pos, rocketPosition);
             if (brg >= 0) {
@@ -366,7 +362,7 @@ public class FlightData implements DataParser, GetPosition {
 
     }
 
-    public String getAAUVoltage() {
+    public synchronized String getAAUVoltage() {
         if (lastValidDataTimeStamp > 0) {
             return "" + AAUVoltage;
         } else {
@@ -374,7 +370,7 @@ public class FlightData implements DataParser, GetPosition {
         }
     }
 
-    public String getFlying() {
+    public synchronized String getFlying() {
         if (lastValidDataTimeStamp > 0) {
             if (rocketPosition.flying == true) {
                 return "Yes";
@@ -386,11 +382,11 @@ public class FlightData implements DataParser, GetPosition {
         }
     }
 
-    public int getPacketLength() {
+    public synchronized int getPacketLength() {
         return PacketIndices.packetLength.getIndex();
     }
 
-    public String getSDCardOK() {
+    public synchronized String getSDCardOK() {
         if (SDCardOK == -1)
         {
             return Constants.naString;
@@ -403,7 +399,7 @@ public class FlightData implements DataParser, GetPosition {
         }
     }
 
-    public String getGPSDeltaTIndex() {
+    public synchronized String getGPSDeltaTIndex() {
         if (GPSDeltaTIndex == -1)
         {
             return Constants.naString;

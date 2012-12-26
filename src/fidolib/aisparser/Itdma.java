@@ -32,7 +32,9 @@ public class Itdma {
 	throws SixbitsExhaustedException, AISMessageException
 	{
 		if (six_state.bit_length() < 19)
-			throw new AISMessageException("ITDMA wrong length");
+                {
+                    throw new AISMessageException("ITDMA wrong length");
+                }
 
         this.sync_state    = (char)  six_state.get( 2  );
         this.slot_inc      = (int)   six_state.get( 13 );

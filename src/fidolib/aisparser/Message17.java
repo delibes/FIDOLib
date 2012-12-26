@@ -47,7 +47,9 @@ public class Message17 extends Messages {
 	{
 		int length = six_state.bit_length();
 		if ((length < 80) || (length > 816))
-			throw new AISMessageException("Message 17 wrong length");
+                {
+                    throw new AISMessageException("Message 17 wrong length");
+                }
 		
 		super.parse( 17, six_state );
 

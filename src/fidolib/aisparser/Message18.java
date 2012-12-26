@@ -65,7 +65,9 @@ public class Message18 extends Messages {
 		throws SixbitsExhaustedException, AISMessageException
 	{
 		if ( six_state.bit_length() != 168 )
-			throw new AISMessageException("Message 18 wrong length");
+                {
+                    throw new AISMessageException("Message 18 wrong length");
+                }
 		
 		super.parse( 18, six_state );
 
