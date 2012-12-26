@@ -206,6 +206,10 @@ public class Constants {
      * The G force
      */
     public static double G = 9.81;
+    /**
+     * G term
+     */
+    public static String gTerm = "g";
     /** 
      * Latitude and longitude convertion factor fom long to double
      * 

@@ -107,36 +107,28 @@ public class COMPortSerialReader implements Runnable, COMPortSerialReaderIF {
 
         int len = -1;
         try {
-            byte x1 = 0;
-            byte x2 = 0;
-            
+            byte char1 = 0;
+            byte char2 = 0;
+
             while (((len = this.in.read(buffer)) > -1) && (closeConnection == false)) {
 
-                
+                ((FlightData)aDataParser).bytesReceived += len; 
+               
                 for (int i = 0; (i < len) && (i < buffer.length); i++) {
                     data.add(buffer[i]);
-                    
-                    x2 = buffer[i];
-                    if ((x1 == 0x0D) && (x2 == 0x0A) && (data.size() >= ((FlightData)aDataParser).getPacketLength())) {
-                       byte[] dataBuffer = new byte[((FlightData)aDataParser).getPacketLength()];
 
+                    char2 = buffer[i];
+                    if ((char1 == 0x0D) && (char2 == 0x0A) && (data.size() >= ((FlightData) aDataParser).getPacketLength())) {
+                        byte[] dataBuffer = new byte[((FlightData) aDataParser).getPacketLength()];
                         for (int j = 0; j < dataBuffer.length; j++) {
-
-
-                            dataBuffer[j] = data.get(data.size() - (((FlightData)aDataParser).getPacketLength()-j));
-                            
-
+                            dataBuffer[j] = data.get(data.size() - (((FlightData) aDataParser).getPacketLength() - j));
                         }
-                        // System.out.println("Parser " + buffer);
                         aDataParser.parseData(dataBuffer);
                         data.clear();
 
                     }
-                    x1 = x2;
-                   // System.out.println("data.size " + data.size());
-                
-                    if (data.size()> (((FlightData)aDataParser).getPacketLength()*2))
-                    {
+                    char1 = char2;
+                    if (data.size() > (((FlightData) aDataParser).getPacketLength() * 2)) {
                         data.clear();
                     }
                 }

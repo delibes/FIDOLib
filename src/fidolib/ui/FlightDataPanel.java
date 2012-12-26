@@ -118,6 +118,7 @@ public class FlightDataPanel extends ColorPanel {
         g.drawString("ETA", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("AAU volt", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Flying", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("SD Card", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
         textPos += deltaTextPos;
         // Print time since last valid data reception
@@ -153,6 +154,7 @@ public class FlightDataPanel extends ColorPanel {
         g.drawString(aFlightData.getETA(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString(aFlightData.getAAUVoltage(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString(aFlightData.getFlying(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString(aFlightData.getSDCardOK(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
         fontSizeFactor = maxFontSizeFactor;
         textPos += deltaTextPos + 20;
@@ -171,7 +173,7 @@ public class FlightDataPanel extends ColorPanel {
         g.drawString(aFlightData.rocketPosition.getAltitude(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString(aFlightData.rocketPosition.getDownrange(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString(aFlightData.rocketPosition.getCOG(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString(aFlightData.rocketPosition.getGPSFix(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString(aFlightData.rocketPosition.getGPSFix() + " " + aFlightData.getGPSDeltaTIndex(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString(aFlightData.rocketPosition.getVelocity(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString(aFlightData.rocketPosition.getVerticalVelocity(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString(aFlightData.rocketPosition.getHorizontalVelocity(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));

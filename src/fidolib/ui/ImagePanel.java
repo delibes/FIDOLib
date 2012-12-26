@@ -7,8 +7,10 @@ package fidolib.ui;
 import fidolib.data.Constants;
 import fidolib.data.FlightData;
 import fidolib.data.AISData;
+import fidolib.data.Position;
 import fidolib.data.RocketInfo;
 import fidolib.data.VesselInfo;
+import fidolib.misc.AuxiliaryFunctions;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -170,10 +172,10 @@ public class ImagePanel extends JPanel {
         g2D.setStroke(new BasicStroke(4F));  // set stroke width of 10
 
 
-        RocketInfo.calcLatLonPixels(Constants.E139NorthWest, this.getWidth(), this.getHeight());
-        RocketInfo.calcLatLonPixels(Constants.E139NorthEast, this.getWidth(), this.getHeight());
-        RocketInfo.calcLatLonPixels(Constants.E139SouthWest, this.getWidth(), this.getHeight());
-        RocketInfo.calcLatLonPixels(Constants.E139SouthEast, this.getWidth(), this.getHeight());
+        AuxiliaryFunctions.calcLatLonPixels(Constants.E139NorthWest, this.getWidth(), this.getHeight());
+        AuxiliaryFunctions.calcLatLonPixels(Constants.E139NorthEast, this.getWidth(), this.getHeight());
+        AuxiliaryFunctions.calcLatLonPixels(Constants.E139SouthWest, this.getWidth(), this.getHeight());
+        AuxiliaryFunctions.calcLatLonPixels(Constants.E139SouthEast, this.getWidth(), this.getHeight());
 
         int[] xValues = {Constants.E139NorthWest.lonPixels,
             Constants.E139NorthEast.lonPixels,
@@ -205,8 +207,8 @@ public class ImagePanel extends JPanel {
             int largestDist = (int) Math.sqrt(xDist * xDist + yDist * yDist);
             g.drawOval(p1a.x - (largestDist) + this.getVisibleRect().x, p1a.y - (largestDist) + this.getVisibleRect().y, largestDist * 2, largestDist * 2);
 
-            RocketInfo pos1 = new RocketInfo();
-            RocketInfo pos2 = new RocketInfo();
+            Position pos1 = new Position();
+            Position pos2 = new Position();
             pos1.lat = pixelToLatitude(p1a.x);
             pos1.lon = pixelToLongitude(p1a.y);
             pos2.lat = pixelToLatitude(p2a.x);
@@ -214,9 +216,9 @@ public class ImagePanel extends JPanel {
 
 
 
-            double disanceNauticalMiles = RocketInfo.disanceNauticalMiles(pos1, pos2);
+            double disanceNauticalMiles = AuxiliaryFunctions.disanceNauticalMiles(pos1, pos2);
             double distanceMeters = disanceNauticalMiles * Constants.nauticalMile;
-            int initialBearing = RocketInfo.initialBearingImg(pos1, pos2);
+            int initialBearing = AuxiliaryFunctions.initialBearingImg(pos1, pos2);
             String distStr = "";
             DecimalFormatSymbols decimalSymbols = new DecimalFormatSymbols(new Locale("da", "DK"));
             decimalSymbols.setDecimalSeparator('.');
@@ -250,8 +252,8 @@ public class ImagePanel extends JPanel {
 
                 int xSpace = Constants.knotsLabelSize * 4;
                 int ySpace = (int) (((double) Constants.knotsLabelSize) * 1.4);
-                String latDegree = Constants.northSouth + " " + RocketInfo.formatDegrees(mouseLat);
-                String lonDegree = Constants.eastWest + " " + RocketInfo.formatDegrees(mouseLon);
+                String latDegree = Constants.northSouth + " " + AuxiliaryFunctions.getInstance().formatDegrees(mouseLat);
+                String lonDegree = Constants.eastWest + " " + AuxiliaryFunctions.getInstance().formatDegrees(mouseLon);
                 int width = (int) (Constants.knotsLabelSize * 14);
                 int height = 0;
                 height = (int) (ySpace * 3.5);
@@ -364,7 +366,7 @@ public class ImagePanel extends JPanel {
         if (vessel == null) {
             return;
         }
-        RocketInfo.calcLatLonPixels(vessel.pos, this.getWidth(), this.getHeight());
+        AuxiliaryFunctions.calcLatLonPixels(vessel.pos, this.getWidth(), this.getHeight());
 
         if (vessel.baseStation == true) {
             g.setColor(Constants.baseStationColor);
@@ -462,7 +464,7 @@ public class ImagePanel extends JPanel {
         if (aRocketInfo == null) {
             return;
         }
-        RocketInfo.calcLatLonPixels(aRocketInfo, this.getWidth(), this.getHeight());
+        AuxiliaryFunctions.calcLatLonPixels(aRocketInfo, this.getWidth(), this.getHeight());
         int ovalWidth = 140;
         int ovalHeight = 100;
         int offSetY = 0;

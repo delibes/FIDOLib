@@ -13,6 +13,7 @@ package fidolib.ui;
 import fidolib.data.RocketInfo;
 import fidolib.data.Constants;
 import fidolib.data.FlightData;
+import fidolib.misc.AuxiliaryFunctions;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -133,14 +134,12 @@ public class AltitudePanel extends ColorPanel {
             for (int i = 0; i < positions.size() - 2; i++) {
                 RocketInfo p1 = (RocketInfo) positions.get(i);
                 RocketInfo p2 = (RocketInfo) positions.get(i + 1);
-                double xDist = RocketInfo.disanceNauticalMiles(liftOffPosition, p1)
+                double xDist = AuxiliaryFunctions.disanceNauticalMiles(liftOffPosition, p1)
                         * Constants.nauticalMile;
                 
-
-              //  System.out.println(xDist);
-                int x1 = (int) (RocketInfo.disanceNauticalMiles(liftOffPosition, p1)
+                int x1 = (int) (AuxiliaryFunctions.disanceNauticalMiles(liftOffPosition, p1)
                         * Constants.nauticalMile / 1000.0 * xTicksPixels + xAxesBorder);
-                int x2 = (int) (RocketInfo.disanceNauticalMiles(liftOffPosition, p2)
+                int x2 = (int) (AuxiliaryFunctions.disanceNauticalMiles(liftOffPosition, p2)
                         * Constants.nauticalMile / 1000.0 * xTicksPixels + xAxesBorder);
 
                 int y1 = height - yAxesBorder - (int) (p1.GPSAltitude * yTicksPixels / 1000.0);

@@ -29,6 +29,10 @@ public class FlightData implements DataParser, GetPosition {
      * Time stamp of last data package
      */
     public long lastValidDataTimeStamp = 0;
+    /** 
+     * Delta T since last GPS reading
+     */
+    public int GPSDeltaTIndex = 0;
     /**
      * Last data received
      */
@@ -42,7 +46,11 @@ public class FlightData implements DataParser, GetPosition {
      */
     public int noBadPackets = 0;
     /**
-     * The latitude and longitude position of the rocket
+     * The number of flight data bytes received 
+     */
+    public long bytesReceived = 0;
+    /**
+     * The latitude and longitude position of the rocket as well as additional infomation.
      */
     public RocketInfo rocketPosition = new RocketInfo();
     /**
@@ -50,7 +58,7 @@ public class FlightData implements DataParser, GetPosition {
      */
     public RocketInfo liftOffPosition = null;
     /**
-     * 
+     * List of rocket info objects used for drawing on the altitude panel
      */
     public ArrayList<RocketInfo> arrayList = new ArrayList<RocketInfo>();
     /**
@@ -61,6 +69,10 @@ public class FlightData implements DataParser, GetPosition {
      * Voltage of the power supply of the AAU
      */
     public double AAUVoltage = 0.0;
+    /**
+     * Sd card OK?
+     */
+    public int SDCardOK = -1;
 
     /**
      * Indices in the packet received from the AAU
@@ -83,8 +95,10 @@ public class FlightData implements DataParser, GetPosition {
         accZIndex(31),
         accTimeStampIndex(33),
         packetNumberIndex(37),
-        CSIndex(41),
-        packetLength(45);
+        SdCardIndex(41),
+        GPSDeltaTIndex(42),
+        CSIndex(44),
+        packetLength(48);
         private final int index;
 
         PacketIndices(int index) {
@@ -125,22 +139,17 @@ public class FlightData implements DataParser, GetPosition {
             noBadPackets++;
             return -1;
         }
-      //  System.out.println(PacketIndices.CSIndex.getIndex());
-      //  System.out.println(PacketIndices.GPSFixIndex.getIndex());
         int packetType = packetType(packet);
 
-       // System.out.println(">" + packetType);
         if (Constants.useCheckSum == true) {
-            boolean checkSumValid = AuxiliaryFunctions.getInstance().checkSum(packet,PacketIndices.CSIndex.getIndex());
+            boolean checkSumValid = AuxiliaryFunctions.getInstance().checkSum(packet, PacketIndices.CSIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
             if (checkSumValid == false) {
-     //   System.out.println(checkSumValid);
                 noBadPackets++;
                 return -1;
             }
             noGoodPackets++;
         }
 
-       // System.out.println(packetType);
         switch (packetType) {
             case 1:
                 Calendar calender = Calendar.getInstance();
@@ -165,24 +174,26 @@ public class FlightData implements DataParser, GetPosition {
 
 
         int packetNumber;
-        
+
         switch (packetType) {
 
             case 1:
                 AAUVoltage = (double) (packet[PacketIndices.voltageIndex.getIndex()] & 0xff) / 10.0;
-                rocketPosition.MCUGPSFixTime = AuxiliaryFunctions.byteArrayToINT32(packet, PacketIndices.MCUGPSTimeIndex.getIndex());
-                rocketPosition.gyroX = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.gyroXIndex.getIndex());
-                rocketPosition.gyroY = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.gyroYIndex.getIndex());
-                rocketPosition.gyroZ = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.gyroZIndex.getIndex());
-                rocketPosition.gyroTime = AuxiliaryFunctions.byteArrayToINT32(packet, PacketIndices.gyroTimeStampIndex.getIndex());
-                
-                rocketPosition.accX = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.accXIndex.getIndex());
-                rocketPosition.accY = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.accYIndex.getIndex());
-                rocketPosition.accZ = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.accZIndex.getIndex());
-                rocketPosition.accTime  = AuxiliaryFunctions.byteArrayToINT32(packet, PacketIndices.accTimeStampIndex.getIndex());
+                SDCardOK = (int) (packet[PacketIndices.SdCardIndex.getIndex()] & 0xff);
+                GPSDeltaTIndex = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.GPSDeltaTIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
+                rocketPosition.MCUGPSFixTime = AuxiliaryFunctions.byteArrayToINT32(packet, PacketIndices.MCUGPSTimeIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
+                rocketPosition.gyroX = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.gyroXIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
+                rocketPosition.gyroY = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.gyroYIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
+                rocketPosition.gyroZ = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.gyroZIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
+                rocketPosition.gyroTime = AuxiliaryFunctions.byteArrayToINT32(packet, PacketIndices.gyroTimeStampIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
 
-                double lat = AuxiliaryFunctions.byteArrayToDouble(packet, PacketIndices.latitudeAsLongIndex.getIndex());
-                double lon = AuxiliaryFunctions.byteArrayToDouble(packet, PacketIndices.longitudeAsLongIndex.getIndex());
+                rocketPosition.accX = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.accXIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
+                rocketPosition.accY = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.accYIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
+                rocketPosition.accZ = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.accZIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
+                rocketPosition.accTime = AuxiliaryFunctions.byteArrayToINT32(packet, PacketIndices.accTimeStampIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
+
+                double lat = AuxiliaryFunctions.byteArrayToDouble(packet, PacketIndices.latitudeAsLongIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
+                double lon = AuxiliaryFunctions.byteArrayToDouble(packet, PacketIndices.longitudeAsLongIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
                 if (lat != 0.0) {
                     rocketPosition.lat = lat / Constants.latLonConvertionFactor;
                     rocketPosition.latitudeGood = true;
@@ -195,9 +206,9 @@ public class FlightData implements DataParser, GetPosition {
                 } else {
                     rocketPosition.longitudeGood = false;
                 }
-                rocketPosition.GPSAltitude = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.altitudeIndex.getIndex());
+                rocketPosition.GPSAltitude = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.altitudeIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
                 rocketPosition.GPSFix = (packet[PacketIndices.GPSFixIndex.getIndex()] & 0xff);
-               packetNumber = AuxiliaryFunctions.byteArrayToINT32(packet, PacketIndices.packetNumberIndex.getIndex());
+                packetNumber = AuxiliaryFunctions.byteArrayToINT32(packet, PacketIndices.packetNumberIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
                 if (positions.size() > 1) {
                     RocketInfo previousPos = (RocketInfo) positions.get(positions.size() - 1);
                     if (previousPos != null) {
@@ -205,16 +216,14 @@ public class FlightData implements DataParser, GetPosition {
                                 || (rocketPosition.lon != previousPos.lon)
                                 || (rocketPosition.GPSAltitude != previousPos.GPSAltitude)) // Different position
                         {
-                            rocketPosition.COG = RocketInfo.initialBearing(previousPos, rocketPosition);
+                            rocketPosition.COG = AuxiliaryFunctions.initialBearing(previousPos, rocketPosition);
 
-                            rocketPosition.downRange = RocketInfo.disanceNauticalMiles(rocketPosition, liftOffPosition) * Constants.nauticalMile;
+                            rocketPosition.downRange = AuxiliaryFunctions.disanceNauticalMiles(rocketPosition, liftOffPosition) * Constants.nauticalMile;
 
-                            // System.out.println(rocketPosition.MCUGPSFixTime + " " + previousPos.MCUGPSFixTime);
                             double deltaT = (rocketPosition.MCUGPSFixTime - previousPos.MCUGPSFixTime) / 1000.0;
                             if (deltaT != 0) {
                                 rocketPosition.verticalVelocity = (rocketPosition.GPSAltitude - previousPos.GPSAltitude) / deltaT;
-                                //System.out.println("v v " +  rocketPosition.GPSAltitude + " " +  previousPos.GPSAltitude + " " +deltaT);
-                                rocketPosition.horizontalVelocity = (RocketInfo.disanceNauticalMiles(rocketPosition, previousPos) * Constants.nauticalMile) / deltaT;
+                                rocketPosition.horizontalVelocity = (AuxiliaryFunctions.disanceNauticalMiles(rocketPosition, previousPos) * Constants.nauticalMile) / deltaT;
                                 rocketPosition.velocity = Math.sqrt(Math.pow(rocketPosition.verticalVelocity, 2) + Math.pow(rocketPosition.horizontalVelocity, 2));
                                 double avgVSpeed = 0;
                                 int count = 0;
@@ -250,7 +259,7 @@ public class FlightData implements DataParser, GetPosition {
                     RocketInfo p = new RocketInfo(rocketPosition);
                     positions.add(p);
                 }
-                DataLog.getInstance().logData(rocketPosition, AAUVoltage, packetNumber, noGoodPackets, noBadPackets);
+                DataLog.getInstance().logData(rocketPosition, AAUVoltage, packetNumber, noGoodPackets, noBadPackets, bytesReceived);
         }
     }
 
@@ -328,7 +337,7 @@ public class FlightData implements DataParser, GetPosition {
     public String getMCDistance() {
         VesselInfo mc = AISData.getInstance().getVessel(AISData.getInstance().mcMMSI);
         if (mc != null) {
-            double disanceNauticalMiles = RocketInfo.disanceNauticalMiles(aFlightData.rocketPosition, mc.pos);
+            double disanceNauticalMiles = AuxiliaryFunctions.disanceNauticalMiles(aFlightData.rocketPosition, mc.pos);
             double distanceMeters = disanceNauticalMiles * Constants.nauticalMile;
 
             String distStr = "";
@@ -347,7 +356,7 @@ public class FlightData implements DataParser, GetPosition {
     public String getMCBearing() {
         VesselInfo mc = AISData.getInstance().getVessel(AISData.getInstance().mcMMSI);
         if (mc != null) {
-            int brg = RocketInfo.initialBearing(mc.pos, rocketPosition);
+            int brg = AuxiliaryFunctions.initialBearing(mc.pos, rocketPosition);
             if (brg >= 0) {
                 return "" + brg + Constants.degreeChar;
             }
@@ -376,8 +385,37 @@ public class FlightData implements DataParser, GetPosition {
             return Constants.naString;
         }
     }
-    public int getPacketLength()
-    {
-        return PacketIndices.packetLength.getIndex(); 
+
+    public int getPacketLength() {
+        return PacketIndices.packetLength.getIndex();
+    }
+
+    public String getSDCardOK() {
+        if (SDCardOK == -1)
+        {
+            return Constants.naString;
+        }
+        else if (SDCardOK == 0){
+            return "Not OK";
+        }
+        else {
+            return "OK";
+        }
+    }
+
+    public String getGPSDeltaTIndex() {
+        if (GPSDeltaTIndex == -1)
+        {
+            return Constants.naString;
+        }
+        else if (GPSDeltaTIndex > 2) {
+            String minutesStr = String.format("%02d", (GPSDeltaTIndex / 60 % 60));
+            String secondsStr = String.format("%02d", (GPSDeltaTIndex % 60));
+            return minutesStr + ":" + secondsStr;
+        } else {
+            return "";
+        }
+
+
     }
 }

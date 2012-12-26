@@ -16,6 +16,7 @@ import fidolib.aisparser.Message5;
 import fidolib.aisparser.Nmea;
 import fidolib.aisparser.Vdm;
 import fidolib.com.DataParser;
+import fidolib.misc.AuxiliaryFunctions;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -378,7 +379,7 @@ public class AISData implements DataParser {
             while (iterator.hasNext()) {
                 VesselInfo aVesselInfo = (VesselInfo) iterator.next();
                 if (aVesselInfo != null) {
-                    RocketInfo.calcLatLonPixels(aVesselInfo.pos, width, height);
+                    AuxiliaryFunctions.calcLatLonPixels(aVesselInfo.pos, width, height);
                     double distance = Math.sqrt(Math.pow(x - aVesselInfo.pos.lonPixels, 2.0) + Math.pow(y - aVesselInfo.pos.latPixels, 2.0));
                     if ((distance < minDist) && (distance < 30)) {
                         minDist = distance;

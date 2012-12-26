@@ -49,7 +49,9 @@ public class SerialPortDialog extends javax.swing.JDialog {
                 while (!portList.isEmpty()) {
                     portComboBox.insertItemAt((String) portList.remove(0), 0);
                 }
-                portComboBox.setSelectedIndex(0);
+                if (portComboBox.getItemCount() > 0) {
+                    portComboBox.setSelectedIndex(0);
+                }
                 /*if (aCOMPort.isCOMPortOpen() == true) {
                     this.openButton.setEnabled(false);
                     this.closeButton.setEnabled(true);
@@ -166,9 +168,9 @@ public class SerialPortDialog extends javax.swing.JDialog {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mainComPortPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(portComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(baudRateComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(parityComboBox, javax.swing.GroupLayout.Alignment.TRAILING, 0, 61, Short.MAX_VALUE)
-                            .addComponent(dataBitsComboBox, 0, 61, Short.MAX_VALUE)
-                            .addComponent(stopBitComboBox, 0, 0, Short.MAX_VALUE))
+                            .addComponent(parityComboBox, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(dataBitsComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(stopBitComboBox, 0, 1, Short.MAX_VALUE))
                         .addGap(386, 386, 386))
                     .addGroup(mainComPortPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(closeDialogButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)

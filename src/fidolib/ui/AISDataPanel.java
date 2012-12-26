@@ -13,8 +13,8 @@ package fidolib.ui;
 import fidolib.data.AISData;
 import fidolib.data.Constants;
 import fidolib.data.FlightData;
-import fidolib.data.RocketInfo;
 import fidolib.data.VesselInfo;
+import fidolib.misc.AuxiliaryFunctions;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GradientPaint;
@@ -179,7 +179,7 @@ public class AISDataPanel extends ColorPanel {
                 
             }
             if ((aAISData.getVessel(aAISData.mcMMSI) != null) && ((aAISData.getVessel(aAISData.sputnikMMSI) != null))) {
-                double disanceNauticalMiles = RocketInfo.disanceNauticalMiles(aAISData.getVessel(aAISData.mcMMSI).pos, aAISData.getVessel(aAISData.sputnikMMSI).pos);
+                double disanceNauticalMiles = AuxiliaryFunctions.disanceNauticalMiles(aAISData.getVessel(aAISData.mcMMSI).pos, aAISData.getVessel(aAISData.sputnikMMSI).pos);
                 double distanceMeters = disanceNauticalMiles * Constants.nauticalMile;
 
                 String distStr = "";
@@ -190,7 +190,7 @@ public class AISDataPanel extends ColorPanel {
                 distStr = "" + df.format(disanceNauticalMiles) + " / " + df.format(distanceMeters / 1000);
 
                 g.drawString(distStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                String brgStr = "" +RocketInfo.initialBearing(aAISData.getVessel(aAISData.mcMMSI).pos, aAISData.getVessel(aAISData.sputnikMMSI).pos)+Constants.degreeChar;
+                String brgStr = "" + AuxiliaryFunctions.initialBearing(aAISData.getVessel(aAISData.mcMMSI).pos, aAISData.getVessel(aAISData.sputnikMMSI).pos)+Constants.degreeChar;
                 g.drawString(brgStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
             } else {

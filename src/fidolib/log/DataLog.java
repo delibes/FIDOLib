@@ -74,7 +74,7 @@ public class DataLog {
             header += "AAU GPS Fix Time;Velocity (m/s);Vertical velocity (m/s);Horizontal velocity (m/s);";
             header += "COG;ETA (s);Down range (m);Voltage (v);";
             header += "Gyro X;Gyro Y;Gyro Z;Gyro Time;Acc X (m G);Acc Y (m G);Acc Z (m G);Acc Time;";
-            header += "Good Packets;Bad Packets";
+            header += "Good Packets;Bad Packets;Bytes received";
             synchronized (output) {
                 output.write(header + "\n");
             }
@@ -111,7 +111,7 @@ public class DataLog {
      * 0..30 are packet types, and -1 is used when it's the timer
      * triggering the log entry.
      */
-    public boolean logData(RocketInfo aRocketInfo, double voltage, int packetNumber, int goodPackages, int badPackages) {
+    public boolean logData(RocketInfo aRocketInfo, double voltage, int packetNumber, int goodPackages, int badPackages,long bytesReceived) {
 
         try {
             if ((output != null)) {
@@ -145,6 +145,7 @@ public class DataLog {
                         + aRocketInfo.accTime + ";"
                         + goodPackages + ";"
                         + badPackages + ";"
+                        + bytesReceived + ";"
                         + "\n";
 
               //  System.out.println(line);
