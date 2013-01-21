@@ -37,7 +37,7 @@ public class CountDownPanel extends ColorPanel {
     /**
      * Creates new form CountDownPanel
      */
-    public CountDownPanel(boolean useGradientColors, Color textColor, Color backgroundColor, Color gradientColorStart, Color gradientColorStop) {
+    public CountDownPanel(boolean usePopUpPanel,boolean useGradientColors, Color textColor, Color backgroundColor, Color gradientColorStart, Color gradientColorStop) {
         this.useGradientColors = useGradientColors;
         this.textColor = textColor;
         this.backgroundColor = backgroundColor;
@@ -46,9 +46,12 @@ public class CountDownPanel extends ColorPanel {
         initComponents();
 //        this.aAISData = aAISData;
 //        this.aFlightData = aFlightData;
+        if (usePopUpPanel == true) {
         MouseAdaptorCountDownPanel aMouseAdaptorCountDownPanel = new MouseAdaptorCountDownPanel(this);
         this.addMouseMotionListener(aMouseAdaptorCountDownPanel);
         this.addMouseListener(aMouseAdaptorCountDownPanel);
+            
+        }
 
         // Set and start the timer
         timer.scheduleAtFixedRate(new TimerTask() {

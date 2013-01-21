@@ -11,6 +11,10 @@
 package fidolib.ui;
 
 
+import fidolib.data.Constants;
+import fidolib.data.FlightData;
+import fidolib.data.RocketInfo;
+import fidolib.misc.AuxiliaryFunctions;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -21,10 +25,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import fidolib.data.RocketInfo;
-import fidolib.data.Constants;
-import fidolib.data.FlightData;
-import fidolib.misc.AuxiliaryFunctions;
 /**
  *
  * @author Steen
@@ -209,9 +209,9 @@ public class AltitudePanel extends ColorPanel {
 
         Font font = new Font("New Courier", Font.BOLD, fontSize);
         g.setFont(font);
-        String title = "GPS data";
-        int sLength = g.getFontMetrics().stringWidth(title);
-        g.drawString(title, width / 2 - sLength / 2, yAxesBorder / 2);
+//        String title = "Alitude and Down range";
+//        int sLength = g.getFontMetrics().stringWidth(title);
+//        g.drawString(title, width / 2 - sLength / 2, yAxesBorder / 2);
 
         g.fillRect(xAxesBorder, height - yAxesBorder, width - xAxesBorder * 2, lineWidth);
         g.fillRect(xAxesBorder, yAxesBorder, lineWidth, height - xAxesBorder * 2);
@@ -219,6 +219,7 @@ public class AltitudePanel extends ColorPanel {
 
 
         // X axes
+        int sLength;
         int xTicksPixels = (int) ((width - xAxesBorder * 2) / xAxesScale);
         for (int i = 0; i <= xAxesScale; i += xAxesScale / xTicks) {
             g.fillRect(xAxesBorder + (i * xTicksPixels), height - yAxesBorder, ticksLineWidth, ticksLineWidth * 4);

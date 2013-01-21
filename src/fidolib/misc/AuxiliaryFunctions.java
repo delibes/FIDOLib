@@ -29,6 +29,7 @@ public class AuxiliaryFunctions {
      * Decimal symbols
      */
     private static DecimalFormatSymbols decimalSymbols = new DecimalFormatSymbols(new Locale("da", "DK"));
+
     /**
      * Enum for selecting little/big endian
      */
@@ -209,6 +210,8 @@ public class AuxiliaryFunctions {
      */
     public static String long2StringTime(long countDownTime) {
         String time;
+        // DecimalFormat df = new DecimalFormat("00", decimalSymbols);
+
         if (countDownTime > 0) {
             time = "T-";
         } else {
@@ -216,7 +219,18 @@ public class AuxiliaryFunctions {
             // Add a sec in order not to have 2 seconds around T-0
             countDownTime -= 1000;
         }
-        long min = (countDownTime / CountDownData.minute);
+        long hours = (countDownTime / CountDownData.hour);
+        hours = Math.abs(hours);
+        if (hours > 0) {
+            if (hours <= 9) {
+                time += "0" + hours + ":";
+            } else {
+                time += "" + hours + ":";
+            }
+
+        }
+
+        long min = (countDownTime % CountDownData.hour) / CountDownData.minute;
         min = Math.abs(min);
         if (min <= 9) {
             time += "0" + min;
@@ -371,7 +385,7 @@ public class AuxiliaryFunctions {
      * The modulus function with the sign following the divisor
      */
     public static double mod(double x, double y) {
-       return (y - x * Math.floor(y / x));
+        return (y - x * Math.floor(y / x));
     }
 
     /**

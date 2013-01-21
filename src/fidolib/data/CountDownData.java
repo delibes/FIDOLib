@@ -22,6 +22,10 @@ public class CountDownData {
      */
     public static long minute = 60 * sec;
     /**
+     * One minute constant = 60 sec.
+     */
+    public static long hour = 60 * minute;
+    /**
      * Count down time
      */
     public static long startCountDown = 1 * minute;

@@ -11,8 +11,8 @@
 package fidolib.ui;
 
 import fidolib.data.Constants;
-import fidolib.data.CountDownData.PresetComboBox;
 import fidolib.data.CountDownData;
+import fidolib.data.CountDownData.PresetComboBox;
 import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
