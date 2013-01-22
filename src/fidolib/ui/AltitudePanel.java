@@ -48,7 +48,11 @@ public class AltitudePanel extends ColorPanel {
     private int yTicks = 10; // has to be <= yAxesScale
     private int lineWidth = 3;
     private int ticksLineWidth = 2;
-    private int fontSize = 12;
+    private int axisFontSize = 12;
+    Font axisFont = new Font("New Courier", Font.BOLD, axisFontSize);
+    private int labelFontSize = 14;
+    Font labelFont = new Font("New Courier", Font.BOLD, labelFontSize);
+        
     /**
      * Timer delay
      */
@@ -172,6 +176,7 @@ public class AltitudePanel extends ColorPanel {
         g.setColor(Constants.textColor);
         int textXPos = xPos + spotSize / 2 + maxSpotSize;
         int textYPos = yPos + spotSize / 2 - maxSpotSize;
+        g.setFont(labelFont);
         g.drawString("A " + aFlightData.rocketPosition.GPSAltitude + " m", textXPos, textYPos - g.getFont().getSize());
         g.drawString("D " + (int) (aFlightData.rocketPosition.downRange) + " m", textXPos, textYPos);
         //g.drawString("V    " + (int) (aFlightData.rocketPosition.velocity) + " m/s", textXPos, textYPos - g.getFont().getSize());
@@ -207,8 +212,8 @@ public class AltitudePanel extends ColorPanel {
         g.fillRect(0, 0, width, height);
         g.setColor(Constants.textColor);
 
-        Font font = new Font("New Courier", Font.BOLD, fontSize);
-        g.setFont(font);
+//        Font font = new Font("New Courier", Font.BOLD, axisFontSize);
+        g.setFont(axisFont);
 //        String title = "Alitude and Down range";
 //        int sLength = g.getFontMetrics().stringWidth(title);
 //        g.drawString(title, width / 2 - sLength / 2, yAxesBorder / 2);
@@ -235,7 +240,7 @@ public class AltitudePanel extends ColorPanel {
         for (int i = 0; i <= yAxesScale; i += yAxesScale / yTicks) {
             g.fillRect(xAxesBorder - ticksLineWidth * 4, height - yAxesBorder - (i * yTicksPixels), ticksLineWidth * 4, ticksLineWidth);
             sLength = g.getFontMetrics().stringWidth("" + i);
-            g.drawString("" + i, xAxesBorder / 3 * 2 - sLength, height + (fontSize / 2) - yAxesBorder - (i * yTicksPixels) - sLength / 4);
+            g.drawString("" + i, xAxesBorder / 3 * 2 - sLength, height + (axisFontSize / 2) - yAxesBorder - (i * yTicksPixels) - sLength / 4);
         }
         String altitudeRangeStr = "Altitude (Km)";
         sLength = g.getFontMetrics().stringWidth(altitudeRangeStr);

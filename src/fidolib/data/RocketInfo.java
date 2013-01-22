@@ -15,17 +15,16 @@ import java.util.Locale;
  */
 public class RocketInfo extends Position {
 
-    /** 
+    /**
      * Time stamp of last data package
      */
     public long lastValidDataTimeStamp = 0;
-    
     /**
      * Course over ground
      */
     public int COG = 0;
     /**
-     * GPS Fix  (1 = no fix, 2 = 2d fix and 3 = 3d fix)
+     * GPS Fix (1 = no fix, 2 = 2d fix and 3 = 3d fix)
      */
     public int GPSFix = 1;
     /**
@@ -33,11 +32,11 @@ public class RocketInfo extends Position {
      */
     public double downRange = 0;
     /**
-     * Vertical velocity in m/s from privious point 
+     * Vertical velocity in m/s from privious point
      */
     public double verticalVelocity = 0;
     /**
-     * Horizontal velocity in m/s from privious point 
+     * Horizontal velocity in m/s from privious point
      */
     public double horizontalVelocity = 0;
     /**
@@ -53,7 +52,7 @@ public class RocketInfo extends Position {
      */
     public boolean flying = false;
     /**
-     * GPS time stamp at MCU (milli s) 
+     * GPS time stamp at MCU (milli s)
      */
     public int MCUGPSFixTime = 0;
     /**
@@ -92,8 +91,6 @@ public class RocketInfo extends Position {
      * Decimal symbols
      */
     private static DecimalFormatSymbols decimalSymbols = new DecimalFormatSymbols(new Locale("da", "DK"));
-
-    
     private RocketInfo etaPosition = null;
 
     /**
@@ -142,28 +139,37 @@ public class RocketInfo extends Position {
         this.lastValidDataTimeStamp = aRocketInfo.lastValidDataTimeStamp;
 
     }
+
     /**
      * Return latitude as string according to the format
      */
     public String getLat() {
-        String latStr = Constants.northSouth + " " + AuxiliaryFunctions.getInstance().formatDegrees(lat);
-        if (latitudeGood != true) {
+        if (lastValidDataTimeStamp > 0) {
+            String latStr = Constants.northSouth + " " + AuxiliaryFunctions.getInstance().formatDegrees(lat);
+            if (latitudeGood != true) {
 
-            latStr = "(" + latStr +")";
+                latStr = "(" + latStr + ")";
+            }
+            return latStr;
+        } else {
+            return Constants.naString;
         }
-        return latStr;
     }
 
     /**
      * Return longitude as string according to the format
      */
     public String getLon() {
-        String lonStr = Constants.eastWest + " " + AuxiliaryFunctions.getInstance().formatDegrees(lon);
-        if (longitudeGood != true) {
+        if (lastValidDataTimeStamp > 0) {
+            String lonStr = Constants.eastWest + " " + AuxiliaryFunctions.getInstance().formatDegrees(lon);
+            if (longitudeGood != true) {
 
-            lonStr = "(" + lonStr +")";
+                lonStr = "(" + lonStr + ")";
+            }
+            return lonStr;
+        } else {
+            return Constants.naString;
         }
-        return lonStr; 
     }
 
     /**
@@ -181,80 +187,94 @@ public class RocketInfo extends Position {
                 return Constants.naString;
         }
     }
+
     public String getAltitude() {
         if (lastValidDataTimeStamp > 0) {
-          return "" + GPSAltitude + " m";   
-        }
-        else {
+            return "" + GPSAltitude + " m";
+        } else {
             return Constants.naString;
         }
     }
+
     public String getDownrange() {
         if (lastValidDataTimeStamp > 0) {
-          return "" + ((int)downRange) + " m";   
-        }
-        else {
+            return "" + ((int) downRange) + " m";
+        } else {
             return Constants.naString;
         }
     }
-     public String getCOG() {
-        if (lastValidDataTimeStamp > 0) {
-          return "" + COG + Constants.degreeChar;   
-        }
-        else {
-            return Constants.naString;
-        }
-    }
-      public String getVelocity() {
-        if (lastValidDataTimeStamp > 0) {
-          return "" + ((int)velocity) + " m/s";   
-        }
-        else {
-            return Constants.naString;
-        }
-    }
-       public String getHorizontalVelocity() {
-        if (lastValidDataTimeStamp > 0) {
-          return "" + ((int)horizontalVelocity) + " m/s";   
-        }
-        else {
-            return Constants.naString;
-        }
-    }
-       public String getVerticalVelocity() {
-        if (lastValidDataTimeStamp > 0) {
-          return "" + ((int)verticalVelocity) + " m/s";   
-        }
-        else {
-            return Constants.naString;
-        }
-    }
-       /**
-        * Return the acceleration in m/^2
-        * @return 
-        */
-       public String getAccX()
-       {
-           DecimalFormat df = new DecimalFormat("0.0", decimalSymbols);
 
-           return "" + df.format(((double)accX / 1000)) + " " + Constants.gTerm;
-       }
-       /**
-        * Return the acceleration in m/^2
-        * @return 
-        */
-       public String getAccY()
-       {
-           DecimalFormat df = new DecimalFormat("0.0", decimalSymbols);
-           return "" + df.format(((double)accY / 1000)) + " " + Constants.gTerm;
-       }
-       /**
-        * Return the acceleration in m/^2
-        * @return 
-        */
-       public String getAccZ()
-       {
-           DecimalFormat df = new DecimalFormat("0.0", decimalSymbols);
-           return "" + df.format(((double)accZ / 1000 )) + " " + Constants.gTerm;
-       }
+    public String getCOG() {
+        if (lastValidDataTimeStamp > 0) {
+            return "" + COG + Constants.degreeChar;
+        } else {
+            return Constants.naString;
+        }
+    }
+
+    public String getVelocity() {
+        if (lastValidDataTimeStamp > 0) {
+            return "" + ((int) velocity) + " m/s";
+        } else {
+            return Constants.naString;
+        }
+    }
+
+    public String getHorizontalVelocity() {
+        if (lastValidDataTimeStamp > 0) {
+            return "" + ((int) horizontalVelocity) + " m/s";
+        } else {
+            return Constants.naString;
+        }
+    }
+
+    public String getVerticalVelocity() {
+        if (lastValidDataTimeStamp > 0) {
+            return "" + ((int) verticalVelocity) + " m/s";
+        } else {
+            return Constants.naString;
+        }
+    }
+
+    /**
+     * Return the acceleration in m/^2
+     *
+     * @return
+     */
+    public String getAccX() {
+        if (lastValidDataTimeStamp > 0) {
+            DecimalFormat df = new DecimalFormat("0.0", decimalSymbols);
+            return "" + df.format(((double) accX / 1000)) + " " + Constants.gTerm;
+        } else {
+            return Constants.naString;
+        }
+    }
+
+    /**
+     * Return the acceleration in m/^2
+     *
+     * @return
+     */
+    public String getAccY() {
+        if (lastValidDataTimeStamp > 0) {
+            DecimalFormat df = new DecimalFormat("0.0", decimalSymbols);
+            return "" + df.format(((double) accY / 1000)) + " " + Constants.gTerm;
+        } else {
+            return Constants.naString;
+        }
+    }
+
+    /**
+     * Return the acceleration in m/^2
+     *
+     * @return
+     */
+    public String getAccZ() {
+        if (lastValidDataTimeStamp > 0) {
+            DecimalFormat df = new DecimalFormat("0.0", decimalSymbols);
+            return "" + df.format(((double) accZ / 1000)) + " " + Constants.gTerm;
+        } else {
+            return Constants.naString;
+        }
+    }
 }

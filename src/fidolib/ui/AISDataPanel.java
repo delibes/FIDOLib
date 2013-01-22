@@ -140,7 +140,7 @@ public class AISDataPanel extends ColorPanel {
         g.drawString("SOG ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("TH ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Dist. MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("BRG MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("BRG f. MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
 
         textPos += deltaTextPos;

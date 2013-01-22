@@ -119,12 +119,12 @@ public class FlightDataPanel extends ColorPanel {
         g.drawString("Latitude", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Longitude", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Dist. MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("BRG MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("BRG f. MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("ETA", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("AAU volt", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Flying", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("SD Card", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-
+        g.drawString("AAU volt", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        
         textPos += deltaTextPos;
         // Print time since last valid data reception
         fontSizeFactor = maxFontSizeFactor;
@@ -157,10 +157,10 @@ public class FlightDataPanel extends ColorPanel {
         g.drawString(aFlightData.getMCDistance(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString(aFlightData.getMCBearing(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString(aFlightData.getETA(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString(aFlightData.getAAUVoltage(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString(aFlightData.getFlying(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString(aFlightData.getSDCardOK(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-
+        g.drawString(aFlightData.getAAUVoltage(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        
         fontSizeFactor = maxFontSizeFactor;
         textPos += deltaTextPos + 20;
         g.drawString("Alt", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
@@ -170,9 +170,9 @@ public class FlightDataPanel extends ColorPanel {
         g.drawString("V", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("V v", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("V h", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("ax", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("ay", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("az", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("A x", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("A y", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("A z", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
         fontSizeFactor = maxFontSizeFactor;
         textPos += deltaTextPos - 80;
         g.drawString(aFlightData.rocketPosition.getAltitude(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
