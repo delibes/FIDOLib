@@ -125,39 +125,39 @@ public class AISDataPanel extends ColorPanel {
             smallest = height;
         }
         int fontSize = smallest;
-        int textPos = 10;
+        int textXPos = 20;
         int deltaTextPos = this.getWidth() / 4 + 20;
         Font font = new Font("New Courier", Font.BOLD, fontSize);
         g.setFont(font);
-        int maxFontSizeFactor = 9;
+        int maxFontSizeFactor = 10;
         int fontSizeFactor = maxFontSizeFactor - 1;
 
         // Spunik
 
-        g.drawString("Latitude ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("Longitude ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("COG ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("SOG ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("TH ", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("Dist. MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("BRG f. MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("Latitude ", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("Longitude ", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("COG ", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("SOG ", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("TH ", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("Dist. MC", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("BRG f. MC", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
 
-        textPos += deltaTextPos;
+        textXPos += deltaTextPos;
         Calendar c1 = Calendar.getInstance();
         String deltaTSputnikData;
         VesselInfo sputnik = aAISData.getVessel(aAISData.sputnikMMSI);
         fontSizeFactor = maxFontSizeFactor;
         if (sputnik == null) {
             deltaTSputnikData = Constants.naString;
-            g.drawString("Sputnik " + deltaTSputnikData, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString("Sputnik " + deltaTSputnikData, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
         } else {
             if (sputnik.timeStamp != 0) {
@@ -169,14 +169,14 @@ public class AISDataPanel extends ColorPanel {
             } else {
                 deltaTSputnikData = Constants.naString;
             }
-            g.drawString("Sputnik " + deltaTSputnikData, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString("Sputnik " + deltaTSputnikData, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
             if (sputnik.timeStamp != 0) {
-                g.drawString(sputnik.pos.getLat(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString(sputnik.pos.getLon(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString("" + sputnik.cog + Constants.degreeChar, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString("" + sputnik.getSOG(true), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString(sputnik.getTH(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(sputnik.pos.getLat(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(sputnik.pos.getLon(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString("" + sputnik.cog + Constants.degreeChar, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString("" + sputnik.getSOG(true), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(sputnik.getTH(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
             } else {
             }
@@ -190,18 +190,18 @@ public class AISDataPanel extends ColorPanel {
                 DecimalFormat df = new DecimalFormat("0.0", decimalSymbols);
                 String distStr = "" + df.format(disanceNauticalMiles) + " / " + df.format(distanceMeters / 1000);
 
-                g.drawString(distStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(distStr, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
                 String brgStr = "" + AuxiliaryFunctions.initialBearing(aAISData.getVessel(aAISData.mcMMSI).pos, aAISData.getVessel(aAISData.sputnikMMSI).pos) + Constants.degreeChar;
-                g.drawString(brgStr, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(brgStr, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
             } else {
-                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
             }
         }
 
         // Mission control
-        textPos += deltaTextPos + 20;
+        textXPos += deltaTextPos + 20;
         fontSizeFactor = maxFontSizeFactor;
         //textPos += deltaTextPos / 2;
 
@@ -210,13 +210,13 @@ public class AISDataPanel extends ColorPanel {
 
         if (mc == null) {
             deltaTMCData = Constants.naString;
-            g.drawString("MC " + deltaTMCData, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-            // g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString("MC " + deltaTMCData, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            // g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
         } else {
             if (mc.timeStamp != 0) {
 
@@ -227,20 +227,20 @@ public class AISDataPanel extends ColorPanel {
             } else {
                 deltaTMCData = Constants.naString;
             }
-            g.drawString("MC " + deltaTMCData, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString("MC " + deltaTMCData, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
             if (mc.timeStamp != 0) {
-                g.drawString(mc.pos.getLat(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString(mc.pos.getLon(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString("" + mc.cog + Constants.degreeChar, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString("" + mc.getSOG(true), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString(mc.getTH(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(mc.pos.getLat(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(mc.pos.getLon(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString("" + mc.cog + Constants.degreeChar, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString("" + mc.getSOG(true), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(mc.getTH(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
             } else {
-                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-                // g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                // g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
             }
         }
     }

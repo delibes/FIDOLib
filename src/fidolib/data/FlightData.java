@@ -243,7 +243,7 @@ public class FlightData implements DataParser, GetPosition {
                             }
                             RocketInfo p = new RocketInfo(rocketPosition);
                             positions.add(p);
-                            if ((rocketPosition.flying == true) || (rocketPosition.GPSAltitude > 200) && (this.liftOffPosition == null)) {
+                            if (((rocketPosition.flying == true) || (rocketPosition.GPSAltitude > 200)) && (this.liftOffPosition == null)) {
                                 liftOffPosition = new RocketInfo(rocketPosition);
                             }
                             if (positions.size() > 3600) // Approximately 2 hours of GPS positions

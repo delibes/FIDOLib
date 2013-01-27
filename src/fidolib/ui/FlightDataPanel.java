@@ -109,23 +109,23 @@ public class FlightDataPanel extends ColorPanel {
         }
 
         int fontSize = smallest;
-        int textPos = 10;
+        int textXPos = 20;
         int deltaTextPos = smallest * 6 + 40;
         Font font = new Font("New Courier", Font.BOLD, fontSize);
         g.setFont(font);
         int maxFontSizeFactor = 10;
         int fontSizeFactor = maxFontSizeFactor;
-        g.drawString("Telemetry", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("Latitude", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("Longitude", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("Dist. MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("BRG f. MC", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("ETA", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("Flying", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("SD Card", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("AAU volt", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("Telemetry", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("Latitude", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("Longitude", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("Dist. MC", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("BRG f. MC", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("ETA", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("Flying", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("SD Card", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("AAU volt", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
         
-        textPos += deltaTextPos;
+        textXPos += deltaTextPos;
         // Print time since last valid data reception
         fontSizeFactor = maxFontSizeFactor;
         if (aFlightData.lastValidDataTimeStamp > 0) {
@@ -140,51 +140,51 @@ public class FlightDataPanel extends ColorPanel {
                 String minutesStr = String.format("%02d", (sinceLastData / 60000));
 
                 String sinceLastDataStr = "" + minutesStr + ":" + secondsStr;
-                g.drawString(sinceLastDataStr + " " + aFlightData.noGoodPackets + "/" + aFlightData.noBadPackets, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString(sinceLastDataStr + " " + aFlightData.noGoodPackets + "/" + aFlightData.noBadPackets, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
             } else {
-                g.drawString("" + aFlightData.noGoodPackets + " / " + aFlightData.noBadPackets, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+                g.drawString("" + aFlightData.noGoodPackets + " / " + aFlightData.noBadPackets, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
             }
 
         } else {
-            g.drawString(Constants.naString, textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+            g.drawString(Constants.naString, textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
         }
 
-        g.drawString(aFlightData.rocketPosition.getLat(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString(aFlightData.rocketPosition.getLon(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString(aFlightData.getMCDistance(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString(aFlightData.getMCBearing(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString(aFlightData.getETA(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString(aFlightData.getFlying(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString(aFlightData.getSDCardOK(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString(aFlightData.getAAUVoltage(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString(aFlightData.rocketPosition.getLat(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString(aFlightData.rocketPosition.getLon(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString(aFlightData.getMCDistance(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString(aFlightData.getMCBearing(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString(aFlightData.getETA(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString(aFlightData.getFlying(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString(aFlightData.getSDCardOK(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString(aFlightData.getAAUVoltage(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
         
         fontSizeFactor = maxFontSizeFactor;
-        textPos += deltaTextPos + 20;
-        g.drawString("Alt", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("Dwn", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("COG", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("Fix", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("V", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("V v", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("V h", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("A x", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("A y", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("A z", textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        textXPos += deltaTextPos + 20;
+        g.drawString("Alt", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("Dwn", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("COG", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("Fix", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("V", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("V v", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("V h", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("A x", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("A y", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("A z", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
         fontSizeFactor = maxFontSizeFactor;
-        textPos += deltaTextPos - 80;
-        g.drawString(aFlightData.rocketPosition.getAltitude(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString(aFlightData.rocketPosition.getDownrange(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString(aFlightData.rocketPosition.getCOG(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString(aFlightData.rocketPosition.getGPSFix() + " " + aFlightData.getGPSDeltaTIndex(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString(aFlightData.rocketPosition.getVelocity(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString(aFlightData.rocketPosition.getVerticalVelocity(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString(aFlightData.rocketPosition.getHorizontalVelocity(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString(aFlightData.rocketPosition.getAccX(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString(aFlightData.rocketPosition.getAccY(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString(aFlightData.rocketPosition.getAccZ(), textPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        textXPos += deltaTextPos - 80;
+        g.drawString(aFlightData.rocketPosition.getAltitude(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString(aFlightData.rocketPosition.getDownrange(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString(aFlightData.rocketPosition.getCOG(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString(aFlightData.rocketPosition.getGPSFix() + " " + aFlightData.getGPSDeltaTIndex(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString(aFlightData.rocketPosition.getVelocity(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString(aFlightData.rocketPosition.getVerticalVelocity(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString(aFlightData.rocketPosition.getHorizontalVelocity(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString(aFlightData.rocketPosition.getAccX(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString(aFlightData.rocketPosition.getAccY(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString(aFlightData.rocketPosition.getAccZ(), textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
 
 
     }
