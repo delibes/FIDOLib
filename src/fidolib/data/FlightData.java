@@ -33,15 +33,14 @@ public class FlightData implements DataParser, GetPosition {
      * Data log
      */
     /**
-      * Log for flight data
-      */
-     private DataLog aDataLog; 
-
-    /** 
+     * Log for flight data
+     */
+    private DataLog aDataLog;
+    /**
      * Time stamp of last data package
      */
     public long lastValidDataTimeStamp = 0;
-    /** 
+    /**
      * Delta T since last GPS reading
      */
     public int GPSDeltaTIndex = 0;
@@ -54,11 +53,12 @@ public class FlightData implements DataParser, GetPosition {
      */
     public int noBadPackets = 0;
     /**
-     * The number of flight data bytes received 
+     * The number of flight data bytes received
      */
     public long bytesReceived = 0;
     /**
-     * The latitude and longitude position of the rocket as well as additional infomation.
+     * The latitude and longitude position of the rocket as well as additional
+     * infomation.
      */
     public RocketInfo rocketPosition = new RocketInfo();
     /**
@@ -121,14 +121,40 @@ public class FlightData implements DataParser, GetPosition {
     /**
      * Constructor
      */
-    public FlightData(AISData aAISData,DataLog aDataLog) {
+    public FlightData(AISData aAISData, DataLog aDataLog) {
         this.aAISData = aAISData;
         this.aDataLog = aDataLog;
+         /*
+         * Test data
+       
+        RocketInfo aRocketInfo = new RocketInfo();
+        Calendar calender = Calendar.getInstance();
+        lastValidDataTimeStamp = calender.getTime().getTime();
+        rocketPosition.COG = 100;
+        rocketPosition.GPSAltitude = 10;
+        rocketPosition.latitudeGood = true;
+        rocketPosition.lat = 55.032121;
+        rocketPosition.longitudeGood = true;
+        rocketPosition.lon = 15.555211;
+        
+        this.SDCardOK = 1;
+        this.AAUVoltage = 7;
+        rocketPosition.lastValidDataTimeStamp = calender.getTime().getTime();
+        rocketPosition.flying = false;
+        rocketPosition.GPSFix = 3;
+        rocketPosition.downRange = 0;
+        rocketPosition.accX = 1;
+        rocketPosition.accY = 982;
+        rocketPosition.accZ = 1;
+        positions.add(aRocketInfo);
+        */ 
+
     }
 
     /**
      * Parse the data packets
-     * @return -1 = error,  1 = new and valid data
+     *
+     * @return -1 = error, 1 = new and valid data
      */
     @Override
     public synchronized int parseData(byte[] packet) {
@@ -179,7 +205,7 @@ public class FlightData implements DataParser, GetPosition {
                 AAUVoltage = (double) (packet[PacketIndices.voltageIndex.getIndex()] & 0xff) / 10.0;
                 SDCardOK = (int) (packet[PacketIndices.SdCardIndex.getIndex()] & 0xff);
                 GPSDeltaTIndex = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.GPSDeltaTIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
-                rocketPosition.lastValidDataTimeStamp = lastValidDataTimeStamp; 
+                rocketPosition.lastValidDataTimeStamp = lastValidDataTimeStamp;
                 rocketPosition.MCUGPSFixTime = AuxiliaryFunctions.byteArrayToINT32(packet, PacketIndices.MCUGPSTimeIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
                 rocketPosition.gyroX = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.gyroXIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
                 rocketPosition.gyroY = AuxiliaryFunctions.byteArrayToINT16(packet, PacketIndices.gyroYIndex.getIndex(), AuxiliaryFunctions.Endian.BIG);
@@ -286,7 +312,6 @@ public class FlightData implements DataParser, GetPosition {
 
     }
 
-    
     @Override
     public synchronized void parseData(String data) {
     }
@@ -333,7 +358,8 @@ public class FlightData implements DataParser, GetPosition {
     public synchronized String getMCDistance() {
         VesselInfo mc = aAISData.getVessel(aAISData.mcMMSI);
         if (mc != null) {
-            double disanceNauticalMiles = AuxiliaryFunctions.disanceNauticalMiles(aFlightData.rocketPosition, mc.pos);
+            
+            double disanceNauticalMiles = AuxiliaryFunctions.disanceNauticalMiles(rocketPosition, mc.pos);
             double distanceMeters = disanceNauticalMiles * Constants.nauticalMile;
 
             String distStr = "";
@@ -387,24 +413,19 @@ public class FlightData implements DataParser, GetPosition {
     }
 
     public synchronized String getSDCardOK() {
-        if (SDCardOK == -1)
-        {
+        if (SDCardOK == -1) {
             return Constants.naString;
-        }
-        else if (SDCardOK == 0){
+        } else if (SDCardOK == 0) {
             return "Not OK";
-        }
-        else {
+        } else {
             return "OK";
         }
     }
 
     public synchronized String getGPSDeltaTIndex() {
-        if (GPSDeltaTIndex == -1)
-        {
+        if (GPSDeltaTIndex == -1) {
             return Constants.naString;
-        }
-        else if (GPSDeltaTIndex > 2) {
+        } else if (GPSDeltaTIndex > 2) {
             String minutesStr = String.format("%02d", (GPSDeltaTIndex / 60 % 60));
             String secondsStr = String.format("%02d", (GPSDeltaTIndex % 60));
             return minutesStr + ":" + secondsStr;

@@ -39,7 +39,6 @@ public class AISData implements DataParser {
      * Self reference
      */
     private static AISData aAISData = null;
-    
     /**
      * Collection of all vessels received by AIS
      */
@@ -48,30 +47,70 @@ public class AISData implements DataParser {
      * Time stamp of last AIS message
      */
     public long AISTimeStamp = 0;
-
     /**
      * AIS log
      */
     private AISLog aAISLog;
+
     /**
      * Constructor
      */
     public AISData(AISLog aAISLog) {
-       this.aAISLog = aAISLog;
+        this.aAISLog = aAISLog;
+        /*
+         * Test data
+        
+        VesselInfo sputnik = new VesselInfo();
+        sputnik.MMSI = "219337000";
+        sputnik.pos.lon = 15.555211;
+        sputnik.pos.lat = 55.032121;;
+        sputnik.pos.latitudeGood = true;
+        sputnik.pos.longitudeGood = true;
+        sputnik.cog = 10;
+        sputnik.pos_acc = 1;
+        sputnik.sog = 0.5;
+        sputnik.rot = 10;
+        sputnik.true_heading = 9;
+        sputnik.utc_sec = 1;
+
+        Calendar calender = Calendar.getInstance();
+        sputnik.timeStamp = calender.getTime().getTime();
+        sputnik.pos.lastValidDataTimeStamp = calender.getTime().getTime();
+        
+        VesselInfo mc = new VesselInfo();
+        mc.MMSI = "2190047";
+        mc.pos.lon = 15.585211;
+        mc.pos.lat = 55.032311;;
+        mc.pos.latitudeGood = true;
+        mc.pos.longitudeGood = true;
+        mc.cog = 5;
+        mc.pos_acc = 1;
+        mc.sog = 0.0;
+        mc.rot = 10;
+        mc.true_heading = 12;
+        mc.utc_sec = 1;
+        mc.timeStamp = calender.getTime().getTime();
+        mc.pos.lastValidDataTimeStamp = calender.getTime().getTime();
+        
+        allVessels.add(sputnik);
+        allVessels.add(mc);
+                 * 
+         */
+
     }
 
     /**
      * Get instance
      */
-/*    public static AISData getInstance() {
+    /*    public static AISData getInstance() {
 
-        if (aAISData == null) {
-            aAISData = new AISData();
-        }
-        return aAISData;
+     if (aAISData == null) {
+     aAISData = new AISData();
+     }
+     return aAISData;
 
-    }
-*/
+     }
+     */
     /**
      * Parse AIS data receives the data and parses the AIS string
      */
@@ -159,6 +198,8 @@ public class AISData implements DataParser {
             aVesselInfo.nav_status = ((Message1) msg).nav_status();
             aVesselInfo.pos.lat = ((Message1) msg).latitude() / 600000.0;
             aVesselInfo.pos.lon = ((Message1) msg).longitude() / 600000.0;
+            aVesselInfo.pos.latitudeGood = true;
+            aVesselInfo.pos.longitudeGood = true;
             aVesselInfo.rot = ((Message1) msg).rot();
             aVesselInfo.cog = ((Message1) msg).cog() / 10;
             aVesselInfo.pos_acc = ((Message1) msg).pos_acc();
@@ -176,6 +217,8 @@ public class AISData implements DataParser {
             aVesselInfo.nav_status = ((Message2) msg).nav_status();
             aVesselInfo.pos.lat = ((Message2) msg).latitude() / 600000.0;
             aVesselInfo.pos.lon = ((Message2) msg).longitude() / 600000.0;
+            aVesselInfo.pos.latitudeGood = true;
+            aVesselInfo.pos.longitudeGood = true;
             aVesselInfo.rot = ((Message2) msg).rot();
             aVesselInfo.cog = ((Message2) msg).cog() / 10;
             aVesselInfo.pos_acc = ((Message2) msg).pos_acc();
@@ -191,6 +234,8 @@ public class AISData implements DataParser {
             aVesselInfo.nav_status = ((Message3) msg).nav_status();
             aVesselInfo.pos.lat = ((Message3) msg).latitude() / 600000.0;
             aVesselInfo.pos.lon = ((Message3) msg).longitude() / 600000.0;
+            aVesselInfo.pos.latitudeGood = true;
+            aVesselInfo.pos.longitudeGood = true;
             aVesselInfo.rot = ((Message3) msg).rot();
             aVesselInfo.cog = ((Message3) msg).cog() / 10;
             aVesselInfo.pos_acc = ((Message3) msg).pos_acc();
@@ -206,6 +251,8 @@ public class AISData implements DataParser {
             aVesselInfo.MMSI = msgMMSI;
             aVesselInfo.pos.lat = ((Message4) msg).latitude() / 600000.0;
             aVesselInfo.pos.lon = ((Message4) msg).longitude() / 600000.0;
+            aVesselInfo.pos.latitudeGood = true;
+            aVesselInfo.pos.longitudeGood = true;
             aVesselInfo.name = "Base Station";
             aVesselInfo.timeStamp = c1.getTimeInMillis();
 
@@ -225,6 +272,8 @@ public class AISData implements DataParser {
             aVesselInfo.MMSI = msgMMSI;
             aVesselInfo.pos.lat = ((Message18) msg).latitude() / 600000.0;
             aVesselInfo.pos.lon = ((Message18) msg).longitude() / 600000.0;
+            aVesselInfo.pos.latitudeGood = true;
+            aVesselInfo.pos.longitudeGood = true;
             aVesselInfo.cog = ((Message18) msg).cog() / 10;
             aVesselInfo.pos_acc = ((Message18) msg).pos_acc();
             aVesselInfo.sog = ((Message18) msg).sog() / 10.0;
@@ -298,6 +347,8 @@ public class AISData implements DataParser {
 
                         aVesselInfo.pos.lat = aVesselInfoArg.pos.lat;
                         aVesselInfo.pos.lon = aVesselInfoArg.pos.lon;
+                        aVesselInfo.pos.latitudeGood = true;
+                        aVesselInfo.pos.longitudeGood = true;
                         aVesselInfo.cog = aVesselInfoArg.cog;
                         aVesselInfo.pos_acc = aVesselInfoArg.pos_acc;
                         aVesselInfo.sog = aVesselInfoArg.sog;
@@ -436,7 +487,6 @@ public class AISData implements DataParser {
 
     @Override
     public synchronized int parseData(byte[] packet) {
-      return -1; 
+        return -1;
     }
-
 }
