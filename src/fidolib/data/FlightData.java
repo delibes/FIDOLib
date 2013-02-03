@@ -261,8 +261,11 @@ public class FlightData implements DataParser, GetPosition {
                                 }
                                 if (avgVSpeed <= -1.0) {
                                     rocketPosition.ETA = (int) (rocketPosition.GPSAltitude / (avgVSpeed * -1));
+                                    Calendar calender = Calendar.getInstance();
+                                    rocketPosition.ETATime = calender.getTime().getTime(); 
                                 } else {
                                     rocketPosition.ETA = 0;
+                                    rocketPosition.ETATime = 0;
                                 }
 
 
@@ -345,9 +348,16 @@ public class FlightData implements DataParser, GetPosition {
 
     public synchronized String getETA() {
         if (rocketPosition.ETA > 0) {
-            String hoursStr = String.format("%02d", (rocketPosition.ETA / 3600));
-            String minutesStr = String.format("%02d", (rocketPosition.ETA / 60 % 60));
-            String secondsStr = String.format("%02d", (rocketPosition.ETA % 60));
+            Calendar calender = Calendar.getInstance();
+            long time = calender.getTime().getTime();
+            int ETA = rocketPosition.ETA - (int)((time - rocketPosition.ETATime) / 1000);
+            if (ETA < 0)
+            {
+                ETA = 0;
+            }
+            String hoursStr = String.format("%02d", (ETA / 3600));
+            String minutesStr = String.format("%02d", (ETA / 60 % 60));
+            String secondsStr = String.format("%02d", (ETA % 60));
             return hoursStr + ":" + minutesStr + ":" + secondsStr;
         } else {
             return Constants.naString;

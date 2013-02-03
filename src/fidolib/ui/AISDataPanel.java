@@ -138,7 +138,7 @@ public class AISDataPanel extends ColorPanel {
         g.drawString("Longitude ", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("COG ", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("SOG ", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
-        g.drawString("TH ", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
+        g.drawString("TH", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("Dist. MC", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
         g.drawString("BRG f. MC", textXPos, this.getHeight() - (fontSize * fontSizeFactor--));
 

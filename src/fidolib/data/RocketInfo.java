@@ -48,6 +48,10 @@ public class RocketInfo extends Position {
      */
     public int ETA = -1;
     /**
+     * ETA calculated at time
+     */
+    public long ETATime = 0;
+    /**
      * Are the rocket flying?
      */
     public boolean flying = false;
