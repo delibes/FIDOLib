@@ -48,7 +48,7 @@ public class CountdownControlPanel extends javax.swing.JPanel {
     public CountdownControlPanel(CountDownDialog aCountDownDialog) {
         initComponents();
         this.aCountDownDialog = aCountDownDialog;
-        
+                
         if (CountDownData.countDownRunning == false) {
             if (CountDownData.countDownHold == false) {
             this.jButton1Start.setText(Constants.startButtonTxt);
@@ -142,52 +142,36 @@ public class CountdownControlPanel extends javax.swing.JPanel {
 
         setName("Form"); // NOI18N
 
-        jButton1Start.setFont(org.jdesktop.application.Application.getInstance().getContext().getResourceMap(CountdownControlPanel.class).getFont("jButton1Start.font")); // NOI18N
-        jButton1Start.setText(org.jdesktop.application.Application.getInstance().getContext().getResourceMap(CountdownControlPanel.class).getString("jButton1Start.text")); // NOI18N
-        jButton1Start.setName("jButton1Start"); // NOI18N
         jButton1Start.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1StartActionPerformed(evt);
             }
         });
 
-        jButton1Hold.setFont(org.jdesktop.application.Application.getInstance().getContext().getResourceMap(CountdownControlPanel.class).getFont("jButton1Hold.font")); // NOI18N
-        jButton1Hold.setText(org.jdesktop.application.Application.getInstance().getContext().getResourceMap(CountdownControlPanel.class).getString("jButton1Hold.text")); // NOI18N
-        jButton1Hold.setName("jButton1Hold"); // NOI18N
         jButton1Hold.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1HoldActionPerformed(evt);
             }
         });
 
-        jButton1Stop.setFont(org.jdesktop.application.Application.getInstance().getContext().getResourceMap(CountdownControlPanel.class).getFont("jButton1Stop.font")); // NOI18N
-        jButton1Stop.setText(org.jdesktop.application.Application.getInstance().getContext().getResourceMap(CountdownControlPanel.class).getString("jButton1Stop.text")); // NOI18N
-        jButton1Stop.setName("jButton1Stop"); // NOI18N
         jButton1Stop.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1StopActionPerformed(evt);
             }
         });
 
-        jButton1Reset.setFont(org.jdesktop.application.Application.getInstance().getContext().getResourceMap(CountdownControlPanel.class).getFont("jButton1Reset.font")); // NOI18N
-        jButton1Reset.setText(org.jdesktop.application.Application.getInstance().getContext().getResourceMap(CountdownControlPanel.class).getString("jButton1Reset.text")); // NOI18N
-        jButton1Reset.setName("jButton1Reset"); // NOI18N
         jButton1Reset.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ResetActionPerformed(evt);
             }
         });
 
-        jComboBoxPresets.setFont(org.jdesktop.application.Application.getInstance().getContext().getResourceMap(CountdownControlPanel.class).getFont("jComboBoxPresets.font")); // NOI18N
-        jComboBoxPresets.setName("jComboBoxPresets"); // NOI18N
         jComboBoxPresets.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jComboBoxPresetsActionPerformed(evt);
             }
         });
 
-        jTextField1manualTimeEntering.setText(org.jdesktop.application.Application.getInstance().getContext().getResourceMap(CountdownControlPanel.class).getString("jTextField1manualTimeEntering.text")); // NOI18N
-        jTextField1manualTimeEntering.setName("jTextField1manualTimeEntering"); // NOI18N
         jTextField1manualTimeEntering.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField1manualTimeEnteringActionPerformed(evt);

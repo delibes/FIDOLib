@@ -11,6 +11,7 @@
 package fidolib.ui;
 
 import java.awt.BorderLayout;
+import java.util.ResourceBundle;
 
 /**
  *
@@ -28,7 +29,7 @@ public class CountDownDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         this.setTitle("Count Down Control");
-        this.mainjPanel1.add(aCountdownControlPanel, BorderLayout.CENTER);
+        this.countDownPanel.add(aCountdownControlPanel, BorderLayout.CENTER);
                 
     }
 
@@ -41,14 +42,16 @@ public class CountDownDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        mainjPanel1 = new javax.swing.JPanel();
+        countDownPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setName("Form"); // NOI18N
 
-        mainjPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(org.jdesktop.application.Application.getInstance().getContext().getResourceMap(CountDownDialog.class).getString("mainjPanel1.border.title"))); // NOI18N
-        mainjPanel1.setName("mainjPanel1"); // NOI18N
-        mainjPanel1.setLayout(new java.awt.BorderLayout());
+        ResourceBundle bundle = ResourceBundle.getBundle("fidolib.ui.resources.CountDownDialog");
+
+        countDownPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(bundle.getString("countDownDialog.border.title"))); // NOI18N
+        countDownPanel.setName("countDownPanel"); // NOI18N
+        countDownPanel.setLayout(new java.awt.BorderLayout());
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -56,14 +59,14 @@ public class CountDownDialog extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(mainjPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 583, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(countDownPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 583, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(mainjPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
+                .addComponent(countDownPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 92, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -114,6 +117,6 @@ public class CountDownDialog extends javax.swing.JDialog {
 //        });
 //    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JPanel mainjPanel1;
+    private javax.swing.JPanel countDownPanel;
     // End of variables declaration//GEN-END:variables
 }
